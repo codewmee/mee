@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Message Wall | Batch '26</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,600&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --bg-dark: #0a0e17;
+    --gold: #ffcc00;
+    --paper: #fffdf7;
+    --text-dark: #1f2937;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: radial-gradient(circle at top, rgba(255,204,0,0.08), transparent 40%), var(--bg-dark);
+    color: white;
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    animation: fadePage 1s ease;
+}
+
+@keyframes fadePage {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.wall-container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 60px 20px 100px;
+}
+
+.wall-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.badge {
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: 999px;
+    backdrop-filter: blur(12px);
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: white;
+    font-weight: 700;
+    transition: 0.3s;
+}
+
+.badge:hover {
+    background: rgba(255,204,0,0.2);
+    color: var(--gold);
+    border-color: rgba(255,204,0,0.4);
+}
+
+h1 {
+    font-size: 3rem;
+    margin: 20px 0 10px;
+}
+
+.wall-header p {
+    color: #94a3b8;
+    max-width: 650px;
+    margin: auto;
+    line-height: 1.6;
+}
+
+.message-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px;
+}
+
+.message-card {
+    background: var(--paper);
+    color: var(--text-dark);
+    padding: 28px;
+    min-height: 220px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transform: rotate(-1.2deg);
+}
+
+.message-card:nth-child(even) {
+    transform: rotate(1deg);
+}
+
+.message-card:hover {
+    transform: rotate(0deg) scale(1.03);
+    z-index: 10;
+    box-shadow: 0 18px 35px rgba(0,0,0,0.45);
+}
+
+.message-card::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70px;
+    height: 22px;
+    background: rgba(255,255,255,0.5);
+}
+
+.card-content {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.3rem;
+    line-height: 1.7;
+}
+
+.card-footer {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(0,0,0,0.08);
+    font-weight: 700;
+}
+
+.write-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: var(--gold);
+    color: black;
+    border: none;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    font-size: 1.8rem;
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(255,204,0,0.3);
+    transition: 0.3s;
+}
+
+.write-btn:hover {
+    transform: scale(1.08);
+}
+
+.popup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.popup.active {
+    display: flex;
+}
+
+.popup-card {
+    position: relative;
+    background: white;
+    width: 90%;
+    max-width: 500px;
+    padding: 35px;
+    border-radius: 20px;
+    animation: popupIn 0.4s ease;
+}
+
+@keyframes popupIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.close-popup {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.06);
+    color: #111;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.close-popup:hover {
+    background: rgba(255, 204, 0, 0.25);
+    transform: rotate(90deg);
+}
+
+.popup-title {
+    font-family: 'Dancing Script', cursive;
+    font-size: 2rem;
+    color: #111;
+    margin-bottom: 20px;
+}
+
+textarea,
+input {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 16px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-style: italic;
+}
+
+textarea {
+    resize: none;
+}
+
+.checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    color: #111;
+}
+
+.checkbox-row input {
+    accent-color: var(--gold);
+    width: 18px;
+    height: 18px;
+}
+
+.pin-btn {
+    width: 100%;
+    padding: 14px;
+    background: black;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="wall-container">
+    <header class="wall-header">
+        <span class="badge">✦ Final Goodbyes ✦</span>
+        <h1>Message Wall of Reflection</h1>
+        <p>Leave one final note for the people and memories that made this journey unforgettable.</p>
+    </header>
+
+    <div class="message-grid" id="messageGrid">
+        <div class="message-card">
+            <div class="card-content">The days may end, but the memories never will.</div>
+            <div class="card-footer">Anonymous</div>
+        </div>
+    </div>
+</div>
+
+<button class="write-btn" onclick="openPopup()">✎</button>
+
+<div class="popup" id="popup">
+    <div class="popup-card">
+        <button class="close-popup" onclick="closePopup()">&times;</button>
+        <div class="popup-title">Leave a Note</div>
+
+        <textarea id="messageText" rows="5" placeholder="A memory I’ll never forget..."></textarea>
+        <input type="text" id="nameInput" placeholder="Your name (optional)">
+
+        <div class="checkbox-row">
+            <input type="checkbox" id="anonymousCheck">
+            <label for="anonymousCheck">Anonymous</label>
+        </div>
+
+        <button class="pin-btn" onclick="pinMessage()">Pin to Wall</button>
+    </div>
+</div>
+
+<script>
+function openPopup() {
+    document.getElementById("popup").classList.add("active");
+}
+
+function closePopup() {
+    document.getElementById("popup").classList.remove("active");
+}
+
+function pinMessage() {
+    const text = document.getElementById("messageText").value.trim();
+    const name = document.getElementById("nameInput").value.trim();
+    const anonymous = document.getElementById("anonymousCheck").checked;
+
+    if (!text) return;
+
+    const grid = document.getElementById("messageGrid");
+    const card = document.createElement("div");
+    card.className = "message-card";
+
+    card.innerHTML = `
+        <div class="card-content">${text}</div>
+        <div class="card-footer">${anonymous ? "Anonymous" : (name || "Unknown")}</div>
+    `;
+
+    grid.prepend(card);
+
+    closePopup();
+    document.getElementById("messageText").value = "";
+    document.getElementById("nameInput").value = "";
+    document.getElementById("anonymousCheck").checked = false;
+}
+</script>
+
+</body>
+</html>

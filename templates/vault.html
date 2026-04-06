@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Echoes Vault - Media Archive</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  body {
+    background-color: #121210;
+    color: #e5e5e5;
+    font-family: 'Inter', sans-serif;
+  }
+  .serif-italic { font-family: 'Playfair Display', serif; font-style: italic; }
+  /* Remove scrollbar for horizontal filter nav */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+   .navbar {
+    position: sticky;
+    top: 18px;
+    width: calc(100% - 48px);
+    margin: 18px auto;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 24px;
+    background: rgba(20,20,20,0.42);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+    z-index: 10;
+    overflow: hidden;
+  }
+
+  .navbar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 8px);
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  .logo {
+    position: relative;
+    font-size: 28px;
+    font-family: serif;
+    color: #d4a017;
+    letter-spacing: 1px;
+    cursor: pointer;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    position: relative;
+  }
+
+  .nav-links a {
+    position: relative;
+    color: rgba(255,255,255,0.88);
+    text-decoration: none;
+    font-size: 15px;
+    transition: color 0.3s ease;
+  }
+
+  .nav-links a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 0;
+    height: 2px;
+    background: #d4a017;
+    transition: width 0.35s ease;
+  }
+
+  .nav-links a:hover {
+    color: #ffffff;
+  }
+
+  .nav-links a:hover::after,
+  .nav-links a.active::after {
+    width: 100%;
+  }
+</style>
+
+</head>
+
+<body class="antialiased p-6 md:p-16">
+    <nav class="navbar">
+    <div class="logo">Echoes</div>
+    <div class="nav-links">
+      <a href="/journey" >The Journey</a>
+      <a href="/yearbook">Year Book</a>
+      <a href="/vault" class="active">Vault</a>
+      <a href="/wall">The Wall</a>
+      <button class="signup-btn">Sign Up</button>
+    </div>
+  </nav>
+<!-- Header Section -->
+<header class="max-w-7xl mx-auto mb-12">
+  <h1 class="serif-italic text-6xl md:text-7xl text-white mb-4">The Archive</h1>
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <p class="text-gray-400 max-w-md text-lg leading-relaxed">
+      A cinematic collection of fleeting moments, frozen in time. From the first lecture to the final goodbye.
+    </p>
+    <button class="mt-2 md:mt-0 flex items-center gap-2 border border-zinc-700 px-4 py-2 rounded-full text-sm hover:bg-zinc-800 transition">
+      ⇅ Newest First
+    </button>
+  </div>
+</header>
+
+<!-- Filter Navigation -->
+<!-- Filter Navigation with Glassmorphism -->
+<nav class="max-w-7xl mx-auto mb-10 flex gap-3 overflow-x-auto pb-4 no-scrollbar">
+  <!-- Active Button -->
+  <button class="bg-[#D4A017] text-black px-6 py-2 rounded-full font-medium whitespace-nowrap backdrop-blur-md border border-white/10">
+    All Memories
+  </button>
+  <!-- Glassmorphic Buttons -->
+  <button class="bg-white/5 text-zinc-300 px-6 py-2 rounded-full font-medium whitespace-nowrap backdrop-blur-md border border-white/10 hover:bg-white/10 transition">
+    1st yr
+  </button>
+  <button class="bg-white/5 text-zinc-300 px-6 py-2 rounded-full font-medium whitespace-nowrap backdrop-blur-md border border-white/10 hover:bg-white/10 transition">
+    2nd yr
+  </button>
+  <button class="bg-white/5 text-zinc-300 px-6 py-2 rounded-full font-medium whitespace-nowrap backdrop-blur-md border border-white/10 hover:bg-white/10 transition">
+    3rd yr
+  </button>
+  <button class="bg-white/5 text-zinc-300 px-6 py-2 rounded-full font-medium whitespace-nowrap backdrop-blur-md border border-white/10 hover:bg-white/10 transition">
+    4th yr
+  </button>
+  <button class="bg-white/5 text-zinc-300 px-6 py-2 rounded-full font-medium whitespace-nowrap backdrop-blur-md border border-white/10 hover:bg-white/10 transition">
+    feasts
+  </button>
+</nav>
+
+<!-- Media Grid -->
+<main class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+  <!-- Card 1 -->
+  <div class="group overflow-hidden rounded-xl bg-[#1c1c1a] cursor-pointer">
+    <div class="relative">
+      <img src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&q=80&w=800" 
+           alt="Memory" class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110 rounded-xl">
+      <div class="absolute bottom-4 left-4 opacity-0 transform translate-y-4 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+        <p class="text-xs text-[#D4A017]">May 2025</p>
+        <h3 class="text-lg font-semibold text-[#D4A017]">CSE dimension...a full chaos</h3>
+        <p class="text-sm italic text-[#D4A017]">CSE</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2 -->
+  <div class="group overflow-hidden rounded-xl bg-[#1c1c1a] cursor-pointer">
+    <div class="relative">
+      <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=800" 
+           alt="Memory" class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110 rounded-xl">
+      <div class="absolute bottom-4 left-4 opacity-0 transform translate-y-4 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+        <p class="text-xs text-[#D4A017]">Apr 2025</p>
+        <h3 class="text-lg font-semibold text-[#D4A017]">Farewell to Seniors'25</h3>
+        <p class="text-sm italic text-[#D4A017]">MECH</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3 -->
+  <div class="group overflow-hidden rounded-xl bg-[#1c1c1a] cursor-pointer">
+    <div class="relative">
+      <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&q=80&w=800" 
+           alt="Memory" class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110 rounded-xl">
+      <div class="absolute bottom-4 left-4 opacity-0 transform translate-y-4 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+        <p class="text-xs text-[#D4A017]">Nov 2024</p>
+        <h3 class="text-lg font-semibold text-[#D4A017]">Good old days</h3>
+        <p class="text-sm italic text-[#D4A017]">ECE</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 4 -->
+  <div class="group overflow-hidden rounded-xl bg-[#1c1c1a] cursor-pointer">
+    <div class="relative">
+      <img src="https://images.unsplash.com/photo-1506765515384-028b60a970df?auto=format&fit=crop&q=80&w=800" 
+           alt="Memory" class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110 rounded-xl">
+      <div class="absolute bottom-4 left-4 opacity-0 transform translate-y-4 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+        <p class="text-xs text-[#D4A017]">Jan 2025</p>
+        <h3 class="text-lg font-semibold text-[#D4A017]">First-year Chaos</h3>
+        <p class="text-sm italic text-[#D4A017]">CSE</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 5 -->
+  <div class="group overflow-hidden rounded-xl bg-[#1c1c1a] cursor-pointer">
+    <div class="relative">
+      <img src="https://images.unsplash.com/photo-1487014679447-9f8336841d58?auto=format&fit=crop&q=80&w=800" 
+           alt="Memory" class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110 rounded-xl">
+      <div class="absolute bottom-4 left-4 opacity-0 transform translate-y-4 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+        <p class="text-xs text-[#D4A017]">Feb 2025</p>
+        <h3 class="text-lg font-semibold text-[#D4A017]">Project Madness</h3>
+        <p class="text-sm italic text-[#D4A017]">MECH</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 6 -->
+  <div class="group overflow-hidden rounded-xl bg-[#1c1c1a] cursor-pointer">
+    <div class="relative">
+      <img src="https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&q=80&w=800" 
+           alt="Memory" class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110 rounded-xl">
+      <div class="absolute bottom-4 left-4 opacity-0 transform translate-y-4 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+        <p class="text-xs text-[#D4A017]">Mar 2025</p>
+        <h3 class="text-lg font-semibold text-[#D4A017]">Tech Fest Vibes</h3>
+        <p class="text-sm italic text-[#D4A017]">ECE</p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- Load More Button -->
+<div class="flex justify-center mt-16">
+  <button class="px-8 py-3 rounded-full font-semibold tracking-wide text-white bg-white/5 backdrop-blur-md border border-white/10 hover:bg-[#D4A017] hover:text-black transition-all">
+    UNLOCK MORE VAULT ITEMS
+  </button>
+</div>
+
+</body>
+</html>

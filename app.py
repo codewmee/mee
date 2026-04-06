@@ -8,11 +8,25 @@ app.secret_key = "your_secret_key"
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    return render_template("landing_page.html")
 
-@app.route("/about")
-def about():
-    return "<h1>About Page</h1>"
+@app.route("/journey")
+def journey():
+    return render_template("journey.html")
+
+
+@app.route("/yearbook")
+def yearbook():
+    return render_template("yearbook.html")
+
+@app.route("/vault")
+def vault():        
+    return render_template("vault.html")
+
+@app.route("/wall")
+def wall():             
+    return render_template("wall.html")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
