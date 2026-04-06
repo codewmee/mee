@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Echoes - Yearbook</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body {
+    background: 
+      radial-gradient(circle at 20% 30%, rgba(120,80,20,0.22), transparent 40%),
+      radial-gradient(circle at 80% 20%, rgba(20,40,90,0.18), transparent 40%),
+      linear-gradient(180deg, #070707, #0b0b0b 40%, #10131a 100%);
+    color: white;
+    font-family: Arial, sans-serif;
+    min-height: 200vh;
+  }
+
+  /* Sticky search/filter section */
+  .sticky-top {
+    position: sticky;
+    top: 18px;
+    z-index: 20;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    background: rgba(20,20,20,0.42);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 24px;
+    padding: 16px;
+    margin-bottom: 32px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+  }
+
+  /* Search bar */
+  .search-input {
+    flex: 1;
+    min-width: 220px;
+    padding: 12px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.08);
+    color: white;
+    outline: none;
+    backdrop-filter: blur(10px);
+  }
+
+  .filter-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    padding: 10px 18px;
+    border-radius: 999px;
+    font:semiboldt;
+    border: 1px solid rgba(255,255,255,0.16);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    background: rgba(255,255,255,0.08);
+    color: white;
+  }
+
+  .filter-btn.active {
+    background: #d4a017;
+    color: black;
+    border: 1px solid #d4a017;
+  }
+
+  /* Cards */
+  .yearbook-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
+    gap: 24px;
+    max-width: 1200px;
+    margin: auto;
+    padding-bottom: 80px;
+  }
+
+  .card {
+    background: rgba(255,255,255,0.05);
+    border-radius: 24px;
+    overflow: hidden;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.1);
+    cursor: pointer;
+    transition: transform 0.3s ease, background 0.3s ease;
+  }
+
+  .card:hover {
+    background: rgba(212,160,23,0.1);
+    transform: scale(1.03);
+  }
+
+  .card-header {
+    height: 180px;
+    background: rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: bold;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .card-body {
+    padding: 16px;
+  }
+
+  .roll {
+    font-family: monospace;
+    font-size: 0.8rem;
+    color: #d4a017;
+    letter-spacing: 1px;
+  }
+
+  .name {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+
+  .branch {
+    font-style: italic;
+    color: #aaa;
+    margin-bottom: 12px;
+  }
+
+  .card-btn {
+    width: 100%;
+    padding: 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.08);
+    color: white;
+    transition: all 0.3s ease;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .card-btn:hover {
+    background: #d4a017;
+    color: black;
+    border: 1px solid #d4a017;
+  }
+
+   .blur-orb {
+    position: fixed;
+    top: 120px;
+    right: 8%;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(212,160,23,0.22), rgba(40,60,120,0.08), transparent 70%);
+    filter: blur(60px);
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  .navbar {
+    position: sticky;
+    top: 18px;
+    width: calc(100% - 48px);
+    margin: 18px auto;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 24px;
+    background: rgba(20,20,20,0.42);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+    z-index: 10;
+    overflow: hidden;
+  }
+
+  .navbar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 8px);
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  .logo {
+    position: relative;
+    font-size: 28px;
+    font-family: serif;
+    color: #d4a017;
+    letter-spacing: 1px;
+    cursor: pointer;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    position: relative;
+  }
+
+  .nav-links a {
+    position: relative;
+    color: rgba(255,255,255,0.88);
+    text-decoration: none;
+    font-size: 15px;
+    transition: color 0.3s ease;
+  }
+
+  .nav-links a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 0;
+    height: 2px;
+    background: #d4a017;
+    transition: width 0.35s ease;
+  }
+
+  .nav-links a:hover {
+    color: #ffffff;
+  }
+
+  .nav-links a:hover::after,
+  .nav-links a.active::after {
+    width: 100%;
+  }
+
+  .signup-btn {
+    padding: 12px 20px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.08);
+    color: white;
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+  }
+
+
+</style>
+
+<style>@keyframes fadeSlideUp {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.search-input {
+  animation: fadeSlideUp 0.6s ease-out forwards;
+}
+
+.filter-buttons .filter-btn {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeSlideUp 0.5s forwards;
+}
+
+.filter-buttons .filter-btn:nth-child(1) { animation-delay: 0.2s; }
+.filter-buttons .filter-btn:nth-child(2) { animation-delay: 0.35s; }
+.filter-buttons .filter-btn:nth-child(3) { animation-delay: 0.5s; }
+.filter-buttons .filter-btn:nth-child(4) { animation-delay: 0.65s; }
+.filter-buttons .filter-btn:nth-child(5) { animation-delay: 0.8s; }
+.filter-buttons .filter-btn:nth-child(6) { animation-delay: 0.95s; }
+</style>
+
+</head>
+<body class="p-8">
+     <nav class="navbar">
+    <div class="logo">Echoes</div>
+    <div class="nav-links">
+      <a href="/" class="active">The Journey</a>
+      <a href="/yearbook">Year Book</a>
+      <a href="/abd">Vault</a>
+      <a href="/wall">The Wall</a>
+      <button class="signup-btn">Sign Up</button>
+    </div>
+  </nav>
+
+<header class="text-center mb-8">
+  <h1 class="text-5xl font-serif mb-2">The Class of '26</h1>
+  <p class="text-gray-400">Faces that defined our journey. Moments that became memories.</p>
+</header>
+
+<!-- Sticky Search & Filter -->
+<div class="sticky-top">
+  <input type="text" placeholder="Search by name or roll no" class="search-input" />
+  <div class="filter-buttons">
+    <button class="filter-btn active">All</button>
+    <button class="filter-btn">CSE</button>
+    <button class="filter-btn">ECE</button>
+    <button class="filter-btn">MECH</button>
+    <button class="filter-btn">CIVIL</button>
+    <button class="filter-btn">AIDS</button>
+  </div>
+</div>
+
+<!-- Yearbook Cards -->
+<div class="yearbook-grid">
+  <div class="card">
+    <div class="card-header">AA</div>
+    <div class="card-body">
+      <div class="roll">0187CS221003</div>
+      <div class="name">Aavi Agrawal</div>
+      <div class="branch">CSE</div>
+      <div class="card-btn">Open Yearbook</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">AS</div>
+    <div class="card-body">
+      <div class="roll">0187CS221053</div>
+      <div class="name">Anushka Shrivastava</div>
+      <div class="branch">CSE</div>
+      <div class="card-btn">View Quote</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">BP</div>
+    <div class="card-body">
+      <div class="roll">0187EC221012</div>
+      <div class="name">Bhavesh Patel</div>
+      <div class="branch">ECE</div>
+      <div class="card-btn">Open Yearbook</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">MK</div>
+    <div class="card-body">
+      <div class="roll">0187ME221045</div>
+      <div class="name">Meera Kapoor</div>
+      <div class="branch">MECH</div>
+      <div class="card-btn">Open Yearbook</div>
+    </div>
+  </div>
+</div>
+ <footer class="py-6 text-center text-sm">
+    © 2026 All memories preserved forever
+  </footer>
+
+</body>
+</html>
