@@ -1,10 +1,10 @@
 ::selection {
-  background: rgba(212,160,23,0.45);
+  background: rgba(212, 160, 23, 0.45);
   color: #fff7d6;
 }
 
 ::-moz-selection {
-  background: rgba(212,160,23,0.45);
+  background: rgba(212, 160, 23, 0.45);
   color: #fff7d6;
 }
 
@@ -32,20 +32,16 @@ body::before {
   position: absolute;
   inset: 0;
   background:
-    repeating-linear-gradient(
-      90deg,
-      rgba(255,255,255,0.03) 0px,
-      rgba(255,255,255,0.03) 1px,
+    repeating-linear-gradient(90deg,
+      rgba(255, 255, 255, 0.03) 0px,
+      rgba(255, 255, 255, 0.03) 1px,
       transparent 1px,
-      transparent 6px
-    ),
-    repeating-linear-gradient(
-      0deg,
-      rgba(255,255,255,0.015) 0px,
-      rgba(255,255,255,0.015) 1px,
+      transparent 6px),
+    repeating-linear-gradient(0deg,
+      rgba(255, 255, 255, 0.015) 0px,
+      rgba(255, 255, 255, 0.015) 1px,
       transparent 1px,
-      transparent 4px
-    );
+      transparent 4px);
   opacity: 0.35;
   mix-blend-mode: soft-light;
   pointer-events: none;
@@ -62,12 +58,12 @@ body::before {
 
 .login-btn {
   padding: 12px 24px;
-  border: 1px solid rgba(255,255,255,0.18);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 999px;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 8px 24px rgba(0,0,0,0.25);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 8px 24px rgba(0, 0, 0, 0.25);
   color: white;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -76,8 +72,8 @@ body::before {
 }
 
 .login-btn:hover {
-  background: rgba(255,255,255,0.12);
-  border-color: rgba(255,255,255,0.28);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.28);
   transform: translateY(-1px);
 }
 
@@ -85,7 +81,7 @@ body::before {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.45);
+  background: rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   display: flex;
@@ -107,21 +103,29 @@ body::before {
   max-width: 90%;
   padding: 38px;
   border-radius: 28px;
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.14);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   transform: scale(0.92) translateY(20px);
-  transition: all 0.45s cubic-bezier(0.22,1,0.36,1);
+  transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .modal-overlay.active .modal-card {
   transform: scale(1) translateY(0);
 }
 
-.modal-card h2 { font-family: serif; font-size: 42px; margin-bottom: 8px; }
-.modal-card p  { color: rgba(255,255,255,0.6); margin-bottom: 24px; }
+.modal-card h2 {
+  font-family: serif;
+  font-size: 42px;
+  margin-bottom: 8px;
+}
+
+.modal-card p {
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 24px;
+}
 
 .form-group input,
 #signupFields input,
@@ -129,8 +133,8 @@ body::before {
   width: 100%;
   padding: 16px 18px;
   border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(0,0,0,0.75);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.75);
   color: white;
   outline: none;
   backdrop-filter: blur(10px);
@@ -152,8 +156,8 @@ body::before {
   padding: 16px 18px;
   margin-bottom: 14px;
   border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
   color: white;
   outline: none;
   backdrop-filter: blur(10px);
@@ -164,22 +168,28 @@ body::before {
   padding: 16px;
   border: none;
   border-radius: 18px;
-  background: linear-gradient(90deg, rgba(212,160,23,0.9), rgba(180,120,40,0.9));
+  background: linear-gradient(90deg, rgba(212, 160, 23, 0.9), rgba(180, 120, 40, 0.9));
   color: white;
   font-weight: 600;
   cursor: pointer;
   margin-top: 8px;
-  box-shadow: 0 10px 30px rgba(212,160,23,0.25);
+  box-shadow: 0 10px 30px rgba(212, 160, 23, 0.25);
 }
 
-.footer-text { margin-top: 18px; color: rgba(255,255,255,0.55); }
-.footer-text span { color: #d4a017; }
+.footer-text {
+  margin-top: 18px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.footer-text span {
+  color: #d4a017;
+}
 
 .close-modal {
   float: right;
   font-size: 28px;
   cursor: pointer;
-  color: rgba(255,255,255,0.7);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 /* ── Hero ── */
@@ -212,12 +222,14 @@ body::before {
   line-height: 1;
 }
 
-.title span { color: rgba(255,255,255,0.7); }
+.title span {
+  color: rgba(255, 255, 255, 0.7);
+}
 
 .line {
   width: 100px;
   height: 1px;
-  background: rgba(212,160,23,0.6);
+  background: rgba(212, 160, 23, 0.6);
   margin: 40px 0;
 }
 
@@ -227,7 +239,7 @@ body::before {
   animation: descRise 0.8s cubic-bezier(0.22, 1, 0.36, 1) 1.0s forwards;
   max-width: 800px;
   font-size: 28px;
-  color: rgba(255,255,255,0.5);
+  color: rgba(255, 255, 255, 0.5);
   line-height: 1.6;
 }
 
@@ -236,13 +248,13 @@ body::before {
   font-size: 12px;
   letter-spacing: 6px;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.4);
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .vertical-line {
   width: 1px;
   height: 60px;
-  background: rgba(255,255,255,0.5);
+  background: rgba(255, 255, 255, 0.5);
   margin: 20px auto 0;
   animation: pulse 1.5s infinite;
 }
@@ -258,7 +270,9 @@ body::before {
   cursor: pointer;
 }
 
-.hero:has(.journey-wrap:hover) { transform: scale(1.04); }
+.hero:has(.journey-wrap:hover) {
+  transform: scale(1.04);
+}
 
 .journey-wrap:hover .journey {
   color: #d4a017;
@@ -267,7 +281,7 @@ body::before {
 
 .journey-wrap:hover .vertical-line {
   background: #d4a017;
-  box-shadow: 0 0 12px rgba(212,160,23,0.6);
+  box-shadow: 0 0 12px rgba(212, 160, 23, 0.6);
 }
 
 .link_to {
@@ -278,38 +292,87 @@ body::before {
 
 /* ── Animations ── */
 @keyframes titlePop {
-  from { opacity: 0; transform: translateY(30px) scale(0.96); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 @keyframes fadeDrop {
-  from { opacity: 0; transform: translateY(-18px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes descRise {
-  from { opacity: 0; transform: translateY(35px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(35px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes bottomRise {
-  from { opacity: 0; transform: translateY(40px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes pageEnter {
-  0%   { transform: scale(1.06); opacity: 0.85; }
-  100% { transform: scale(1);    opacity: 1; }
+  0% {
+    transform: scale(1.06);
+    opacity: 0.85;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 @keyframes pageExit {
-  from { transform: scale(1);    opacity: 1; }
-  to   { transform: scale(0.97); opacity: 0.92; }
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  to {
+    transform: scale(0.97);
+    opacity: 0.92;
+  }
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 0.4; }
-  50%       { opacity: 1; }
+
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+
+  50% {
+    opacity: 1;
+  }
 }
 
 .page-exit {
@@ -318,7 +381,42 @@ body::before {
 
 /* ── Responsive ── */
 @media (max-width: 768px) {
-  .title       { font-size: 70px; }
-  .description { font-size: 18px; }
-  .subtitle-top{ font-size: 22px; }
+  .title {
+    font-size: 70px;
+  }
+
+  .description {
+    font-size: 18px;
+  }
+
+  .subtitle-top {
+    font-size: 22px;
+  }
+}
+
+
+.toast {
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  min-width: 320px;
+  max-width: 420px;
+  padding: 18px 22px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(212, 160, 23, 0.35);
+  color: white;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  transform: translateY(-20px);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.45s ease;
+  z-index: 999;
+}
+
+.toast.show {
+  transform: translateY(0);
+  opacity: 1;
 }

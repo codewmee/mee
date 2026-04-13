@@ -7,17 +7,47 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
-  body {
-    background-color: #121210;
-    color: #e5e5e5;
-    font-family: 'Inter', sans-serif;
-  }
-  .serif-italic { font-family: 'Playfair Display', serif; font-style: italic; }
-  /* Remove scrollbar for horizontal filter nav */
-  .no-scrollbar::-webkit-scrollbar { display: none; }
-  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+::selection {
+  background: rgba(212, 160, 23, 0.45);
+  color: #fff7d6;
+}
 
-   .navbar {
+::-moz-selection {
+  background: rgba(212, 160, 23, 0.45);
+  color: #fff7d6;
+}
+
+  body { background:#121210; color:#e5e5e5; font-family:'Inter',sans-serif; }
+  .serif-italic { font-family:'Playfair Display', serif; font-style:italic; }
+  .no-scrollbar::-webkit-scrollbar { display:none; }
+  .no-scrollbar { -ms-overflow-style:none; scrollbar-width:none; }
+
+  .memory-card {
+    opacity: 0;
+    transform: translateY(70px) scale(0.94);
+    transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .card-enter {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+
+  .card-show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+    @keyframes dropFromTop {
+    0% { transform: translateY(-100px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+
+  @keyframes linkFadeUp {
+    0% { transform: translateY(10px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+
+  .navbar {
     position: sticky;
     top: 18px;
     width: calc(100% - 48px);
@@ -34,6 +64,7 @@
     box-shadow: 0 12px 40px rgba(0,0,0,0.25);
     z-index: 10;
     overflow: hidden;
+    animation: dropFromTop 0.8s ease-out forwards;
   }
 
   .navbar::before {
@@ -67,7 +98,15 @@
     text-decoration: none;
     font-size: 15px;
     transition: color 0.3s ease;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: linkFadeUp 0.6s forwards;
   }
+
+  .nav-links a:nth-child(1) { animation-delay: 0.3s; }
+  .nav-links a:nth-child(2) { animation-delay: 0.45s; }
+  .nav-links a:nth-child(3) { animation-delay: 0.6s; }
+  .nav-links a:nth-child(4) { animation-delay: 0.75s; }
 
   .nav-links a::after {
     content: "";
@@ -80,7 +119,8 @@
     transition: width 0.35s ease;
   }
 
-  .nav-links a:hover {
+  .nav-links a:hover,
+  .nav-links a.active {
     color: #ffffff;
   }
 
@@ -88,148 +128,446 @@
   .nav-links a.active::after {
     width: 100%;
   }
+
+  .login-btn {
+    padding: 12px 20px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.08);
+    color: white;
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: linkFadeUp 0.6s 0.9s forwards;
+  }
+
+
+.premium-line{
+  border: none;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgb(239, 220, 111), transparent);
+  margin: 40px 0;
+}
+
+
+
+
+/* .login-btn {
+  padding: 12px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 8px 24px rgba(0, 0, 0, 0.25);
+  color: white;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+} */
+/* 
+.login-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.28);
+  transform: translateY(-1px);
+} */
+
+/* ── Modal ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.45s ease;
+  z-index: 100;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  width: 420px;
+  max-width: 90%;
+  padding: 38px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  transform: scale(0.92) translateY(20px);
+  transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.modal-overlay.active .modal-card {
+  transform: scale(1) translateY(0);
+}
+
+.modal-card h2 {
+  font-family: serif;
+  font-size: 42px;
+  margin-bottom: 8px;
+}
+
+.modal-card p {
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 24px;
+}
+
+.form-group input,
+#signupFields input,
+#signupFields select {
+  width: 100%;
+  padding: 16px 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  outline: none;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+#signupFields select {
+  background-color: #111;
+  color: white;
+}
+
+#signupFields select option {
+  background-color: #111;
+  color: white;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  color: white;
+  outline: none;
+  backdrop-filter: blur(10px);
+}
+
+.signin-btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 18px;
+  background: linear-gradient(90deg, rgba(212, 160, 23, 0.9), rgba(180, 120, 40, 0.9));
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  box-shadow: 0 10px 30px rgba(212, 160, 23, 0.25);
+}
+
 </style>
-
 </head>
-
-<body class="antialiased p-6 md:p-16">
-    <nav class="navbar">
-    <div class="logo">Echoes</div>
+<body class="antialiased p-6 md:p-9">
+  <nav class="navbar">
+    <a href="/"><div class="logo">Echoes</div></a>
     <div class="nav-links">
-      <a href="/journey" >The Journey</a>
+      <a href="/journey">The Journey</a>
       <a href="/yearbook">Year Book</a>
-      <a href="/vault" class="active">Vault</a>
+      <a href="/vault" class="active">vault</a>
       <a href="/wall">The Wall</a>
-      <button class="signup-btn">Sign Up</button>
+      <button class="login-btn" onclick="openlogin()">Sign Up</button>
     </div>
   </nav>
-<!-- Header Section -->
+
 <header class="max-w-7xl mx-auto mb-12">
   <h1 class="serif-italic text-6xl md:text-7xl text-white mb-4">The Archive</h1>
   <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-    <p class="text-gray-400 max-w-md text-lg leading-relaxed">
-      A cinematic collection of fleeting moments, frozen in time. From the first lecture to the final goodbye.
-    </p>
-    <button class="mt-2 md:mt-0 flex items-center gap-2 border border-zinc-700 px-4 py-2 rounded-full text-sm hover:bg-zinc-800 transition">
-      ⇅ Newest First
-    </button>
-  </div>
+  <p class="text-gray-400 max-w-md text-lg leading-relaxed">
+    A cinematic collection of fleeting moments, frozen in time. From the first lecture to the final goodbye.
+  </p>
+
+  <button id="sortBtn"></button>
+     <!-- class="sticky top-18 z-30 mt-2 md:mt-0 flex items-center gap-2 border border-zinc-700 bg-[#121210]/80 backdrop-blur-md px-4 py-2 rounded-full text-sm hover:bg-zinc-800 transition">  -->
+    <!-- <span id="sortArrow" class="inline-block transition-transform duration-300">⇅</span> -->
+    <!-- <span id="sortText">Newest First</span> -->
+  </button>
+</div>
 </header>
+<hr class="premium-line">
 
-<!-- Filter Navigation -->
-<!-- Filter Navigation with Glassmorphism -->
-<nav class="max-w-7xl mx-auto mb-10 flex gap-3 overflow-x-auto pb-4 no-scrollbar">
-  <!-- Active Button -->
-  <button class="bg-[#D4A017] text-black px-6 py-2 rounded-full font-medium whitespace-nowrap backdrop-blur-md border border-white/10">
-    All Memories
-  </button>
-  <!-- Glassmorphic Buttons -->
-  <button class="bg-white/5 text-zinc-300 px-6 py-2 rounded-full font-medium whitespace-nowrap backdrop-blur-md border border-white/10 hover:bg-white/10 transition">
-    1st yr
-  </button>
-  <button class="bg-white/5 text-zinc-300 px-6 py-2 rounded-full font-medium whitespace-nowrap backdrop-blur-md border border-white/10 hover:bg-white/10 transition">
-    2nd yr
-  </button>
-  <button class="bg-white/5 text-zinc-300 px-6 py-2 rounded-full font-medium whitespace-nowrap backdrop-blur-md border border-white/10 hover:bg-white/10 transition">
-    3rd yr
-  </button>
-  <button class="bg-white/5 text-zinc-300 px-6 py-2 rounded-full font-medium whitespace-nowrap backdrop-blur-md border border-white/10 hover:bg-white/10 transition">
-    4th yr
-  </button>
-  <button class="bg-white/5 text-zinc-300 px-6 py-2 rounded-full font-medium whitespace-nowrap backdrop-blur-md border border-white/10 hover:bg-white/10 transition">
-    feasts
-  </button>
+<nav class="sticky top-4 z-20 max-w-7xl mx-auto mb-10 flex gap-3 overflow-x-auto pb-4 no-scrollbar bg-[#121210]/80 backdrop-blur-md py-3">
+  <button data-filter="all" class="filter-btn bg-[#D4A017] text-black px-6 py-2 rounded-full font-medium whitespace-nowrap backdrop-blur-md border border-white/10">All Memories</button>
+  <button data-filter="1st" class="filter-btn bg-white/5 text-zinc-300 px-6 py-2 rounded-full font-medium whitespace-nowrap backdrop-blur-md border border-white/10 hover:bg-white/10 transition">1st yr</button>
+  <button data-filter="2nd" class="filter-btn bg-white/5 text-zinc-300 px-6 py-2 rounded-full font-medium whitespace-nowrap backdrop-blur-md border border-white/10 hover:bg-white/10 transition">2nd yr</button>
+  <button data-filter="3rd" class="filter-btn bg-white/5 text-zinc-300 px-6 py-2 rounded-full font-medium whitespace-nowrap backdrop-blur-md border border-white/10 hover:bg-white/10 transition">3rd yr</button>
+  <button data-filter="4th" class="filter-btn bg-white/5 text-zinc-300 px-6 py-2 rounded-full font-medium whitespace-nowrap backdrop-blur-md border border-white/10 hover:bg-white/10 transition">4th yr</button>
+  <button data-filter="feasts" class="filter-btn bg-white/5 text-zinc-300 px-6 py-2 rounded-full font-medium whitespace-nowrap backdrop-blur-md border border-white/10 hover:bg-white/10 transition">feasts</button>
 </nav>
+<main id="mediaGrid" style="transition: opacity 0.35s ease, transform 0.35s ease;"
+      class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-<!-- Media Grid -->
-<main class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  {% for img in images %}
+  <div class="memory-card group overflow-hidden rounded-xl bg-[#1c1c1a] cursor-pointer"
+       data-year="{{ img.year }}"
+       data-date="{{ img.sort_date }}">
 
-  <!-- Card 1 -->
-  <div class="group overflow-hidden rounded-xl bg-[#1c1c1a] cursor-pointer">
     <div class="relative">
-      <img src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&q=80&w=800" 
-           alt="Memory" class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110 rounded-xl">
+      <img src="{{ img.src }}"
+           alt="{{ img.title }}"
+           class="w-full h-80 object-cover transition-transform duration-500 group-hover:scale-110 rounded-xl">
+
       <div class="absolute bottom-4 left-4 opacity-0 transform translate-y-4 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-        <p class="text-xs text-[#D4A017]">May 2025</p>
-        <h3 class="text-lg font-semibold text-[#D4A017]">CSE dimension...a full chaos</h3>
-        <p class="text-sm italic text-[#D4A017]">CSE</p>
+        <p class="text-xs text-[white]">{{ img.date }}</p>
+        <h3 class="text-lg font-semibold text-[#D4A017]">{{ img.title }}</h3>
+        <p class="text-sm italic text-[#D4A017]">{{ img.year }}</p>
       </div>
     </div>
   </div>
-
-  <!-- Card 2 -->
-  <div class="group overflow-hidden rounded-xl bg-[#1c1c1a] cursor-pointer">
-    <div class="relative">
-      <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=800" 
-           alt="Memory" class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110 rounded-xl">
-      <div class="absolute bottom-4 left-4 opacity-0 transform translate-y-4 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-        <p class="text-xs text-[#D4A017]">Apr 2025</p>
-        <h3 class="text-lg font-semibold text-[#D4A017]">Farewell to Seniors'25</h3>
-        <p class="text-sm italic text-[#D4A017]">MECH</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Card 3 -->
-  <div class="group overflow-hidden rounded-xl bg-[#1c1c1a] cursor-pointer">
-    <div class="relative">
-      <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&q=80&w=800" 
-           alt="Memory" class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110 rounded-xl">
-      <div class="absolute bottom-4 left-4 opacity-0 transform translate-y-4 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-        <p class="text-xs text-[#D4A017]">Nov 2024</p>
-        <h3 class="text-lg font-semibold text-[#D4A017]">Good old days</h3>
-        <p class="text-sm italic text-[#D4A017]">ECE</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Card 4 -->
-  <div class="group overflow-hidden rounded-xl bg-[#1c1c1a] cursor-pointer">
-    <div class="relative">
-      <img src="https://images.unsplash.com/photo-1506765515384-028b60a970df?auto=format&fit=crop&q=80&w=800" 
-           alt="Memory" class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110 rounded-xl">
-      <div class="absolute bottom-4 left-4 opacity-0 transform translate-y-4 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-        <p class="text-xs text-[#D4A017]">Jan 2025</p>
-        <h3 class="text-lg font-semibold text-[#D4A017]">First-year Chaos</h3>
-        <p class="text-sm italic text-[#D4A017]">CSE</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Card 5 -->
-  <div class="group overflow-hidden rounded-xl bg-[#1c1c1a] cursor-pointer">
-    <div class="relative">
-      <img src="https://images.unsplash.com/photo-1487014679447-9f8336841d58?auto=format&fit=crop&q=80&w=800" 
-           alt="Memory" class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110 rounded-xl">
-      <div class="absolute bottom-4 left-4 opacity-0 transform translate-y-4 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-        <p class="text-xs text-[#D4A017]">Feb 2025</p>
-        <h3 class="text-lg font-semibold text-[#D4A017]">Project Madness</h3>
-        <p class="text-sm italic text-[#D4A017]">MECH</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Card 6 -->
-  <div class="group overflow-hidden rounded-xl bg-[#1c1c1a] cursor-pointer">
-    <div class="relative">
-      <img src="https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&q=80&w=800" 
-           alt="Memory" class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110 rounded-xl">
-      <div class="absolute bottom-4 left-4 opacity-0 transform translate-y-4 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-        <p class="text-xs text-[#D4A017]">Mar 2025</p>
-        <h3 class="text-lg font-semibold text-[#D4A017]">Tech Fest Vibes</h3>
-        <p class="text-sm italic text-[#D4A017]">ECE</p>
-      </div>
-    </div>
-  </div>
+  {% endfor %}
 
 </main>
-
-<!-- Load More Button -->
 <div class="flex justify-center mt-16">
   <button class="px-8 py-3 rounded-full font-semibold tracking-wide text-white bg-white/5 backdrop-blur-md border border-white/10 hover:bg-[#D4A017] hover:text-black transition-all">
     UNLOCK MORE VAULT ITEMS
   </button>
 </div>
+<div class="modal-overlay" id="loginModal">
+    <div class="modal-card">
+      <span class="close-modal" onclick="toggleModal()">&times;</span>
+      <h2 style="color:#d4a017; font-size:48px;">Welcome Back</h2>
+      <p>Sign in to access your digital yearbook</p>
+ 
+      <form id="authForm" method="POST" action="/login">
+        <div id="loginFields">
+          <div class="form-group">
+            <input type="email" name="email" placeholder="Email Address" required>
+          </div>
+          <div class="form-group">
+            <input type="password" name="password" placeholder="Password" required>
+          </div>
+        </div>
+ 
+        <div id="signupFields" style="display:none;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+            <input type="text" name="full_name" placeholder="Full Name" required>
+            <input type="email" name="email" placeholder="Email Address" required>
+            <select name="branch" required>
+              <option selected>ECS</option>
+              <option>CS</option>
+              <option>AIDS</option>
+              <option>MECH</option>
+              <option>CIVIL</option>
+            </select>
+            <input type="text" name="roll" placeholder="Roll Number" required>
+          </div>
+          <div class="form-group" style="margin-top:14px;">
+            <input type="password" name="password" placeholder="Create Password" required
+              pattern="(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}"
+              title="Use 1 uppercase, 1 number, 1 symbol, min 8 chars">
+          </div>
+        </div>
+ 
+        <button type="submit" class="signin-btn" id="authBtn" value="login">Sign In</button>
+      </form>
+ 
+      <div class="footer-text" id="authFooter">
+        Don't have an account? <span onclick="toggleSignup()" style="cursor:pointer;">Create one</span>
+      </div>
+    </div>
+  </div>
+
+<script>
+const sortBtn = document.getElementById('sortBtn');
+const sortText = document.getElementById('sortText');
+const sortArrow = document.getElementById('sortArrow');
+const mediaGrid = document.getElementById('mediaGrid');
+const filterBtns = document.querySelectorAll('.filter-btn');
+
+let newestFirst = true;
+let activeFilter = 'all';
+
+function getCards() {
+  return [...document.querySelectorAll('.memory-card')];
+}
+
+function animateVisibleCards(cards) {
+  cards.forEach((card, index) => {
+    card.classList.remove('card-show');
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(42px) scale(0.97)';
+
+    setTimeout(() => {
+      requestAnimationFrame(() => {
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0) scale(1)';
+        card.classList.add('card-show');
+      });
+    }, index * 90);
+  });
+}
+
+function setupScrollReveal() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0) scale(1)';
+
+        // animate only first time while scrolling down
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {
+    threshold: 0.18,
+    rootMargin: '0px 0px -40px 0px'
+  });
+
+  document.querySelectorAll('.memory-card').forEach(card => {
+    observer.observe(card);
+  });
+}
+
+function setActiveButton(activeBtn) {
+  filterBtns.forEach(btn => {
+    btn.classList.remove('bg-[#D4A017]', 'text-black');
+    btn.classList.add('bg-white/5', 'text-zinc-300');
+  });
+  activeBtn.classList.remove('bg-white/5', 'text-zinc-300');
+  activeBtn.classList.add('bg-[#D4A017]', 'text-black');
+}
+
+function renderCards(withTransition = false) {
+  const cards = getCards();
+
+  cards.forEach(card => {
+    const match = activeFilter === 'all' || card.dataset.year === activeFilter;
+    card.style.display = match ? 'block' : 'none';
+    card.classList.remove('card-show');
+  });
+
+  const visible = cards.filter(card => card.style.display !== 'none');
+
+  visible.sort((a, b) => {
+    const da = new Date(a.dataset.date);
+    const db = new Date(b.dataset.date);
+    return newestFirst ? db - da : da - db;
+  });
+
+  const applyRender = () => {
+    visible.forEach(card => mediaGrid.appendChild(card));
+    animateVisibleCards(visible);
+  };
+
+  if (withTransition) {
+    mediaGrid.style.opacity = '0';
+    mediaGrid.style.transform = 'translateY(18px)';
+    setTimeout(() => {
+      applyRender();
+      mediaGrid.style.opacity = '1';
+      mediaGrid.style.transform = 'translateY(0)';
+    }, 220);
+  } else {
+    applyRender();
+  }
+}
+
+sortBtn.addEventListener('click', () => {
+  newestFirst = !newestFirst;
+  sortText.textContent = newestFirst ? 'Newest First' : 'Oldest First';
+  sortArrow.style.transform = newestFirst ? 'rotate(0deg)' : 'rotate(180deg)';
+  renderCards(true);
+});
+
+filterBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    activeFilter = btn.dataset.filter;
+    setActiveButton(btn);
+    renderCards(true);
+  });
+});
+
+renderCards();
+setupScrollReveal();
+
+
+
+// ── Modal open / close ──
+function toggleModal() {
+  document.getElementById("loginModal").classList.toggle("active");
+}
+
+// ── Toggle between Sign In and Sign Up ──
+function toggleSignup() {
+  const login = document.getElementById("loginFields");
+  const signup = document.getElementById("signupFields");
+  const btn = document.getElementById("authBtn");
+  const form = document.getElementById("authForm");
+  const heading = document.querySelector(".modal-card h2");
+  const sub = document.querySelector(".modal-card p");
+  const footer = document.getElementById("authFooter");
+
+  const loginInputs = login.querySelectorAll("input");
+  const signupInputs = signup.querySelectorAll("input, select");
+
+  const signupOpen = signup.style.display === "block";
+
+  if (!signupOpen) {
+    // OPEN SIGNUP
+    login.style.display = "none";
+    signup.style.display = "block";
+
+    loginInputs.forEach(input => input.disabled = true);
+    signupInputs.forEach(input => input.disabled = false);
+
+    btn.textContent = "Create Account";
+    form.action = "/signup";
+
+    heading.textContent = "Create Account";
+    sub.textContent = "Complete your details to access the digital archive";
+
+    footer.innerHTML =
+      'Already have an account? <span onclick="toggleSignup()" style="cursor:pointer;">Sign In</span>';
+  } else {
+    // BACK TO LOGIN
+    login.style.display = "block";
+    signup.style.display = "none";
+
+    loginInputs.forEach(input => input.disabled = false);
+    signupInputs.forEach(input => input.disabled = true);
+
+    btn.textContent = "Sign In";
+    form.action = "/login";
+
+    heading.textContent = "Welcome Back";
+    sub.textContent = "Sign in to access your digital yearbook";
+
+    footer.innerHTML =
+    footer.innerHTML =
+  'Don\'t have an account? <span onclick="toggleSignup()" style="cursor:pointer;">Create one</span>';
+  }
+}
+window.onload = function () {
+  // disable signup fields by default
+  const signupInputs = document.querySelectorAll("#signupFields input, #signupFields select");
+  signupInputs.forEach(input => input.disabled = true);
+
+  // show flash toast if message exists
+  const flash = document.getElementById("flashMessage");
+  if (flash) {
+    const message = flash.dataset.message;
+    showToast(message);
+  }
+};
+
+</script>
 
 </body>
 </html>

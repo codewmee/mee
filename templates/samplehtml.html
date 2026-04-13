@@ -1,125 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Wizarding Timeline 2025–2029</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{
-  background:radial-gradient(circle at top,#16111f,#09070d 70%);
-  color:#f8f1d4;
-  font-family:'Cinzel',serif;
-  overflow-x:hidden;
-}
-.scroll-space{height:600vh}
-.stage{
-  position:fixed;inset:0;
-  display:flex;align-items:center;justify-content:center;
-  overflow:hidden;
-}
-.stage::before{
-  content:'';
-  position:absolute;inset:0;
-  background:radial-gradient(circle,rgba(255,215,120,.08),transparent 60%);
-  animation:glow 6s ease-in-out infinite;
-}
-@keyframes glow{50%{opacity:.5}}
-.card{
-  width:min(1100px,90vw);
-  height:72vh;
-  border:1px solid rgba(255,215,120,.18);
-  border-radius:30px;
-  background:rgba(20,14,26,.72);
-  backdrop-filter:blur(12px);
-  box-shadow:0 0 80px rgba(255,215,120,.08), inset 0 0 30px rgba(255,255,255,.03);
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  padding:50px;
-  gap:30px;
-}
-.left{display:flex;flex-direction:column;justify-content:center;z-index:2}
-.left h1{
-  font-size:clamp(5rem,10vw,8rem);
-  color:#f4d06f;
-  text-shadow:0 0 20px rgba(255,215,120,.35);
-}
-.left h2{font-size:clamp(1.6rem,3vw,3rem);margin-top:10px}
-.left p{margin-top:20px;line-height:1.9;font-size:1.08rem;color:#e8dcc0;max-width:500px}
-.magic-scene{position:relative}
-.floating{
-  position:absolute;
-  border-radius:18px;
-  border:1px solid rgba(255,255,255,.12);
-  box-shadow:0 15px 40px rgba(0,0,0,.4);
-  animation:float 5s ease-in-out infinite;
-}
-@keyframes float{50%{transform:translateY(-14px) rotate(2deg)}}
-.castle{width:58%;height:52%;left:0;top:5%;background:linear-gradient(135deg,#2a2438,#111827)}
-.book{width:44%;height:34%;right:0;top:20%;background:linear-gradient(135deg,#7c3aed,#2e1065)}
-.wand{width:60%;height:28%;left:18%;bottom:8%;background:linear-gradient(135deg,#d4a017,#5b3a00)}
-.stars span{
-  position:absolute;
-  width:4px;height:4px;border-radius:50%;
-  background:#fff4c2;
-  box-shadow:0 0 10px #fff4c2;
-  animation:twinkle 2s infinite alternate;
-}
-@keyframes twinkle{from{opacity:.2}to{opacity:1}}
-.progress{
-  position:fixed;left:50px;top:50%;transform:translateY(-50%);
-  width:6px;height:280px;border-radius:999px;
-  background:rgba(255,255,255,.08);overflow:hidden;
-}
-.fill{width:100%;height:0;background:linear-gradient(to bottom,#f4d06f,#fff8d6)}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ancient Story Scroll Timeline</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #09090b;
+      color: white;
+      overflow-x: hidden;
+      filter: grayscale(100%);
+    }
+    section {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .hero, .end {
+      text-align: center;
+      background: linear-gradient(to bottom, #18181b, #000);
+    }
+    .hero h1, .end h2 { font-size: 4rem; }
+    .timeline {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      max-width: 1200px;
+      width: 100%;
+    }
+    .timeline img {
+      width: 100%;
+      height: 500px;
+      object-fit: cover;
+      border-radius: 24px;
+      transition: transform 0.7s ease;
+      filter: grayscale(100%);
+    }
+    .timeline img:hover { transform: scale(1.05); }
+    .year {
+      letter-spacing: 4px;
+      color: #888;
+      margin-bottom: 10px;
+    }
+    .title { font-size: 3rem; margin-bottom: 20px; }
+    .text { color: #ccc; line-height: 1.8; font-size: 1.1rem; }
+    .reveal {
+      opacity: 0;
+      transform: translateY(80px);
+      transition: all 1s ease;
+    }
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    @media (max-width: 768px) {
+      .timeline { grid-template-columns: 1fr; }
+      .hero h1, .end h2, .title { font-size: 2.5rem; }
+    }
+  </style>
 </head>
 <body>
-<div class="progress"><div class="fill" id="fill"></div></div>
-<div class="scroll-space"></div>
-<div class="stage">
-  <div class="card">
-    <div class="left">
-      <h1 id="year">2025</h1>
-      <h2 id="title">The Sorting Begins</h2>
-      <p id="desc">The first magical chapter opens — new faces, first friendships, and a castle full of untold memories waiting to be written.</p>
+
+  <section class="hero">
+    <div>
+      <p style="letter-spacing:6px;color:#888;margin-bottom:20px;">ANCIENT CHRONICLES</p>
+      <h1>A Scroll Through Lost Time</h1>
+      <p style="margin-top:20px;color:#aaa;max-width:700px;line-height:1.8;">
+        Scroll through forgotten kingdoms, lost wars, and temples of wisdom in a cinematic grayscale journey.
+      </p>
     </div>
-    <div class="magic-scene">
-      <div class="floating castle"></div>
-      <div class="floating book"></div>
-      <div class="floating wand"></div>
-      <div class="stars">
-        <span style="top:10%;left:20%"></span>
-        <span style="top:30%;left:80%"></span>
-        <span style="top:70%;left:60%"></span>
-        <span style="top:50%;left:30%"></span>
+  </section>
+
+  <section class="reveal">
+    <div class="timeline">
+      <div>
+        <div class="year">3000 BCE</div>
+        <div class="title">The First Flame</div>
+        <div class="text">In the age of stone and shadow, the tribe discovered fire beneath a storm-split tree. Civilization was born in sparks and fear.</div>
+      </div>
+      <img src="https://images.unsplash.com/photo-1518709268805-4e9042af2176?q=80&w=1600&auto=format&fit=crop">
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="timeline">
+      <img src="https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?q=80&w=1600&auto=format&fit=crop">
+      <div>
+        <div class="year">2200 BCE</div>
+        <div class="title">The Desert Kingdom</div>
+        <div class="text">Empires rose from riverbanks and sand, where kings built monuments believing stone could defeat time.</div>
       </div>
     </div>
-  </div>
-</div>
-<script>
-const timeline=[
-{year:'2025',title:'The Sorting Begins',desc:'The first magical chapter opens — new faces, first friendships, and a castle full of untold memories waiting to be written.'},
-{year:'2026',title:'The Chamber of Secrets',desc:'Inside hidden corridors of campus life, the strongest friendships and funniest secrets were discovered.'},
-{year:'2027',title:'The Prisoner of Nostalgia',desc:'The golden middle year — trips, laughter, midnight chaos, and unforgettable snapshots frozen in time.'},
-{year:'2028',title:'The Half-Blood Legacy',desc:'Now seniors, every corner held history. Juniors looked up as your legend quietly formed.'},
-{year:'2029',title:'The Deathly Echoes',desc:'The final chapter of the school years, where memories became magic powerful enough to outlive time itself.'}
-];
-const year=document.getElementById('year');
-const title=document.getElementById('title');
-const desc=document.getElementById('desc');
-const fill=document.getElementById('fill');
-window.addEventListener('scroll',()=>{
- const max=document.body.scrollHeight-window.innerHeight;
- const progress=window.scrollY/max;
- const index=Math.min(timeline.length-1,Math.floor(progress*timeline.length));
- const item=timeline[index];
- fill.style.height=(progress*100)+'%';
- year.textContent=item.year;
- title.textContent=item.title;
- desc.textContent=item.desc;
-});
-</script>
+  </section>
+
+  <section class="reveal">
+    <div class="timeline">
+      <div>
+        <div class="year">1200 BCE</div>
+        <div class="title">The Lost War</div>
+        <div class="text">A thousand ships crossed black waters, carrying warriors into a war that would become eternal myth.</div>
+      </div>
+      <img src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?q=80&w=1600&auto=format&fit=crop">
+    </div>
+  </section>
+
+  <section class="end">
+    <div>
+      <p style="letter-spacing:6px;color:#888;margin-bottom:20px;">THE END OF THE SCROLL</p>
+      <h2>But Legends Never End</h2>
+    </div>
+  </section>
+
+  <script>
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('active');
+      });
+    }, { threshold: 0.2 });
+
+    reveals.forEach(sec => observer.observe(sec));
+  </script>
 </body>
 </html>

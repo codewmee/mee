@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Echoes Admin</title>
+</head>
+<body>
+  <h1>Pending Requests</h1>
+
+  {% for user in pending_users %}
+    <div>
+      {{ user.full_name }} - {{ user.email }}
+      <a href="/admin/approve/{{ user.id }}">Approve</a>
+    </div>
+  {% endfor %}
+
+  <hr>
+
+  <h1>Approved Users</h1>
+  {% for user in approved_users %}
+    <div>
+      {{ user.full_name }} - Approved
+    </div>
+  {% endfor %}
+</body>
+</html>
