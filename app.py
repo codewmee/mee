@@ -133,6 +133,9 @@ def vault():
     images.sort(key=lambda x: x['sort_date'], reverse=True)
     return render_template('vault.html', images=images)
 
+@app.route('/wall')
+def wall():
+    return render_template('wall.html')
 
 if __name__ == '__main__':
     with app.app_context():
