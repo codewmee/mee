@@ -6,160 +6,12 @@
 <title>Echoes - Yearbook</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-  ::selection {
-  background: rgba(212,160,23,0.45);
-  color: #fff7d6;
-}
+  ::selection { background: rgba(212,160,23,0.45); color: #fff7d6; }
+  ::-moz-selection { background: rgba(212,160,23,0.45); color: #fff7d6; }
 
-::-moz-selection {
-  background: rgba(212,160,23,0.45);
-  color: #fff7d6;
-}
-/* 
+  * { margin:0; padding:0; box-sizing:border-box; }
+
   body {
-    background: 
-      radial-gradient(circle at 20% 30%, rgba(120,80,20,0.22), transparent 40%),
-      radial-gradient(circle at 80% 20%, rgba(20,40,90,0.18), transparent 40%),
-      linear-gradient(180deg, #070707, #0b0b0b 40%, #10131a 100%);
-    color: white;
-    font-family: Arial, sans-serif;
-    min-height: 200vh;
-  } */
-
-  /* Sticky search/filter section */
-  .sticky-top {
-    position: sticky;
-    top: 18px;
-    z-index: 20;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    background: rgba(20,20,20,0.42);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 24px;
-    padding: 16px;
-    margin-bottom: 32px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 12px;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
-  }
-
-  /* Search bar */
-  .search-input {
-    flex: 1;
-    min-width: 220px;
-    padding: 12px 16px;
-    border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.16);
-    background: rgba(255,255,255,0.08);
-    color: white;
-    outline: none;
-    backdrop-filter: blur(10px);
-  }
-
-  .filter-buttons {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
-  .filter-btn {
-    padding: 10px 18px;
-    border-radius: 999px;
-    font:semiboldt;
-    border: 1px solid rgba(255,255,255,0.16);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-    background: rgba(255,255,255,0.08);
-    color: white;
-  }
-
-  .filter-btn.active {
-    background: #d4a017;
-    color: black;
-    border: 1px solid #d4a017;
-  }
-
-  /* Cards */
-  .yearbook-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
-    gap: 24px;
-    max-width: 1200px;
-    margin: auto;
-    padding-bottom: 80px;
-  }
-
-  .card {
-    background: rgba(255,255,255,0.05);
-    border-radius: 24px;
-    overflow: hidden;
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255,255,255,0.1);
-    cursor: pointer;
-    transition: transform 0.3s ease, background 0.3s ease;
-  }
-
-  .card:hover {
-    background: rgba(212,160,23,0.1);
-    transform: scale(1.03);
-  }
-
-  .card-header {
-    height: 180px;
-    background: rgba(255,255,255,0.05);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3rem;
-    font-weight: bold;
-    color: rgba(255,255,255,0.5);
-  }
-
-  .card-body {
-    padding: 16px;
-  }
-
-  .roll {
-    font-family: monospace;
-    font-size: 0.8rem;
-    color: #d4a017;
-    letter-spacing: 1px;
-  }
-
-  .name {
-    font-size: 1.4rem;
-    font-weight: 600;
-    margin-top: 4px;
-  }
-
-  .branch {
-    font-style: italic;
-    color: #aaa;
-    margin-bottom: 12px;
-  }
-
-  .card-btn {
-    width: 100%;
-    padding: 10px;
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.16);
-    background: rgba(255,255,255,0.08);
-    color: white;
-    transition: all 0.3s ease;
-    text-align: center;
-    cursor: pointer;
-  }
-
-  .card-btn:hover {
-    background: #d4a017;
-    color: black;
-    border: 1px solid #d4a017;
-  }
-
-body {
     min-height: 200vh;
     font-family: Arial, sans-serif;
     color: white;
@@ -184,10 +36,8 @@ body {
 
   .blur-orb {
     position: fixed;
-    top: 120px;
-    right: 8%;
-    width: 320px;
-    height: 320px;
+    top: 120px; right: 8%;
+    width: 320px; height: 320px;
     border-radius: 50%;
     background: radial-gradient(circle, rgba(212,160,23,0.22), rgba(40,60,120,0.08), transparent 70%);
     filter: blur(60px);
@@ -195,418 +45,690 @@ body {
     pointer-events: none;
   }
 
-  @keyframes dropFromTop {
-    0% { transform: translateY(-100px); opacity: 0; }
-    100% { transform: translateY(0); opacity: 1; }
+  /* ── Navbar ── */
+  .glass {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.35);
   }
 
-  @keyframes linkFadeUp {
-    0% { transform: translateY(10px); opacity: 0; }
-    100% { transform: translateY(0); opacity: 1; }
+  .nav-link { color: #d6d3d1; transition: color 0.2s; text-decoration: none; }
+  .nav-link:hover { color: #facc15; }
+  .nav-link.active { color: #facc15; border-bottom: 1px solid #facc15; padding-bottom: 4px; }
+
+  .fade-down { animation: fadeDown .7s ease; }
+  .pop       { animation: pop .35s ease; }
+
+  @keyframes fadeDown {
+    from { opacity:0; transform:translateY(-25px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  @keyframes pop {
+    from { opacity:0; transform:scale(.94); }
+    to   { opacity:1; transform:scale(1); }
   }
 
-  .navbar {
+  .input-glass {
+    width: 100%;
+    border-radius: 1rem;
+    padding: 0.75rem 1rem;
+    background: rgba(28,25,23,0.6);
+    border: 1px solid #44403c;
+    outline: none;
+    color: #f5f5f4;
+    transition: border-color .2s;
+    font-size: 0.875rem;
+  }
+  .input-glass::placeholder { color: #78716c; }
+  .input-glass:focus        { border-color: #facc15; }
+
+  .section-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #57534e;
+    margin-bottom: 0.35rem;
+  }
+
+  .upload-zone {
+    width: 100%;
+    border-radius: 1rem;
+    padding: 0.75rem 1rem;
+    background: rgba(28,25,23,0.6);
+    border: 1px dashed rgba(250,204,21,0.25);
+    color: #78716c;
+    font-size: 0.8rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .upload-zone:hover    { border-color: #facc15; color: #facc15; }
+  .upload-zone.has-file { border-color: rgba(250,204,21,.5); color: #facc15; }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.07), transparent);
+    margin: 1rem 0;
+  }
+
+  .avatar-ring { background: conic-gradient(#facc15, #92400e, #facc15); }
+
+  .ham-line {
+    display: block;
+    width: 22px; height: 2px;
+    background: #facc15;
+    border-radius: 2px;
+    transition: transform 0.35s ease, opacity 0.25s ease, width 0.3s ease;
+    transform-origin: center;
+  }
+
+  #mobileMenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease;
+    opacity: 0;
+  }
+  #mobileMenu.open { max-height: 400px; opacity: 1; }
+
+  .mobile-nav-link {
+    display: block;
+    padding: 0.75rem 0;
+    color: #d6d3d1;
+    font-size: 1.1rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    transition: color 0.2s, padding-left 0.2s;
+    text-decoration: none;
+  }
+  .mobile-nav-link:hover,
+  .mobile-nav-link.active { color: #facc15; padding-left: 0.5rem; }
+
+  .mobile-divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.08), transparent);
+    margin: 0.5rem 0;
+  }
+
+  /* ── Yearbook styles ── */
+  .sticky-top {
     position: sticky;
-    top: 18px;
-    width: calc(100% - 48px);
-    margin: 18px auto;
-    padding: 16px 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 24px;
-    background: rgba(20,20,20,0.42);
+    top: 100px;
+    z-index: 20;
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
-    z-index: 10;
-    overflow: hidden;
-    animation: dropFromTop 0.8s ease-out forwards;
-  }
-
-  .navbar::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 8px);
-    opacity: 0.35;
-    pointer-events: none;
-  }
-
-  .logo {
-    position: relative;
-    font-size: 28px;
-    font-family: serif;
-    color: #d4a017;
-    letter-spacing: 1px;
-    cursor: pointer;
-  }
-
-  .nav-links {
+    background: rgba(20,20,20,0.42);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 24px;
+    padding: 16px;
+    margin-bottom: 32px;
     display: flex;
-    align-items: center;
-    gap: 28px;
-    position: relative;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
   }
 
-  .nav-links a {
-    position: relative;
-    color: rgba(255,255,255,0.88);
-    text-decoration: none;
-    font-size: 15px;
-    transition: color 0.3s ease;
-    opacity: 0;
-    transform: translateY(10px);
-    animation: linkFadeUp 0.6s forwards;
-  }
-
-  .nav-links a:nth-child(1) { animation-delay: 0.3s; }
-  .nav-links a:nth-child(2) { animation-delay: 0.45s; }
-  .nav-links a:nth-child(3) { animation-delay: 0.6s; }
-  .nav-links a:nth-child(4) { animation-delay: 0.75s; }
-
-  .nav-links a::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: -6px;
-    width: 0;
-    height: 2px;
-    background: #d4a017;
-    transition: width 0.35s ease;
-  }
-
-  .nav-links a:hover,
-  .nav-links a.active {
-    color: #ffffff;
-  }
-
-  .nav-links a:hover::after,
-  .nav-links a.active::after {
-    width: 100%;
-  }
-
-  .signup-btn {
-    padding: 12px 20px;
+  .search-input {
+    flex: 1;
+    min-width: 220px;
+    padding: 12px 16px;
     border-radius: 999px;
     border: 1px solid rgba(255,255,255,0.16);
     background: rgba(255,255,255,0.08);
     color: white;
+    outline: none;
     backdrop-filter: blur(10px);
+    animation: fadeSlideUp 0.6s ease-out forwards;
+  }
+  .search-input::placeholder { color: rgba(255,255,255,0.45); }
+
+  .filter-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .filter-btn {
+    padding: 10px 18px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.16);
     cursor: pointer;
-    opacity: 0;
-    transform: translateY(10px);
-    animation: linkFadeUp 0.6s 0.9s forwards;
-  }
-
-  a { text-decoration: none; }
-
-  /* WORKING AUTH MODAL */
-  .auth-popup {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.45);
+    transition: all 0.3s ease;
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 3000;
-  }
-
-  .auth-popup.active {
-    display: flex;
-  }
-
-  .auth-card {
-    width: 90%;
-    max-width: 560px;
-    padding: 32px;
-    border-radius: 28px;
-    position: relative;
-    background: rgba(255,255,255,0.07);
-    border: 1px solid rgba(255,255,255,0.12);
-    backdrop-filter: blur(22px);
-    -webkit-backdrop-filter: blur(22px);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
-    animation: authFade 0.35s ease;
-  }
-
-  @keyframes authFade {
-    from { opacity: 0; transform: translateY(20px) scale(0.96); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-  }
-
-  .close-auth {
-    position: absolute;
-    top: 14px;
-    right: 16px;
-    width: 38px;
-    height: 38px;
-    border: none;
-    border-radius: 50%;
     background: rgba(255,255,255,0.08);
     color: white;
-    font-size: 1.3rem;
-    cursor: pointer;
-  }
-
-  .auth-card h2 {
-    font-size: 2rem;
-    margin-bottom: 8px;
-    color: white;
-    font-family: serif;
-  }
-
-  .auth-card p {
-    color: rgba(255,255,255,0.7);
-    margin-bottom: 20px;
-  }
-
-  .auth-card input,
-  .auth-card select {
-    width: 100%;
-    padding: 14px;
-    margin-bottom: 14px;
-    border-radius: 14px;
-    border: 1px solid rgba(255,255,255,0.1);
-    outline: none;
-    font-size: 1rem;
-    background: rgba(255,255,255,0.06);
-    color: white;
-  }
-
-  .auth-card input::placeholder { color: rgba(255,255,255,0.55); }
-  .auth-card select option { background: #111827; }
-
-  .auth-card input:focus,
-  .auth-card select:focus {
-    border-color: rgba(212,160,23,0.5);
-    box-shadow: 0 0 0 3px rgba(212,160,23,0.15);
-  }
-
-  .login-btn,
-  .create-btn {
-    width: 100%;
-    padding: 14px;
-    border: none;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #d4a017, #ffcc00);
-    color: black;
-    font-weight: 800;
-    cursor: pointer;
-    transition: 0.3s ease;
-  }
-
-  .login-btn:hover,
-  .create-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 24px rgba(212,160,23,0.22);
-  }
-
-  .switch-text {
-    text-align: center;
-    margin-top: 18px;
-    color: rgba(255,255,255,0.65);
-  }
-
-  .switch-text span {
-    color: #ffcc00;
-    font-weight: 700;
-    cursor: pointer;
-  }
-
-  .signup-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-    margin-bottom: 14px;
-  }
-
-</style>
-
-<style>@keyframes fadeSlideUp {
-  0% {
-    transform: translateY(20px);
     opacity: 0;
+    transform: translateY(10px);
+    animation: fadeSlideUp 0.5s forwards;
   }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
+  .filter-btn.active { background: #d4a017; color: black; border-color: #d4a017; }
+
+  .filter-buttons .filter-btn:nth-child(1) { animation-delay: 0.2s; }
+  .filter-buttons .filter-btn:nth-child(2) { animation-delay: 0.35s; }
+  .filter-buttons .filter-btn:nth-child(3) { animation-delay: 0.5s; }
+  .filter-buttons .filter-btn:nth-child(4) { animation-delay: 0.65s; }
+  .filter-buttons .filter-btn:nth-child(5) { animation-delay: 0.8s; }
+  .filter-buttons .filter-btn:nth-child(6) { animation-delay: 0.95s; }
+
+  @keyframes fadeSlideUp {
+    0%   { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0);    opacity: 1; }
   }
-}
 
-.search-input {
-  animation: fadeSlideUp 0.6s ease-out forwards;
-}
+  .yearbook-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+    max-width: 1200px;
+    margin: auto;
+    padding-bottom: 80px;
+  }
 
-.filter-buttons .filter-btn {
-  opacity: 0;
-  transform: translateY(10px);
-  animation: fadeSlideUp 0.5s forwards;
-}
+  .card {
+    background: rgba(255,255,255,0.05);
+    border-radius: 24px;
+    overflow: hidden;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.1);
+    cursor: pointer;
+    transition: transform 0.3s ease, background 0.3s ease;
+  }
+  .card:hover { background: rgba(212,160,23,0.1); transform: scale(1.03); }
 
-.filter-buttons .filter-btn:nth-child(1) { animation-delay: 0.2s; }
-.filter-buttons .filter-btn:nth-child(2) { animation-delay: 0.35s; }
-.filter-buttons .filter-btn:nth-child(3) { animation-delay: 0.5s; }
-.filter-buttons .filter-btn:nth-child(4) { animation-delay: 0.65s; }
-.filter-buttons .filter-btn:nth-child(5) { animation-delay: 0.8s; }
-.filter-buttons .filter-btn:nth-child(6) { animation-delay: 0.95s; }
+  .card-header {
+    height: 180px;
+    background: rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: bold;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .card-body { padding: 16px; }
+
+  .roll { font-family: monospace; font-size: 0.8rem; color: #d4a017; letter-spacing: 1px; }
+  .name { font-size: 1.4rem; font-weight: 600; margin-top: 4px; }
+  .branch { font-style: italic; color: #aaa; margin-bottom: 12px; }
+
+  .card-btn {
+    width: 100%;
+    padding: 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.08);
+    color: white;
+    transition: all 0.3s ease;
+    text-align: center;
+    cursor: pointer;
+  }
+  .card-btn:hover { background: #d4a017; color: black; border-color: #d4a017; }
+
+  a { text-decoration: none; }
 </style>
-
 </head>
 <body class="p-8">
-    <div class="blur-orb"></div>
+  <div class="blur-orb"></div>
 
-  <nav class="navbar">
-    <a href="/journey"><div class="logo">Echoes</div></a>
-    <div class="nav-links">
-      <a href="/journey">The Journey</a>
-      <a href="/yearbook" class="active">Year Book</a>
-      <a href="/vault">vault</a>
-      <a href="/wall">The Wall</a>
-      <button class="signup-btn" onclick="openSignup()">Sign Up</button>
+  <!-- TOAST -->
+  <div id="toast"
+    class="hidden fixed top-24 right-6 z-[100] min-w-[320px] max-w-sm rounded-3xl px-5 py-4 border border-yellow-400/30 bg-stone-900/70 backdrop-blur-2xl shadow-2xl shadow-black/40 transition-all duration-500">
+    <div class="absolute inset-0 rounded-3xl bg-gradient-to-r from-yellow-400/10 via-transparent to-stone-200/5 pointer-events-none"></div>
+    <div class="relative flex items-start gap-3">
+      <div id="toastDot" class="mt-1 h-2.5 w-2.5 rounded-full bg-yellow-400 shadow-lg shadow-yellow-400/50 shrink-0"></div>
+      <p id="toastText" class="text-sm leading-6 text-stone-100 font-medium"></p>
     </div>
-  </nav>
+  </div>
 
-  <div class="auth-popup" id="authPopup">
-    <div class="auth-card">
-      <button class="close-auth" onclick="closeSignup()">&times;</button>
+  <!-- NAVBAR -->
+  <div id="navWrapper" class="glass fade-down fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl rounded-full z-50 transition-all duration-400">
+    <div class="px-6 md:px-8 py-4 flex items-center justify-between">
+      <a href="/" class="text-2xl font-bold tracking-wide text-yellow-400">Echoes</a>
 
-      <div id="loginForm">
-        <h2>Welcome Back</h2>
-        <p>Login to continue your Echoes journey.</p>
-        <input type="email" placeholder="Email Address">
-        <input type="password" placeholder="Password">
-        <button class="login-btn" onclick="showLoginSuccess()">Login</button>
-        <div class="switch-text">
-          Don’t have an account?
-          <span onclick="showSignup()">Create one</span>
+      <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+        <a class="nav-link" href="/journey">The Journey</a>
+        <a class="nav-link active" href="/yearbook">Year Book</a>
+        <a class="nav-link" href="/vault">Vault</a>
+        <a class="nav-link" href="/wall">The Wall</a>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button id="authBtn" onclick="handleAuthButton()"
+          class="hidden md:flex glass rounded-full px-5 py-2 text-yellow-300 hover:scale-105 transition-all duration-300 items-center gap-3">
+          <span id="authBtnText" class="font-semibold tracking-wide">Sign Up</span>
+          <div id="pfpRing" class="hidden h-10 w-10 rounded-full p-[2px] avatar-ring shadow-lg shadow-yellow-400/30">
+            <img id="navPfp" src="https://placehold.co/40x40"
+              class="h-full w-full rounded-full object-cover border border-black/40" />
+          </div>
+        </button>
+
+        <div id="mobileAuth" class="flex md:hidden items-center gap-2">
+          <button id="hamburger" onclick="toggleMenu()"
+            class="flex flex-col gap-[5px] items-center justify-center w-10 h-10 rounded-full glass">
+            <span id="hLine1" class="ham-line"></span>
+            <span id="hLine2" class="ham-line"></span>
+            <span id="hLine3" class="ham-line w-[14px] self-end mr-[4px]"></span>
+          </button>
+          <button id="mobilePfpBtn" onclick="handleAuthButton()"
+            class="hidden items-center gap-2 glass rounded-full pl-3 pr-1.5 py-1.5 text-yellow-300 hover:scale-105 transition-all duration-300">
+            <span id="mobileNameText" class="text-xs font-semibold tracking-wide"></span>
+            <div class="h-8 w-8 rounded-full p-[2px] avatar-ring">
+              <img id="mobilePfp" src="https://placehold.co/32x32"
+                class="h-full w-full rounded-full object-cover border border-black/40" />
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobileMenu">
+      <div class="px-6 pb-5">
+        <div class="mobile-divider mb-3"></div>
+        <a class="mobile-nav-link" href="/journey">The Journey</a>
+        <a class="mobile-nav-link active" href="/yearbook">Year Book</a>
+        <a class="mobile-nav-link" href="/vault">Vault</a>
+        <a class="mobile-nav-link" href="/wall">The Wall</a>
+        <div class="mobile-divider my-3"></div>
+        <button onclick="handleAuthButton(); toggleMenu()"
+          class="w-full rounded-2xl bg-yellow-400/10 border border-yellow-400/30 text-yellow-300 font-semibold py-3 text-sm tracking-wide hover:bg-yellow-400/20 transition">
+          <span id="mobileAuthText">Sign In / Sign Up</span>
+        </button>
+        <div class="mobile-divider mt-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── YEARBOOK BODY ── -->
+  <div class="pt-28">
+
+    <header class="text-center mb-8">
+      <h1 class="text-5xl font-serif mb-2">The Class of '29</h1>
+      <p class="text-gray-400">Faces that defined our journey. Moments that became memories.</p>
+    </header>
+
+    <!-- Sticky Search & Filter -->
+    <div class="sticky-top">
+      <input type="text" placeholder="Search by name or roll no" class="search-input" id="searchInput" />
+      <div class="filter-buttons">
+        <button class="filter-btn active" data-filter="All">All</button>
+        <button class="filter-btn" data-filter="CSE">CSE</button>
+        <button class="filter-btn" data-filter="ECE">ECE</button>
+        <button class="filter-btn" data-filter="MECH">MECH</button>
+        <button class="filter-btn" data-filter="CIVIL">CIVIL</button>
+        <button class="filter-btn" data-filter="AIDS">AIDS</button>
+      </div>
+    </div>
+
+    <!-- Yearbook Cards -->
+    <div class="yearbook-grid" id="yearbookGrid">
+      <div class="card" data-branch="CSE" data-name="Aavi Agrawal" data-roll="0187CS221003">
+        <div class="card-header">AA</div>
+        <div class="card-body">
+          <div class="roll">0187CS221003</div>
+          <div class="name">Aavi Agrawal</div>
+          <div class="branch">CSE</div>
+          <div class="card-btn">Open Yearbook</div>
         </div>
       </div>
 
-      <div id="signupForm" style="display:none;">
-        <h2>Create Account</h2>
-        <p>Join Echoes and preserve your memories forever.</p>
-        <div class="signup-grid">
-          <input type="text" placeholder="Full Name">
-          <input type="email" placeholder="Email Address">
-          <select>
-            <option selected disabled>Select Branch</option>
-            <option>ECS</option>
-            <option>Civil</option>
-            <option>Mechanical</option>
-            <option>AIDS</option>
-            <option>Computer</option>
-          </select>
-          <input type="text" placeholder="Roll Number">
+      <div class="card" data-branch="CSE" data-name="Anushka Shrivastava" data-roll="0187CS221053">
+        <div class="card-header">AS</div>
+        <div class="card-body">
+          <div class="roll">0187CS221053</div>
+          <div class="name">Anushka Shrivastava</div>
+          <div class="branch">CSE</div>
+          <div class="card-btn">View Quote</div>
         </div>
-        <input type="password" placeholder="Create Password">
-        <button class="create-btn" onclick="showSignupSuccess()">Create Account</button>
-        <div class="switch-text">
-          Already have an account?
-          <span onclick="showLogin()">Login</span>
+      </div>
+
+      <div class="card" data-branch="ECE" data-name="Bhavesh Patel" data-roll="0187EC221012">
+        <div class="card-header">BP</div>
+        <div class="card-body">
+          <div class="roll">0187EC221012</div>
+          <div class="name">Bhavesh Patel</div>
+          <div class="branch">ECE</div>
+          <div class="card-btn">Open Yearbook</div>
+        </div>
+      </div>
+
+      <div class="card" data-branch="MECH" data-name="Meera Kapoor" data-roll="0187ME221045">
+        <div class="card-header">MK</div>
+        <div class="card-body">
+          <div class="roll">0187ME221045</div>
+          <div class="name">Meera Kapoor</div>
+          <div class="branch">MECH</div>
+          <div class="card-btn">Open Yearbook</div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="py-6 text-center text-sm text-stone-500">
+      © 2026 All memories preserved forever
+    </footer>
+
+  </div>
+
+  <!-- SIGN IN MODAL -->
+  <div id="signinModal"
+    class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div class="glass pop rounded-[2rem] p-8 w-full max-w-md relative">
+      <button onclick="closeModal('signinModal')"
+        class="absolute top-4 right-4 text-2xl text-stone-400 hover:text-yellow-400 hover:rotate-90 transition-all duration-300">×</button>
+      <h2 class="text-3xl font-bold text-yellow-400 mb-2 text-center">Welcome Back</h2>
+      <p class="text-stone-400 text-center mb-6 text-sm">Sign in to access your yearbook</p>
+      <div class="space-y-4">
+        <input id="loginEmail" type="email" placeholder="Email" class="input-glass" />
+        <input id="loginPass" type="password" placeholder="Password" class="input-glass" />
+      </div>
+      <button onclick="signin()"
+        class="w-full mt-5 rounded-2xl bg-yellow-400 text-black font-semibold py-3 hover:scale-[1.02] transition">
+        Sign In
+      </button>
+      <p class="text-sm text-center text-stone-400 mt-4">
+        Don't have an account?
+        <button onclick="switchToSignup()" class="text-yellow-400 hover:underline">Create one</button>
+      </p>
+    </div>
+  </div>
+
+  <!-- SIGN UP MODAL -->
+  <div id="signupModal"
+    class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div class="glass pop rounded-[2rem] p-8 w-full max-w-2xl relative">
+      <button onclick="closeModal('signupModal')"
+        class="absolute top-4 right-4 text-2xl text-stone-400 hover:text-yellow-400 hover:rotate-90 transition-all duration-300">×</button>
+      <h2 class="text-3xl font-bold text-yellow-400 mb-6 text-center">Request Access</h2>
+      <div class="grid md:grid-cols-2 gap-4">
+        <input id="fullName" placeholder="Full Name" class="input-glass" />
+        <input id="email" placeholder="Email" class="input-glass" />
+        <select id="branch" class="input-glass bg-black text-white">
+          <option>ECS</option>
+          <option>Comp</option>
+          <option>Mech</option>
+          <option>Civil</option>
+          <option>AIDS</option>
+        </select>
+        <input id="roll" placeholder="Roll Number" class="input-glass" />
+      </div>
+      <input id="password" type="password" placeholder="Create Password" class="input-glass mt-4" />
+      <button onclick="signup()"
+        class="w-full mt-5 rounded-2xl bg-yellow-400 text-black font-semibold py-3 hover:scale-[1.02] transition">
+        Request Access
+      </button>
+      <p class="text-sm text-center text-stone-400 mt-4">
+        Already have an account?
+        <button onclick="switchToSignin()" class="text-yellow-400 hover:underline">Sign In</button>
+      </p>
+    </div>
+  </div>
+
+  <!-- PROFILE MODAL -->
+  <div id="profileModal"
+    class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div class="glass pop rounded-[2rem] w-full max-w-md relative overflow-hidden">
+      <div class="h-[2px] bg-gradient-to-r from-transparent via-yellow-400 to-transparent"></div>
+      <div class="p-8">
+        <button onclick="closeModal('profileModal')"
+          class="absolute top-5 right-5 text-2xl text-stone-400 hover:text-yellow-400 hover:rotate-90 transition-all duration-300">×</button>
+        <h2 class="text-3xl font-bold text-yellow-400 mb-1 text-center">Profile Settings</h2>
+        <p class="text-stone-500 text-xs text-center tracking-widest uppercase mb-6">Manage your identity</p>
+        <div class="flex items-center gap-5 mb-5">
+          <div class="h-16 w-16 rounded-full p-[2px] avatar-ring shrink-0">
+            <img id="modalPfpPreview" src="https://placehold.co/64x64"
+              class="h-full w-full rounded-full object-cover border-2 border-black" />
+          </div>
+          <div class="flex-1">
+            <p class="section-label">Profile Picture</p>
+            <input id="pfpUpload" type="file" accept="image/*" class="hidden" />
+            <div id="uploadZone" class="upload-zone" onclick="document.getElementById('pfpUpload').click()">
+              <span id="uploadZoneText">📁 Choose image</span>
+            </div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="mb-4">
+          <p class="section-label">Display Name</p>
+          <input id="newName" placeholder="Enter new name" class="input-glass" />
+        </div>
+        <div class="divider"></div>
+        <div class="space-y-3">
+          <p class="section-label">Change Password</p>
+          <input id="currentPass" type="password" placeholder="Current Password" class="input-glass" />
+          <input id="newPass" type="password" placeholder="New Password" class="input-glass" />
+        </div>
+        <div class="grid grid-cols-2 gap-4 mt-6">
+          <button onclick="saveProfileChanges()"
+            class="rounded-2xl bg-yellow-400 text-black py-3 font-semibold hover:scale-[1.02] transition">
+            Save Changes
+          </button>
+          <button onclick="signout()"
+            class="rounded-2xl border border-stone-600 py-3 hover:border-red-500/60 hover:text-red-400 transition">
+            Sign Out
+          </button>
         </div>
       </div>
     </div>
   </div>
-<header class="text-center mb-8">
-  <h1 class="text-5xl font-serif mb-2">The Class of '26</h1>
-  <p class="text-gray-400">Faces that defined our journey. Moments that became memories.</p>
-</header>
 
-<!-- Sticky Search & Filter -->
-<div class="sticky-top">
-  <input type="text" placeholder="Search by name or roll no" class="search-input" />
-  <div class="filter-buttons">
-    <button class="filter-btn active">All</button>
-    <button class="filter-btn">CSE</button>
-    <button class="filter-btn">ECE</button>
-    <button class="filter-btn">MECH</button>
-    <button class="filter-btn">CIVIL</button>
-    <button class="filter-btn">AIDS</button>
-  </div>
-</div>
-
-<!-- Yearbook Cards -->
-<div class="yearbook-grid">
-  <div class="card">
-    <div class="card-header">AA</div>
-    <div class="card-body">
-      <div class="roll">0187CS221003</div>
-      <div class="name">Aavi Agrawal</div>
-      <div class="branch">CSE</div>
-      <div class="card-btn">Open Yearbook</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header">AS</div>
-    <div class="card-body">
-      <div class="roll">0187CS221053</div>
-      <div class="name">Anushka Shrivastava</div>
-      <div class="branch">CSE</div>
-      <div class="card-btn">View Quote</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header">BP</div>
-    <div class="card-body">
-      <div class="roll">0187EC221012</div>
-      <div class="name">Bhavesh Patel</div>
-      <div class="branch">ECE</div>
-      <div class="card-btn">Open Yearbook</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header">MK</div>
-    <div class="card-body">
-      <div class="roll">0187ME221045</div>
-      <div class="name">Meera Kapoor</div>
-      <div class="branch">MECH</div>
-      <div class="card-btn">Open Yearbook</div>
-    </div>
-  </div>
-</div>
-
- <footer class="py-6 text-center text-sm">
-    © 2026 All memories preserved forever
-  </footer>
 <script>
-function openSignup() {
-  document.getElementById('authPopup').classList.add('active');
-  showLogin();
-}
+  /* ── Auth state ── */
+  let currentUserName = "";
+  let isLoggedIn = false;
+  let selectedPfpFile = null;
 
-function closeSignup() {
-  document.getElementById('authPopup').classList.remove('active');
-}
+  document.addEventListener("DOMContentLoaded", () => {
+    ["loginEmail", "loginPass"].forEach(id => {
+      document.getElementById(id)?.addEventListener("keydown", e => { if (e.key === "Enter") signin(); });
+    });
+    ["fullName", "email", "roll", "password"].forEach(id => {
+      document.getElementById(id)?.addEventListener("keydown", e => { if (e.key === "Enter") signup(); });
+    });
+    ["newName", "currentPass", "newPass"].forEach(id => {
+      document.getElementById(id)?.addEventListener("keydown", e => { if (e.key === "Enter") saveProfileChanges(); });
+    });
 
-function showSignup() {
-  document.getElementById('loginForm').style.display = 'none';
-  document.getElementById('signupForm').style.display = 'block';
-}
+    document.getElementById("pfpUpload").addEventListener("change", function () {
+      const file = this.files[0];
+      if (!file) return;
+      selectedPfpFile = file;
+      document.getElementById("uploadZoneText").textContent = "✓ " + file.name;
+      document.getElementById("uploadZone").classList.add("has-file");
+      const reader = new FileReader();
+      reader.onload = e => { document.getElementById("modalPfpPreview").src = e.target.result; };
+      reader.readAsDataURL(file);
+    });
+  });
 
-function showLogin() {
-  document.getElementById('signupForm').style.display = 'none';
-  document.getElementById('loginForm').style.display = 'block';
-}
+  function showToast(message, isError = false) {
+    const toast = document.getElementById("toast");
+    const dot   = document.getElementById("toastDot");
+    document.getElementById("toastText").textContent = message;
+    toast.classList.remove("hidden");
+    toast.style.borderColor = isError ? "rgba(248,113,113,0.4)" : "rgba(250,204,21,0.3)";
+    dot.style.background    = isError ? "#f87171" : "#facc15";
+    setTimeout(() => toast.classList.add("hidden"), 2800);
+  }
 
-function showLoginSuccess() {
-  alert('Login button working ✨ Connect Flask route next');
-}
+  let menuOpen = false;
 
-function showSignupSuccess() {
-  alert('Signup button working 🎓 Connect DB next');
-}
+  function toggleMenu() {
+    menuOpen = !menuOpen;
+    const menu    = document.getElementById("mobileMenu");
+    const wrapper = document.getElementById("navWrapper");
+    const l1 = document.getElementById("hLine1");
+    const l2 = document.getElementById("hLine2");
+    const l3 = document.getElementById("hLine3");
 
-window.addEventListener('click', function(e) {
-  const popup = document.getElementById('authPopup');
-  if (e.target === popup) closeSignup();
-});
+    if (menuOpen) {
+      menu.classList.add("open");
+      wrapper.style.borderRadius = "1.5rem";
+      l1.style.transform = "translateY(7px) rotate(45deg)";
+      l2.style.opacity   = "0";
+      l3.style.transform = "translateY(-7px) rotate(-45deg)";
+      l3.style.width = "22px"; l3.style.marginRight = "0"; l3.style.alignSelf = "auto";
+    } else {
+      menu.classList.remove("open");
+      wrapper.style.borderRadius = "9999px";
+      l1.style.transform = ""; l2.style.opacity = "1"; l3.style.transform = "";
+      l3.style.width = "14px"; l3.style.marginRight = "4px"; l3.style.alignSelf = "flex-end";
+    }
+  }
+
+  function syncMobileAuthText() {
+    const hamburger      = document.getElementById("hamburger");
+    const mobilePfpBtn   = document.getElementById("mobilePfpBtn");
+    const mobileNameText = document.getElementById("mobileNameText");
+    const mobilePfp      = document.getElementById("mobilePfp");
+
+    if (isLoggedIn) {
+      hamburger.classList.add("hidden");
+      mobilePfpBtn.classList.remove("hidden");
+      mobilePfpBtn.classList.add("flex");
+      mobileNameText.textContent = currentUserName.toUpperCase();
+      const navSrc = document.getElementById("navPfp").src;
+      if (navSrc) mobilePfp.src = navSrc;
+    } else {
+      hamburger.classList.remove("hidden");
+      mobilePfpBtn.classList.add("hidden");
+      mobilePfpBtn.classList.remove("flex");
+    }
+  }
+
+  function closeModal(id) { document.getElementById(id).classList.add("hidden"); }
+
+  function handleAuthButton() {
+    if (!isLoggedIn) {
+      document.getElementById("signinModal").classList.remove("hidden");
+    } else {
+      document.getElementById("modalPfpPreview").src = document.getElementById("navPfp").src;
+      selectedPfpFile = null;
+      document.getElementById("uploadZoneText").textContent = "📁 Choose image";
+      document.getElementById("uploadZone").classList.remove("has-file");
+      document.getElementById("profileModal").classList.remove("hidden");
+    }
+  }
+
+  function switchToSignup() { closeModal("signinModal"); document.getElementById("signupModal").classList.remove("hidden"); }
+  function switchToSignin()  { closeModal("signupModal"); document.getElementById("signinModal").classList.remove("hidden"); }
+
+  function validatePassword(p) {
+    return /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/.test(p);
+  }
+
+  async function signup() {
+    const pwd = document.getElementById("password").value;
+    if (!validatePassword(pwd)) { showToast("Password needs 8+ chars, 1 capital, 1 number, 1 symbol", true); return; }
+    const res = await fetch("/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        full_name:   document.getElementById("fullName").value,
+        email:       document.getElementById("email").value,
+        branch:      document.getElementById("branch").value,
+        roll_number: document.getElementById("roll").value,
+        password:    pwd
+      })
+    });
+    const result = await res.json();
+    if (result.message?.toLowerCase().includes("exists")) { showToast("User already exists", true); return; }
+    showToast("Access request submitted!");
+    switchToSignin();
+  }
+
+  async function signin() {
+    const res = await fetch("/signin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email:    document.getElementById("loginEmail").value,
+        password: document.getElementById("loginPass").value
+      })
+    });
+    const result = await res.json();
+    if (result.success) {
+      isLoggedIn = true;
+      currentUserName = result.name;
+      document.getElementById("authBtnText").innerText = result.name.toUpperCase();
+      if (result.pfp) {
+        document.getElementById("navPfp").src = result.pfp;
+        document.getElementById("pfpRing").classList.remove("hidden");
+      }
+      closeModal("signinModal");
+      showToast("Welcome back, " + result.name);
+      syncMobileAuthText();
+    } else {
+      showToast(result.message || "Incorrect credentials", true);
+    }
+  }
+
+  async function saveProfileChanges() {
+    const formData = new FormData();
+    const newName     = document.getElementById("newName").value.trim();
+    const currentPass = document.getElementById("currentPass").value;
+    const newPass     = document.getElementById("newPass").value;
+    if (newName)         formData.append("new_name", newName);
+    if (currentPass)     formData.append("current_password", currentPass);
+    if (newPass)         formData.append("new_password", newPass);
+    if (selectedPfpFile) formData.append("pfp", selectedPfpFile);
+
+    const res = await fetch("/update-profile", { method: "POST", body: formData });
+    const result = await res.json();
+    if (result.success) {
+      if (result.name) { currentUserName = result.name; document.getElementById("authBtnText").innerText = result.name.toUpperCase(); }
+      if (result.pfp) {
+        document.getElementById("navPfp").src = result.pfp;
+        document.getElementById("modalPfpPreview").src = result.pfp;
+        document.getElementById("mobilePfp").src = result.pfp;
+        document.getElementById("pfpRing").classList.remove("hidden");
+      }
+      selectedPfpFile = null;
+      showToast("Profile updated");
+      closeModal("profileModal");
+    } else {
+      showToast(result.message || "Update failed", true);
+    }
+  }
+
+  async function signout() {
+    await fetch("/signout", { method: "POST" });
+    isLoggedIn = false; currentUserName = ""; selectedPfpFile = null;
+    document.getElementById("authBtnText").innerText = "Sign Up";
+    document.getElementById("navPfp").src = "";
+    document.getElementById("pfpRing").classList.add("hidden");
+    closeModal("profileModal");
+    showToast("Signed out");
+    syncMobileAuthText();
+  }
+
+  window.addEventListener("click", function(e) {
+    ["signinModal", "signupModal", "profileModal"].forEach(id => {
+      if (e.target === document.getElementById(id)) closeModal(id);
+    });
+  });
+
+  /* ── Search & filter logic ── */
+  const filterBtns  = document.querySelectorAll('.filter-btn');
+  const searchInput = document.getElementById('searchInput');
+  let activeFilter  = 'All';
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeFilter = btn.dataset.filter;
+      applyFilters();
+    });
+  });
+
+  searchInput.addEventListener('input', applyFilters);
+
+  function applyFilters() {
+    const query = searchInput.value.toLowerCase();
+    document.querySelectorAll('.card').forEach(card => {
+      const matchBranch = activeFilter === 'All' || card.dataset.branch === activeFilter;
+      const matchSearch = card.dataset.name.toLowerCase().includes(query) || card.dataset.roll.includes(query);
+      card.style.display = matchBranch && matchSearch ? '' : 'none';
+    });
+  }
 </script>
 </body>
 </html>

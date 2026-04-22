@@ -1,137 +1,3 @@
-from flask import Flask, request, redirect, flash, render_template
-from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask import session
-import os
-from datetime import datetime
-
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'dev-secret-key'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///yearbook.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db = SQLAlchemy(app)
-
-
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    full_name = db.Column(db.String(120), nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    branch = db.Column(db.String(20), nullable=False)
-    roll = db.Column(db.String(30), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=False)
-
-
-@app.route('/')
-def home():
-    return render_template('landing_page.html')
-
-
-@app.route('/signup', methods=['POST'])
-def signup():
-    full_name = request.form.get('full_name')
-    email = request.form.get('email')
-    branch = request.form.get('branch')
-    roll = request.form.get('roll')
-    password = request.form.get('password')
-
-    # check existing user
-    existing_user = User.query.filter_by(email=email).first()
-    if existing_user:
-        flash('Account already exists. Please sign in.')
-        return redirect('/')
-
-    hashed_password = generate_password_hash(password)
-
-    new_user = User(
-        full_name=full_name,
-        email=email,
-        branch=branch,
-        roll=roll,
-        password=hashed_password,
-    )
-
-    db.session.add(new_user)
-    db.session.commit()
-
-    flash('Signup successful. Please sign in now.')
-    return redirect('/')
-
-
-@app.route('/login', methods=['POST'])
-def login():
-    email = request.form.get('email')
-    password = request.form.get('password')
-
-    user = User.query.filter_by(email=email).first()
-
-    if not user:
-        flash('User not found. Please sign up first.')
-        return redirect('/')
-
-    if not check_password_hash(user.password, password):
-        flash('Wrong password.')
-        return redirect('/')
-    session["user"] = user.email
-
-
-    flash(f'Welcome back, {user.full_name}!')
-    return redirect('/journey')
-
-
-
-
-@app.route('/journey')
-def journey():
-    return render_template('journey.html')
-
-@app.route('/yearbook')
-def yearbook():
-    return render_template('yearbook.html')
-
-
-UPLOAD_ROOT = os.path.join('static', 'uploads')
-YEARS = ['1st', '2nd', '3rd', '4th', 'feasts']
-
-@app.route('/vault')
-def vault():
-    images = []
-
-    for year in YEARS:
-        folder = os.path.join(UPLOAD_ROOT, year)
-
-        if not os.path.exists(folder):
-            continue
-
-        for file in os.listdir(folder):
-            if not file.lower().endswith(('.png', '.jpg', '.jpeg', '.webp')):
-                continue
-
-            # filename format: 2025-02-14_Farewell Night.jpg
-            name_without_ext = os.path.splitext(file)[0]
-            parts = name_without_ext.split('_', 1)
-
-            raw_date = parts[0] if len(parts) > 0 else '2025-01-01'
-            title = parts[1] if len(parts) > 1 else 'Untitled Memory'
-
-            try:
-                parsed_date = datetime.strptime(raw_date, '%Y-%m-%d')
-                pretty_date = parsed_date.strftime('%d %b')
-                sort_date = parsed_date.strftime('%Y-%m-%d')
-            except ValueError:
-                pretty_date = raw_date
-                sort_date = '2025-01-01'
-
-            images.append({
-                'src': f'/static/uploads/{year}/{file}',
-                'year': year,
-                'date': pretty_date,
-                'sort_date': sort_date,
-                'title': title
-            })
-
-    images.sort(key=lambda x: x['sort_date'], reverse=True)
-    return render_template('vault.html', images=images)
 from flask import Flask, render_template, request, jsonify, session, redirect
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -151,22 +17,31 @@ db = SQLAlchemy(app)
 
 
 # =========================
-# MODEL
+# MODELS
 # =========================
+
 class User(db.Model):
     id          = db.Column(db.Integer, primary_key=True)
     full_name   = db.Column(db.String(120), nullable=False)
     email       = db.Column(db.String(120), unique=True, nullable=False)
-    branch      = db.Column(db.String(20), nullable=False)
-    roll_number = db.Column(db.String(30), unique=True, nullable=False)
+    branch      = db.Column(db.String(20),  nullable=False)
+    roll_number = db.Column(db.String(30),  unique=True, nullable=False)
     password    = db.Column(db.String(255), nullable=False)
     profile_pic = db.Column(db.String(255), default='')
     approved    = db.Column(db.Boolean, default=False, nullable=False)
 
 
+class WallMessage(db.Model):
+    id         = db.Column(db.Integer, primary_key=True)
+    text       = db.Column(db.Text,        nullable=False)
+    author     = db.Column(db.String(120), nullable=False, default='Anonymous')
+    created_at = db.Column(db.DateTime,    nullable=False, default=datetime.utcnow)
+
+
 # =========================
 # HELPERS
 # =========================
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -179,6 +54,7 @@ with app.app_context():
 # =========================
 # PAGES
 # =========================
+
 @app.route('/')
 def home():
     return render_template('landing_page.html')
@@ -195,10 +71,15 @@ def yearbook():
 def wall():
     return render_template('wall.html')
 
+@app.route('/credit')
+def credit():
+    return render_template('credits.html')
+
 
 # =========================
 # VAULT
 # =========================
+
 UPLOAD_ROOT = os.path.join('static', 'uploads')
 YEARS = ['1st', '2nd', '3rd', '4th', 'feasts']
 
@@ -215,20 +96,20 @@ def vault():
             name_without_ext = os.path.splitext(file)[0]
             parts = name_without_ext.split('_', 1)
             raw_date = parts[0] if len(parts) > 0 else '2025-01-01'
-            title = parts[1] if len(parts) > 1 else 'Untitled Memory'
+            title    = parts[1] if len(parts) > 1 else 'Untitled Memory'
             try:
                 parsed_date = datetime.strptime(raw_date, '%Y-%m-%d')
                 pretty_date = parsed_date.strftime('%d %b')
-                sort_date = parsed_date.strftime('%Y-%m-%d')
+                sort_date   = parsed_date.strftime('%Y-%m-%d')
             except ValueError:
                 pretty_date = raw_date
-                sort_date = '2025-01-01'
+                sort_date   = '2025-01-01'
             images.append({
-                'src': f'/static/uploads/{year}/{file}',
-                'year': year,
-                'date': pretty_date,
+                'src':       f'/static/uploads/{year}/{file}',
+                'year':      year,
+                'date':      pretty_date,
                 'sort_date': sort_date,
-                'title': title
+                'title':     title
             })
     images.sort(key=lambda x: x['sort_date'], reverse=True)
     return render_template('vault.html', images=images)
@@ -237,6 +118,7 @@ def vault():
 # =========================
 # AUTH
 # =========================
+
 @app.route('/signup', methods=['POST'])
 def signup():
     data = request.json
@@ -245,12 +127,12 @@ def signup():
         return jsonify({'message': 'User already exists'})
 
     user = User(
-        full_name=data['full_name'],
-        email=data['email'],
-        branch=data['branch'],
-        roll_number=data['roll_number'],
-        password=generate_password_hash(data['password']),
-        approved=False
+        full_name   = data['full_name'],
+        email       = data['email'],
+        branch      = data['branch'],
+        roll_number = data['roll_number'],
+        password    = generate_password_hash(data['password']),
+        approved    = False
     )
     db.session.add(user)
     db.session.commit()
@@ -313,8 +195,42 @@ def signout():
 
 
 # =========================
+# WALL MESSAGES
+# =========================
+
+@app.route('/api/messages', methods=['GET'])
+def get_messages():
+    messages = WallMessage.query.order_by(WallMessage.id.desc()).all()
+    return jsonify([
+        {
+            'id':         m.id,
+            'text':       m.text,
+            'author':     m.author,
+            'created_at': m.created_at.strftime('%d %b %Y')
+        }
+        for m in messages
+    ])
+
+
+@app.route('/api/messages', methods=['POST'])
+def post_message():
+    data   = request.get_json()
+    text   = (data.get('text') or '').strip()
+    author = (data.get('author') or 'Anonymous').strip()
+
+    if not text:
+        return jsonify({'error': 'Message cannot be empty'}), 400
+
+    msg = WallMessage(text=text, author=author)
+    db.session.add(msg)
+    db.session.commit()
+    return jsonify({'success': True})
+
+
+# =========================
 # ADMIN
 # =========================
+
 @app.route('/admin/users')
 def list_users():
     users = User.query.all()
@@ -325,6 +241,7 @@ def list_users():
         for u in users
     )
     return f"<table border='1'><tr><th>ID</th><th>Name</th><th>Email</th><th>Approved</th><th>Action</th></tr>{rows}</table>"
+
 
 @app.route('/admin/approve/<int:user_id>')
 def approve_user(user_id):
@@ -343,9 +260,7 @@ def approve_user(user_id):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    app.run(debug=True,port=9000)
-    
-    
+    app.run(debug=True, port=9000)
 # ============================= for protecting the page from entering without signing in =============================
 # @app.route('/journey')
 # def journey():

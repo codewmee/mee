@@ -3,340 +3,818 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Message Wall | Batch '26</title>
+<title>Message Wall | Echoes</title>
 
+<script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,600&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
 
 <style>
 :root {
-    --bg-dark: #0a0e17;
-    --gold: #ffcc00;
-    --paper: #fffdf7;
-    --text-dark: #1f2937;
-}
-::selection {
-  background: rgba(212,160,23,0.45);
-  color: #fff7d6;
+  --bg-dark: #0a0e17;
+  --gold: #ffcc00;
+  --paper: #fffdf7;
+  --text-dark: #1f2937;
 }
 
-::-moz-selection {
-  background: rgba(212,160,23,0.45);
-  color: #fff7d6;
-}
+::selection { background: rgba(212,160,23,0.45); color: #fff7d6; }
+::-moz-selection { background: rgba(212,160,23,0.45); color: #fff7d6; }
 
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    background: radial-gradient(circle at top, rgba(255,204,0,0.08), transparent 40%), var(--bg-dark);
-    color: white;
-    font-family: 'Inter', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-    animation: fadePage 1s ease;
+  background: radial-gradient(circle at top, rgba(255,204,0,0.08), transparent 40%), var(--bg-dark);
+  color: white;
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  animation: fadePage 1s ease;
 }
 
 @keyframes fadePage {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ── Navbar ── */
+.glass {
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+}
+
+.nav-link { color: #d6d3d1; transition: color 0.2s; text-decoration: none; }
+.nav-link:hover { color: #facc15; }
+.nav-link.active { color: #facc15; border-bottom: 1px solid #facc15; padding-bottom: 4px; }
+
+.fade-down { animation: fadeDown .7s ease; }
+.pop       { animation: pop .35s ease; }
+
+@keyframes fadeDown {
+  from { opacity:0; transform:translateY(-25px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes pop {
+  from { opacity:0; transform:scale(.94); }
+  to   { opacity:1; transform:scale(1); }
+}
+
+.input-glass {
+  width: 100%;
+  border-radius: 1rem;
+  padding: 0.75rem 1rem;
+  background: rgba(28,25,23,0.6);
+  border: 1px solid #44403c;
+  outline: none;
+  color: #f5f5f4;
+  transition: border-color .2s;
+  font-size: 0.875rem;
+}
+.input-glass::placeholder { color: #78716c; }
+.input-glass:focus        { border-color: #facc15; }
+
+.section-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #57534e;
+  margin-bottom: 0.35rem;
+}
+
+.upload-zone {
+  width: 100%;
+  border-radius: 1rem;
+  padding: 0.75rem 1rem;
+  background: rgba(28,25,23,0.6);
+  border: 1px dashed rgba(250,204,21,0.25);
+  color: #78716c;
+  font-size: 0.8rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all .2s;
+}
+.upload-zone:hover    { border-color: #facc15; color: #facc15; }
+.upload-zone.has-file { border-color: rgba(250,204,21,.5); color: #facc15; }
+
+.modal-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.07), transparent);
+  margin: 1rem 0;
+}
+
+.avatar-ring { background: conic-gradient(#facc15, #92400e, #facc15); }
+
+.ham-line {
+  display: block;
+  width: 22px; height: 2px;
+  background: #facc15;
+  border-radius: 2px;
+  transition: transform 0.35s ease, opacity 0.25s ease, width 0.3s ease;
+  transform-origin: center;
+}
+
+#mobileMenu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease;
+  opacity: 0;
+}
+#mobileMenu.open { max-height: 400px; opacity: 1; }
+
+.mobile-nav-link {
+  display: block;
+  padding: 0.75rem 0;
+  color: #d6d3d1;
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  transition: color 0.2s, padding-left 0.2s;
+  text-decoration: none;
+}
+.mobile-nav-link:hover,
+.mobile-nav-link.active { color: #facc15; padding-left: 0.5rem; }
+
+.mobile-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.08), transparent);
+  margin: 0.5rem 0;
+}
+
+/* ── Wall styles ── */
 .wall-container {
-    max-width: 1200px;
-    margin: auto;
-    padding: 60px 20px 100px;
+  max-width: 1200px;
+  margin: auto;
+  padding: 120px 20px 100px;
 }
 
 .wall-header {
-    text-align: center;
-    margin-bottom: 60px;
+  text-align: center;
+  margin-bottom: 60px;
 }
 
-.badge {
-    display: inline-block;
-    padding: 12px 24px;
-    border-radius: 999px;
-    backdrop-filter: blur(12px);
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.1);
-    color: white;
-    font-weight: 700;
-    transition: 0.3s;
-}
-
-.badge:hover {
-    background: rgba(255,204,0,0.2);
-    color: var(--gold);
-    border-color: rgba(255,204,0,0.4);
-}
-
-h1 {
-    font-size: 3rem;
-    margin: 20px 0 10px;
+.wall-header h1 {
+  font-size: 3rem;
+  margin: 20px 0 10px;
 }
 
 .wall-header p {
-    color: #94a3b8;
-    max-width: 650px;
-    margin: auto;
-    line-height: 1.6;
+  color: #94a3b8;
+  max-width: 650px;
+  margin: auto;
+  line-height: 1.6;
 }
 
 .message-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 30px;
+  columns: 280px;
+  column-gap: 30px;
 }
 
 .message-card {
-    background: var(--paper);
-    color: var(--text-dark);
-    padding: 28px;
-    min-height: 220px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-    position: relative;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    transform: rotate(-1.2deg);
+  break-inside: avoid;
+  display: inline-block;
+  width: 100%;
+  margin-bottom: 30px;
 }
 
-.message-card:nth-child(even) {
-    transform: rotate(1deg);
+.message-card {
+  background: var(--paper);
+  color: var(--text-dark);
+  padding: 28px;
+  min-height: unset;
+  height: fit-content;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transform: rotate(-1.2deg);
+  overflow: visible;
+  word-break: break-word;
 }
+
+.message-card:nth-child(even) { transform: rotate(1deg); }
 
 .message-card:hover {
-    transform: rotate(0deg) scale(1.03);
-    z-index: 10;
-    box-shadow: 0 18px 35px rgba(0,0,0,0.45);
+  transform: rotate(0deg) scale(1.03);
+  z-index: 10;
+  box-shadow: 0 18px 35px rgba(0,0,0,0.45);
 }
 
 .message-card::before {
-    content: "";
-    position: absolute;
-    top: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 70px;
-    height: 22px;
-    background: rgba(255,255,255,0.5);
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70px;
+  height: 22px;
+  background: rgba(255,255,255,0.5);
 }
 
 .card-content {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 1.3rem;
-    line-height: 1.7;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1.3rem;
+  line-height: 1.7;
 }
 
 .card-footer {
-    margin-top: 20px;
-    padding-top: 15px;
-    border-top: 1px solid rgba(0,0,0,0.08);
-    font-weight: 700;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(0,0,0,0.08);
+  font-weight: 700;
 }
 
 .write-btn {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    background: var(--gold);
-    color: black;
-    border: none;
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    font-size: 1.8rem;
-    cursor: pointer;
-    box-shadow: 0 8px 25px rgba(255,204,0,0.3);
-    transition: 0.3s;
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: var(--gold);
+  color: black;
+  border: none;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  font-size: 1.8rem;
+  cursor: pointer;
+  box-shadow: 0 8px 25px rgba(255,204,0,0.3);
+  transition: 0.3s;
+  z-index: 40;
 }
+.write-btn:hover { transform: scale(1.08); }
 
-.write-btn:hover {
-    transform: scale(1.08);
-}
-
+/* ── Write note popup ── */
 .popup {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.65);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
 }
-
-.popup.active {
-    display: flex;
-}
+.popup.active { display: flex; }
 
 .popup-card {
-    position: relative;
-    background: white;
-    width: 90%;
-    max-width: 500px;
-    padding: 35px;
-    border-radius: 20px;
-    animation: popupIn 0.4s ease;
+  position: relative;
+  background: white;
+  width: 90%;
+  max-width: 500px;
+  padding: 35px;
+  border-radius: 20px;
+  animation: popupIn 0.4s ease;
 }
 
 @keyframes popupIn {
-    from {
-        transform: scale(0.8);
-        opacity: 0;
-    }
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
+  from { transform: scale(0.8); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
 }
 
 .close-popup {
-    position: absolute;
-    top: 14px;
-    right: 16px;
-    width: 36px;
-    height: 36px;
-    border: none;
-    border-radius: 50%;
-    background: rgba(0,0,0,0.06);
-    color: #111;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: 0.3s ease;
+  position: absolute;
+  top: 14px; right: 16px;
+  width: 36px; height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.06);
+  color: #111;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: 0.3s ease;
 }
-
-.close-popup:hover {
-    background: rgba(255, 204, 0, 0.25);
-    transform: rotate(90deg);
-}
+.close-popup:hover { background: rgba(255,204,0,0.25); transform: rotate(90deg); }
 
 .popup-title {
-    font-family: 'Dancing Script', cursive;
-    font-size: 2rem;
-    color: #111;
-    margin-bottom: 20px;
+  font-family: 'Dancing Script', cursive;
+  font-size: 2rem;
+  color: #111;
+  margin-bottom: 20px;
 }
 
-textarea,
-input {
-    width: 100%;
-    padding: 14px;
-    margin-bottom: 16px;
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.2rem;
-    font-style: italic;
+.popup-card textarea,
+.popup-card input[type="text"] {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 16px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  font-style: italic;
+  outline: none;
+  color: #111;
+  background: #fafaf8;
+  transition: border-color 0.2s;
 }
-
-textarea {
-    resize: none;
-}
+.popup-card textarea:focus,
+.popup-card input[type="text"]:focus { border-color: #d4a017; }
+.popup-card textarea { resize: none; }
 
 .checkbox-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
-    color: #111;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  color: #111;
 }
-
-.checkbox-row input {
-    accent-color: var(--gold);
-    width: 18px;
-    height: 18px;
+.checkbox-row input[type="checkbox"] {
+  accent-color: var(--gold);
+  width: 18px; height: 18px;
+  margin: 0; padding: 0;
 }
 
 .pin-btn {
-    width: 100%;
-    padding: 14px;
-    background: black;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-weight: 700;
-    cursor: pointer;
+  width: 100%;
+  padding: 14px;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
 }
+.pin-btn:hover { background: #d4a017; color: black; }
+
+a { text-decoration: none; }
 </style>
 </head>
 <body>
 
-<div class="wall-container">
+  <!-- TOAST -->
+  <div id="toast"
+    class="hidden fixed top-24 right-6 z-[100] min-w-[320px] max-w-sm rounded-3xl px-5 py-4 border border-yellow-400/30 bg-stone-900/70 backdrop-blur-2xl shadow-2xl shadow-black/40 transition-all duration-500">
+    <div class="absolute inset-0 rounded-3xl bg-gradient-to-r from-yellow-400/10 via-transparent to-stone-200/5 pointer-events-none"></div>
+    <div class="relative flex items-start gap-3">
+      <div id="toastDot" class="mt-1 h-2.5 w-2.5 rounded-full bg-yellow-400 shadow-lg shadow-yellow-400/50 shrink-0"></div>
+      <p id="toastText" class="text-sm leading-6 text-stone-100 font-medium"></p>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <div id="navWrapper" class="glass fade-down fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl rounded-full z-50 transition-all duration-400">
+    <div class="px-6 md:px-8 py-4 flex items-center justify-between">
+      <a href="/" class="text-2xl font-bold tracking-wide text-yellow-400">Echoes</a>
+
+      <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+        <a class="nav-link" href="/journey">The Journey</a>
+        <a class="nav-link" href="/yearbook">Year Book</a>
+        <a class="nav-link" href="/vault">Vault</a>
+        <a class="nav-link active" href="/wall">The Wall</a>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button id="authBtn" onclick="handleAuthButton()"
+          class="hidden md:flex glass rounded-full px-5 py-2 text-yellow-300 hover:scale-105 transition-all duration-300 items-center gap-3">
+          <span id="authBtnText" class="font-semibold tracking-wide">Sign Up</span>
+          <div id="pfpRing" class="hidden h-10 w-10 rounded-full p-[2px] avatar-ring shadow-lg shadow-yellow-400/30">
+            <img id="navPfp" src="https://placehold.co/40x40"
+              class="h-full w-full rounded-full object-cover border border-black/40" />
+          </div>
+        </button>
+
+        <div id="mobileAuth" class="flex md:hidden items-center gap-2">
+          <button id="hamburger" onclick="toggleMenu()"
+            class="flex flex-col gap-[5px] items-center justify-center w-10 h-10 rounded-full glass">
+            <span id="hLine1" class="ham-line"></span>
+            <span id="hLine2" class="ham-line"></span>
+            <span id="hLine3" class="ham-line w-[14px] self-end mr-[4px]"></span>
+          </button>
+          <button id="mobilePfpBtn" onclick="handleAuthButton()"
+            class="hidden items-center gap-2 glass rounded-full pl-3 pr-1.5 py-1.5 text-yellow-300 hover:scale-105 transition-all duration-300">
+            <span id="mobileNameText" class="text-xs font-semibold tracking-wide"></span>
+            <div class="h-8 w-8 rounded-full p-[2px] avatar-ring">
+              <img id="mobilePfp" src="https://placehold.co/32x32"
+                class="h-full w-full rounded-full object-cover border border-black/40" />
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobileMenu">
+      <div class="px-6 pb-5">
+        <div class="mobile-divider mb-3"></div>
+        <a class="mobile-nav-link" href="/journey">The Journey</a>
+        <a class="mobile-nav-link" href="/yearbook">Year Book</a>
+        <a class="mobile-nav-link" href="/vault">Vault</a>
+        <a class="mobile-nav-link active" href="/wall">The Wall</a>
+        <div class="mobile-divider my-3"></div>
+        <button onclick="handleAuthButton(); toggleMenu()"
+          class="w-full rounded-2xl bg-yellow-400/10 border border-yellow-400/30 text-yellow-300 font-semibold py-3 text-sm tracking-wide hover:bg-yellow-400/20 transition">
+          <span id="mobileAuthText">Sign In / Sign Up</span>
+        </button>
+        <div class="mobile-divider mt-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── WALL BODY ── -->
+  <div class="wall-container">
     <header class="wall-header">
-        <!-- <span class="badge">✦ Final Goodbyes ✦</span> -->
-        <h1>Message Wall of Reflection</h1>
-        <p>Leave one final note for the people and memories that made this journey unforgettable.</p>
+      <h1>Message Wall of Reflection</h1>
+      <p>Leave one final note for the people and memories that made this journey unforgettable.</p>
     </header>
 
     <div class="message-grid" id="messageGrid">
-        <div class="message-card">
-            <div class="card-content">The days may end, but the memories never will.</div>
-            <div class="card-footer">Anonymous</div>
-        </div>
+      <div class="message-card">
+        <div class="card-content">The days may end, but the memories never will.</div>
+        <div class="card-footer">Anonymous</div>
+      </div>
     </div>
-</div>
+  </div>
 
-<button class="write-btn" onclick="openPopup()">✎</button>
+  <!-- Floating write button -->
+  <button class="write-btn" onclick="openPopup()">✎</button>
 
-<div class="popup" id="popup">
+  <!-- Write note popup -->
+  <div class="popup" id="popup">
     <div class="popup-card">
-        <button class="close-popup" onclick="closePopup()">&times;</button>
-        <div class="popup-title">Leave a Note</div>
-
-        <textarea id="messageText" rows="5" placeholder="A memory I’ll never forget..."></textarea>
-        <input type="text" id="nameInput" placeholder="Your name (optional)">
-
-        <div class="checkbox-row">
-            <input type="checkbox" id="anonymousCheck">
-            <label for="anonymousCheck">Anonymous</label>
-        </div>
-
-        <button class="pin-btn" onclick="pinMessage()">Pin to Wall</button>
+      <button class="close-popup" onclick="closePopup()">&times;</button>
+      <div class="popup-title">Leave a Note</div>
+      <textarea id="messageText" rows="5" placeholder="A memory I'll never forget..."></textarea>
+      <input type="text" id="nameInput" placeholder="Your name (optional)">
+      <div class="checkbox-row">
+        <input type="checkbox" id="anonymousCheck">
+        <label for="anonymousCheck">Post anonymously</label>
+      </div>
+      <button class="pin-btn" onclick="pinMessage()">Pin to Wall</button>
     </div>
-</div>
+  </div>
+
+  <!-- SIGN IN MODAL -->
+  <div id="signinModal"
+    class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div class="glass pop rounded-[2rem] p-8 w-full max-w-md relative">
+      <button onclick="closeModal('signinModal')"
+        class="absolute top-4 right-4 text-2xl text-stone-400 hover:text-yellow-400 hover:rotate-90 transition-all duration-300">×</button>
+      <h2 class="text-3xl font-bold text-yellow-400 mb-2 text-center">Welcome Back</h2>
+      <p class="text-stone-400 text-center mb-6 text-sm">Sign in to access your yearbook</p>
+      <div class="space-y-4">
+        <input id="loginEmail" type="email" placeholder="Email" class="input-glass" />
+        <input id="loginPass" type="password" placeholder="Password" class="input-glass" />
+      </div>
+      <button onclick="signin()"
+        class="w-full mt-5 rounded-2xl bg-yellow-400 text-black font-semibold py-3 hover:scale-[1.02] transition">
+        Sign In
+      </button>
+      <p class="text-sm text-center text-stone-400 mt-4">
+        Don't have an account?
+        <button onclick="switchToSignup()" class="text-yellow-400 hover:underline">Create one</button>
+      </p>
+    </div>
+  </div>
+
+  <!-- SIGN UP MODAL -->
+  <div id="signupModal"
+    class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div class="glass pop rounded-[2rem] p-8 w-full max-w-2xl relative">
+      <button onclick="closeModal('signupModal')"
+        class="absolute top-4 right-4 text-2xl text-stone-400 hover:text-yellow-400 hover:rotate-90 transition-all duration-300">×</button>
+      <h2 class="text-3xl font-bold text-yellow-400 mb-6 text-center">Request Access</h2>
+      <div class="grid md:grid-cols-2 gap-4">
+        <input id="fullName" placeholder="Full Name" class="input-glass" />
+        <input id="email" placeholder="Email" class="input-glass" />
+        <select id="branch" class="input-glass bg-black text-white">
+          <option>ECS</option>
+          <option>Comp</option>
+          <option>Mech</option>
+          <option>Civil</option>
+          <option>AIDS</option>
+        </select>
+        <input id="roll" placeholder="Roll Number" class="input-glass" />
+      </div>
+      <input id="password" type="password" placeholder="Create Password" class="input-glass mt-4" />
+      <button onclick="signup()"
+        class="w-full mt-5 rounded-2xl bg-yellow-400 text-black font-semibold py-3 hover:scale-[1.02] transition">
+        Request Access
+      </button>
+      <p class="text-sm text-center text-stone-400 mt-4">
+        Already have an account?
+        <button onclick="switchToSignin()" class="text-yellow-400 hover:underline">Sign In</button>
+      </p>
+    </div>
+  </div>
+
+  <!-- PROFILE MODAL -->
+  <div id="profileModal"
+    class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div class="glass pop rounded-[2rem] w-full max-w-md relative overflow-hidden">
+      <div class="h-[2px] bg-gradient-to-r from-transparent via-yellow-400 to-transparent"></div>
+      <div class="p-8">
+        <button onclick="closeModal('profileModal')"
+          class="absolute top-5 right-5 text-2xl text-stone-400 hover:text-yellow-400 hover:rotate-90 transition-all duration-300">×</button>
+        <h2 class="text-3xl font-bold text-yellow-400 mb-1 text-center">Profile Settings</h2>
+        <p class="text-stone-500 text-xs text-center tracking-widest uppercase mb-6">Manage your identity</p>
+        <div class="flex items-center gap-5 mb-5">
+          <div class="h-16 w-16 rounded-full p-[2px] avatar-ring shrink-0">
+            <img id="modalPfpPreview" src="https://placehold.co/64x64"
+              class="h-full w-full rounded-full object-cover border-2 border-black" />
+          </div>
+          <div class="flex-1">
+            <p class="section-label">Profile Picture</p>
+            <input id="pfpUpload" type="file" accept="image/*" class="hidden" />
+            <div id="uploadZone" class="upload-zone" onclick="document.getElementById('pfpUpload').click()">
+              <span id="uploadZoneText">📁 Choose image</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-divider"></div>
+        <div class="mb-4">
+          <p class="section-label">Display Name</p>
+          <input id="newName" placeholder="Enter new name" class="input-glass" />
+        </div>
+        <div class="modal-divider"></div>
+        <div class="space-y-3">
+          <p class="section-label">Change Password</p>
+          <input id="currentPass" type="password" placeholder="Current Password" class="input-glass" />
+          <input id="newPass" type="password" placeholder="New Password" class="input-glass" />
+        </div>
+        <div class="grid grid-cols-2 gap-4 mt-6">
+          <button onclick="saveProfileChanges()"
+            class="rounded-2xl bg-yellow-400 text-black py-3 font-semibold hover:scale-[1.02] transition">
+            Save Changes
+          </button>
+          <button onclick="signout()"
+            class="rounded-2xl border border-stone-600 py-3 hover:border-red-500/60 hover:text-red-400 transition">
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 <script>
-function openPopup() {
-    document.getElementById("popup").classList.add("active");
-}
+  /* ── Auth state ── */
+  let currentUserName = "";
+  let isLoggedIn = false;
+  let selectedPfpFile = null;
 
-function closePopup() {
-    document.getElementById("popup").classList.remove("active");
-}
+  document.addEventListener("DOMContentLoaded", () => {
+    ["loginEmail", "loginPass"].forEach(id => {
+      document.getElementById(id)?.addEventListener("keydown", e => { if (e.key === "Enter") signin(); });
+    });
+    ["fullName", "email", "roll", "password"].forEach(id => {
+      document.getElementById(id)?.addEventListener("keydown", e => { if (e.key === "Enter") signup(); });
+    });
+    ["newName", "currentPass", "newPass"].forEach(id => {
+      document.getElementById(id)?.addEventListener("keydown", e => { if (e.key === "Enter") saveProfileChanges(); });
+    });
 
-function pinMessage() {
-    const text = document.getElementById("messageText").value.trim();
-    const name = document.getElementById("nameInput").value.trim();
-    const anonymous = document.getElementById("anonymousCheck").checked;
+    document.getElementById("pfpUpload").addEventListener("change", function () {
+      const file = this.files[0];
+      if (!file) return;
+      selectedPfpFile = file;
+      document.getElementById("uploadZoneText").textContent = "✓ " + file.name;
+      document.getElementById("uploadZone").classList.add("has-file");
+      const reader = new FileReader();
+      reader.onload = e => { document.getElementById("modalPfpPreview").src = e.target.result; };
+      reader.readAsDataURL(file);
+    });
+  });
 
-    if (!text) return;
+  function showToast(message, isError = false) {
+    const toast = document.getElementById("toast");
+    const dot   = document.getElementById("toastDot");
+    document.getElementById("toastText").textContent = message;
+    toast.classList.remove("hidden");
+    toast.style.borderColor = isError ? "rgba(248,113,113,0.4)" : "rgba(250,204,21,0.3)";
+    dot.style.background    = isError ? "#f87171" : "#facc15";
+    setTimeout(() => toast.classList.add("hidden"), 2800);
+  }
 
+  let menuOpen = false;
+
+  function toggleMenu() {
+    menuOpen = !menuOpen;
+    const menu    = document.getElementById("mobileMenu");
+    const wrapper = document.getElementById("navWrapper");
+    const l1 = document.getElementById("hLine1");
+    const l2 = document.getElementById("hLine2");
+    const l3 = document.getElementById("hLine3");
+
+    if (menuOpen) {
+      menu.classList.add("open");
+      wrapper.style.borderRadius = "1.5rem";
+      l1.style.transform = "translateY(7px) rotate(45deg)";
+      l2.style.opacity   = "0";
+      l3.style.transform = "translateY(-7px) rotate(-45deg)";
+      l3.style.width = "22px"; l3.style.marginRight = "0"; l3.style.alignSelf = "auto";
+    } else {
+      menu.classList.remove("open");
+      wrapper.style.borderRadius = "9999px";
+      l1.style.transform = ""; l2.style.opacity = "1"; l3.style.transform = "";
+      l3.style.width = "14px"; l3.style.marginRight = "4px"; l3.style.alignSelf = "flex-end";
+    }
+  }
+
+  function syncMobileAuthText() {
+    const hamburger      = document.getElementById("hamburger");
+    const mobilePfpBtn   = document.getElementById("mobilePfpBtn");
+    const mobileNameText = document.getElementById("mobileNameText");
+    const mobilePfp      = document.getElementById("mobilePfp");
+
+    if (isLoggedIn) {
+      hamburger.classList.add("hidden");
+      mobilePfpBtn.classList.remove("hidden");
+      mobilePfpBtn.classList.add("flex");
+      mobileNameText.textContent = currentUserName.toUpperCase();
+      const navSrc = document.getElementById("navPfp").src;
+      if (navSrc) mobilePfp.src = navSrc;
+    } else {
+      hamburger.classList.remove("hidden");
+      mobilePfpBtn.classList.add("hidden");
+      mobilePfpBtn.classList.remove("flex");
+    }
+  }
+
+  function closeModal(id) { document.getElementById(id).classList.add("hidden"); }
+
+  function handleAuthButton() {
+    if (!isLoggedIn) {
+      document.getElementById("signinModal").classList.remove("hidden");
+    } else {
+      document.getElementById("modalPfpPreview").src = document.getElementById("navPfp").src;
+      selectedPfpFile = null;
+      document.getElementById("uploadZoneText").textContent = "📁 Choose image";
+      document.getElementById("uploadZone").classList.remove("has-file");
+      document.getElementById("profileModal").classList.remove("hidden");
+    }
+  }
+
+  function switchToSignup() { closeModal("signinModal"); document.getElementById("signupModal").classList.remove("hidden"); }
+  function switchToSignin()  { closeModal("signupModal"); document.getElementById("signinModal").classList.remove("hidden"); }
+
+  function validatePassword(p) {
+    return /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/.test(p);
+  }
+
+  async function signup() {
+    const pwd = document.getElementById("password").value;
+    if (!validatePassword(pwd)) { showToast("Password needs 8+ chars, 1 capital, 1 number, 1 symbol", true); return; }
+    const res = await fetch("/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        full_name:   document.getElementById("fullName").value,
+        email:       document.getElementById("email").value,
+        branch:      document.getElementById("branch").value,
+        roll_number: document.getElementById("roll").value,
+        password:    pwd
+      })
+    });
+    const result = await res.json();
+    if (result.message?.toLowerCase().includes("exists")) { showToast("User already exists", true); return; }
+    showToast("Access request submitted!");
+    switchToSignin();
+  }
+
+  async function signin() {
+    const res = await fetch("/signin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email:    document.getElementById("loginEmail").value,
+        password: document.getElementById("loginPass").value
+      })
+    });
+    const result = await res.json();
+    if (result.success) {
+      isLoggedIn = true;
+      currentUserName = result.name;
+      document.getElementById("authBtnText").innerText = result.name.toUpperCase();
+      if (result.pfp) {
+        document.getElementById("navPfp").src = result.pfp;
+        document.getElementById("pfpRing").classList.remove("hidden");
+      }
+      closeModal("signinModal");
+      showToast("Welcome back, " + result.name);
+      syncMobileAuthText();
+    } else {
+      showToast(result.message || "Incorrect credentials", true);
+    }
+  }
+
+  async function saveProfileChanges() {
+    const formData = new FormData();
+    const newName     = document.getElementById("newName").value.trim();
+    const currentPass = document.getElementById("currentPass").value;
+    const newPass     = document.getElementById("newPass").value;
+    if (newName)         formData.append("new_name", newName);
+    if (currentPass)     formData.append("current_password", currentPass);
+    if (newPass)         formData.append("new_password", newPass);
+    if (selectedPfpFile) formData.append("pfp", selectedPfpFile);
+
+    const res = await fetch("/update-profile", { method: "POST", body: formData });
+    const result = await res.json();
+    if (result.success) {
+      if (result.name) { currentUserName = result.name; document.getElementById("authBtnText").innerText = result.name.toUpperCase(); }
+      if (result.pfp) {
+        document.getElementById("navPfp").src = result.pfp;
+        document.getElementById("modalPfpPreview").src = result.pfp;
+        document.getElementById("mobilePfp").src = result.pfp;
+        document.getElementById("pfpRing").classList.remove("hidden");
+      }
+      selectedPfpFile = null;
+      showToast("Profile updated");
+      closeModal("profileModal");
+    } else {
+      showToast(result.message || "Update failed", true);
+    }
+  }
+
+  async function signout() {
+    await fetch("/signout", { method: "POST" });
+    isLoggedIn = false; currentUserName = ""; selectedPfpFile = null;
+    document.getElementById("authBtnText").innerText = "Sign Up";
+    document.getElementById("navPfp").src = "";
+    document.getElementById("pfpRing").classList.add("hidden");
+    closeModal("profileModal");
+    showToast("Signed out");
+    syncMobileAuthText();
+  }
+
+  /* Close auth modals on backdrop click — but NOT the write popup */
+  window.addEventListener("click", function(e) {
+    ["signinModal", "signupModal", "profileModal"].forEach(id => {
+      if (e.target === document.getElementById(id)) closeModal(id);
+    });
+  });
+
+  /* ── Wall popup ── */
+  function openPopup()  { document.getElementById("popup").classList.add("active"); }
+  function closePopup() { document.getElementById("popup").classList.remove("active"); }
+
+  document.getElementById("popup").addEventListener("click", function(e) {
+    if (e.target === this) closePopup();
+  });
+
+  /* ── Flask API ── */
+  function renderCard(text, author, prepend = true) {
     const grid = document.getElementById("messageGrid");
     const card = document.createElement("div");
     card.className = "message-card";
-
+    const safe = text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
     card.innerHTML = `
-        <div class="card-content">${text}</div>
-        <div class="card-footer">${anonymous ? "Anonymous" : (name || "Unknown")}</div>
+      <div class="card-content">${safe}</div>
+      <div class="card-footer">${author}</div>
     `;
+    if (prepend) grid.prepend(card);
+    else         grid.appendChild(card);
+  }
 
-    grid.prepend(card);
+  async function loadMessages() {
+    const grid = document.getElementById("messageGrid");
+    grid.innerHTML = "";
+    try {
+      const res  = await fetch("/api/messages");
+      const msgs = await res.json();
+      if (msgs.length === 0) {
+        renderCard("The days may end, but the memories never will.", "Anonymous", false);
+      } else {
+        msgs.forEach(m => renderCard(m.text, m.author, false));
+      }
+    } catch {
+      renderCard("The days may end, but the memories never will.", "Anonymous", false);
+    }
+  }
 
-    closePopup();
-    document.getElementById("messageText").value = "";
-    document.getElementById("nameInput").value = "";
-    document.getElementById("anonymousCheck").checked = false;
-}
+  async function pinMessage() {
+    const text      = document.getElementById("messageText").value.trim();
+    const name      = document.getElementById("nameInput").value.trim();
+    const anonymous = document.getElementById("anonymousCheck").checked;
+
+    if (!text) { showToast("Write something first!", true); return; }
+
+    const author = anonymous ? "Anonymous" : (name || "Unknown");
+
+    try {
+      const res    = await fetch("/api/messages", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ text, author })
+      });
+      const result = await res.json();
+      if (result.success) {
+        renderCard(text, author, true);
+        closePopup();
+        document.getElementById("messageText").value = "";
+        document.getElementById("nameInput").value   = "";
+        document.getElementById("anonymousCheck").checked = false;
+        showToast("Note pinned to the wall ✦");
+      } else {
+        showToast(result.error || "Failed to pin", true);
+      }
+    } catch {
+      showToast("Server error, try again", true);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    loadMessages();
+    document.getElementById("nameInput")?.addEventListener("keydown", e => {
+      if (e.key === "Enter") pinMessage();
+    });
+  });
 </script>
-
 </body>
 </html>

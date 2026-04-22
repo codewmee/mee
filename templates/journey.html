@@ -155,6 +155,265 @@
   .hero-space { padding: 140px 60px; }
   .hero-space h1 { font-size: 92px; font-family: serif; color: rgba(255,255,255,0.92); }
   a { text-decoration: none; }
+      .serif {
+      font-family: 'Playfair Display', serif;
+    }
+
+    /* TEXTURE */
+    .texture {
+      position: fixed;
+      inset: 0;
+      background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+      opacity: 0.05;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* ORB */
+   
+
+    @keyframes floatOrb {
+      0% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-40px);
+      }
+
+      100% {
+        transform: translateY(0);
+      }
+    }
+
+    /* HEADER */
+    header {
+      text-align: center;
+         padding: 136px 20px 50px;
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+
+
+    header h1 {
+      font-size: 60px;
+      color: white;
+    }
+
+    /* TIMELINE */
+    .timeline {
+      max-width: 1100px;
+      margin: auto;
+      padding: 50px 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      width: 2px;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateX(-50%);
+    }
+
+    /* ITEM */
+    .timeline-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 100px 0;
+      opacity: 0;
+      transform: translateY(60px);
+      transition: 0.8s;
+    }
+
+    .timeline-item.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .timeline-item.reverse {
+      flex-direction: row-reverse;
+    }
+
+    /* YEAR */
+    .year {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #111;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #d4a017;
+      font-weight: bold;
+      z-index: 3;
+    }
+
+    /* POLAROID */
+    .polaroid {
+      width: 45%;
+      background: #e5e5e5;
+      padding: 12px 12px 40px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+      transform: rotate(-2deg);
+      transition: 0.3s;
+    }
+
+    .timeline-item.reverse .polaroid {
+      transform: rotate(2deg);
+    }
+
+    .polaroid:hover {
+      transform: rotate(0deg) scale(1.05);
+    }
+
+    /* IMAGE FIXED */
+    .polaroid img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      display: block;
+      filter: grayscale(100%);
+      transition: 0.4s;
+    }
+
+    .polaroid:hover img {
+      filter: grayscale(0%);
+      transform: scale(1.05);
+    }
+
+    /* CAPTION */
+    .polaroid p {
+      text-align: center;
+      color: black;
+      margin-top: 10px;
+      font-style: italic;
+    }
+
+    /* TEXT SIDE */
+    .content {
+      width: 45%;
+    }
+
+    .content h2 {
+      font-size: 28px;
+      color: white;
+      margin-bottom: 10px;
+    }
+
+    .content p {
+      font-style: italic;
+      color: #aaa;
+      line-height: 1.6;
+    }
+
+
+
+    /* BUTTON */
+    .btn_yearbook {
+      padding: 15px 30px;
+      border: 1px solid #d4a017;
+      background: transparent;
+      color: #d4a017;
+      cursor: pointer;
+      letter-spacing: 2px;
+      transition: 0.3s;
+      width: fit-content;
+      border-radius: 50px;
+
+    }
+
+    .btn_yearbook:hover {
+      background: #d4a017;
+      color: black;
+    }
+
+    /* FOOTER FIXED */
+    footer {
+      margin-top: 100px;
+      padding: 40px 20px;
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    }
+
+    footer p {
+      font-size: 12px;
+      letter-spacing: 3px;
+      color: gray;
+    }
+
+    /* MOBILE */
+    @media(max-width: 768px) {
+      .timeline::before {
+        left: 20px;
+      }
+
+      .timeline-item {
+        flex-direction: column !important;
+        align-items: flex-start;
+      }
+
+      .polaroid,
+      .content {
+        width: 100%;
+      }
+
+      .year {
+        left: 20px;
+      }
+    }
+
+    .btn_txt {
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      border-radius: 50px;
+
+
+    }
+.btn_yearbook:hover{
+   border: #d4a017 2px solid;
+      background: transparent;
+      color: white;
+}
+
+    .cover {
+
+      background: #d4a017;
+      padding: 10px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      width: fit-content;
+      color: black;
+      transition: all 0.3s ease;
+    }
+
+    .cover p {
+      font-size: 12px;
+      letter-spacing: 4px;
+    }
+
+    .cover:hover {
+      border: #d4a017 2px solid;
+      background: transparent;
+      color: white;
+    }
 </style>
 </head>
 <body>
@@ -230,9 +489,87 @@
   </div>
 
   <!-- ORIGINAL BODY CONTENT -->
-  <section class="hero-space">
-    <h1>The Journey Begins</h1>
-  </section>
+   <header>
+    <div class="cover">
+      <p>OUR HISTORY</p>
+    </div>
+    <h1 class="serif">The Journey: 2025-2029</h1>
+  </header>
+
+  <div class="timeline">
+
+    <div class="timeline-item">
+      <div class="year">2025</div>
+      <div class="polaroid">
+        <img src="https://images.unsplash.com/photo-1523050335102-c67440e03125">
+        <p>First day on campus 🍂</p>
+      </div>
+      <div class="content">
+        <h2 class="serif">The First Hello</h2>
+        <p>We were lost, nervous, and carrying way too many bags.</p>
+      </div>
+    </div>
+
+    <div class="timeline-item reverse">
+      <div class="year">2026</div>
+      <div class="polaroid">
+        <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622">
+        <p>Freshers night 🎉</p>
+      </div>
+      <div class="content">
+        <h2 class="serif">We Became Seniors</h2>
+        <p>Hosting turned out harder than attending.</p>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="year">2027</div>
+      <div class="polaroid">
+        <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f">
+        <p>Library nights 📚</p>
+      </div>
+      <div class="content">
+        <h2 class="serif">Finding Our Feet</h2>
+        <p>Coffee and chaos became routine.</p>
+      </div>
+    </div>
+
+    <div class="timeline-item reverse">
+      <div class="year">2028</div>
+      <div class="polaroid">
+        <img src="https://images.unsplash.com/photo-1529634893965-4c9c9e84c0b0">
+        <p>Farewell 🎈</p>
+      </div>
+      <div class="content">
+        <h2 class="serif">A Goodbye Worth Remembering</h2>
+        <p>We poured everything into that night.</p>
+      </div>
+    </div>
+
+
+    <div class="timeline-item">
+      <div class="year">2029</div>
+      <div class="polaroid">
+        <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f">
+        <p>Library nights 📚</p>
+      </div>
+      <div class="content">
+        <h2 class="serif">Finding Our Feet</h2>
+        <p>Coffee and chaos became routine.</p>
+      </div>
+    </div>
+
+
+  </div>
+  <div class="btn_txt">
+    <p class="serif">Four years. Countless memories. One unforgettable journey.</p>
+    <button class="btn_yearbook" onclick="goToYearbook()">MEET THE CLASS</button>
+  </div>
+
+  <footer>
+
+    <p>All memories preserved by love </p>
+  </footer>
 
   <!-- SIGN IN MODAL -->
   <div id="signinModal"
@@ -337,6 +674,20 @@
   </div>
 
 <script>
+   function goToYearbook() {
+      window.location.href = "/yearbook";
+    }
+
+    const items = document.querySelectorAll('.timeline-item');
+
+    window.addEventListener('scroll', () => {
+      items.forEach(item => {
+        const top = item.getBoundingClientRect().top;
+        if (top < window.innerHeight - 100) {
+          item.classList.add('show');
+        }
+      });
+    });
   let currentUserName = "";
   let isLoggedIn = false;
   let selectedPfpFile = null;
