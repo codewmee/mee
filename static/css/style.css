@@ -77,6 +77,13 @@ body::before {
   transform: translateY(-1px);
 }
 
+.login-btn.logged-in {
+  border-color: rgba(212, 160, 23, 0.6);
+  color: #d4a017;
+  background: rgba(212, 160, 23, 0.1);
+  box-shadow: inset 0 1px 0 rgba(212,160,23,0.15), 0 8px 24px rgba(212,160,23,0.15);
+}
+
 /* ── Modal ── */
 .modal-overlay {
   position: fixed;

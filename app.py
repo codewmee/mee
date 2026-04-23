@@ -252,7 +252,14 @@ def approve_user(user_id):
     db.session.commit()
     return f'✅ {user.full_name} approved'
 
-
+@app.route('/api/me')
+def me():
+    if 'user_id' not in session:
+        return jsonify({'loggedIn': False})
+    user = db.session.get(User, session['user_id'])
+    if not user:
+        return jsonify({'loggedIn': False})
+    return jsonify({'loggedIn': True, 'name': user.full_name, 'pfp': user.profile_pic})
 # =========================
 # RUN
 # =========================

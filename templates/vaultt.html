@@ -44,7 +44,6 @@
     pointer-events: none;
   }
 
-  /* ── Navbar ── */
   .glass {
     background: rgba(255,255,255,0.06);
     backdrop-filter: blur(18px);
@@ -149,7 +148,6 @@
     margin: 0.5rem 0;
   }
 
-  /* ── Vault / Archive styles ── */
   .serif-italic { font-family: 'Playfair Display', serif; font-style: italic; }
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -159,10 +157,7 @@
     transform: translateY(70px) scale(0.94);
     transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .card-show {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  .card-show { opacity: 1; transform: translateY(0) scale(1); }
 
   .premium-line {
     border: none;
@@ -209,20 +204,13 @@
           </div>
         </button>
 
+        <!-- Mobile: always show hamburger only -->
         <div id="mobileAuth" class="flex md:hidden items-center gap-2">
           <button id="hamburger" onclick="toggleMenu()"
             class="flex flex-col gap-[5px] items-center justify-center w-10 h-10 rounded-full glass">
             <span id="hLine1" class="ham-line"></span>
             <span id="hLine2" class="ham-line"></span>
             <span id="hLine3" class="ham-line w-[14px] self-end mr-[4px]"></span>
-          </button>
-          <button id="mobilePfpBtn" onclick="handleAuthButton()"
-            class="hidden items-center gap-2 glass rounded-full pl-3 pr-1.5 py-1.5 text-yellow-300 hover:scale-105 transition-all duration-300">
-            <span id="mobileNameText" class="text-xs font-semibold tracking-wide"></span>
-            <div class="h-8 w-8 rounded-full p-[2px] avatar-ring">
-              <img id="mobilePfp" src="https://placehold.co/32x32"
-                class="h-full w-full rounded-full object-cover border border-black/40" />
-            </div>
           </button>
         </div>
       </div>
@@ -237,7 +225,7 @@
         <a class="mobile-nav-link active" href="/vault">Vault</a>
         <a class="mobile-nav-link" href="/wall">The Wall</a>
         <div class="mobile-divider my-3"></div>
-        <button onclick="handleAuthButton(); toggleMenu()"
+        <button id="mobileMenuAuthBtn" onclick="handleAuthButton(); toggleMenu()"
           class="w-full rounded-2xl bg-yellow-400/10 border border-yellow-400/30 text-yellow-300 font-semibold py-3 text-sm tracking-wide hover:bg-yellow-400/20 transition">
           <span id="mobileAuthText">Sign In / Sign Up</span>
         </button>
@@ -246,9 +234,8 @@
     </div>
   </div>
 
-  <!-- ── VAULT BODY ── -->
+  <!-- VAULT BODY -->
   <div class="pt-28 px-6 md:px-9">
-
     <header class="max-w-7xl mx-auto mb-12">
       <h1 class="serif-italic text-6xl md:text-7xl text-white mb-4">The Archive</h1>
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -272,7 +259,6 @@
 
     <main id="mediaGrid" style="transition: opacity 0.35s ease, transform 0.35s ease;"
           class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
       {% for img in images %}
       <div class="memory-card group overflow-hidden rounded-xl bg-[#1c1c1a] cursor-pointer"
            data-year="{{ img.year }}"
@@ -289,7 +275,6 @@
         </div>
       </div>
       {% endfor %}
-
     </main>
 
     <footer class="max-w-7xl mx-auto mt-20 mb-8">
@@ -298,12 +283,10 @@
         @2026 All memories preserved by love ❤️
       </div>
     </footer>
-
   </div>
 
   <!-- SIGN IN MODAL -->
-  <div id="signinModal"
-    class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+  <div id="signinModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
     <div class="glass pop rounded-[2rem] p-8 w-full max-w-md relative">
       <button onclick="closeModal('signinModal')"
         class="absolute top-4 right-4 text-2xl text-stone-400 hover:text-yellow-400 hover:rotate-90 transition-all duration-300">×</button>
@@ -325,8 +308,7 @@
   </div>
 
   <!-- SIGN UP MODAL -->
-  <div id="signupModal"
-    class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+  <div id="signupModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
     <div class="glass pop rounded-[2rem] p-8 w-full max-w-2xl relative">
       <button onclick="closeModal('signupModal')"
         class="absolute top-4 right-4 text-2xl text-stone-400 hover:text-yellow-400 hover:rotate-90 transition-all duration-300">×</button>
@@ -336,10 +318,10 @@
         <input id="email" placeholder="Email" class="input-glass" />
         <select id="branch" class="input-glass bg-black text-white">
           <option>ECS</option>
-          <option>Comp</option>
-          <option>Mech</option>
-          <option>Civil</option>
+          <option>CS</option>
           <option>AIDS</option>
+          <option>MECH</option>
+          <option>CIVIL</option>
         </select>
         <input id="roll" placeholder="Roll Number" class="input-glass" />
       </div>
@@ -356,8 +338,7 @@
   </div>
 
   <!-- PROFILE MODAL -->
-  <div id="profileModal"
-    class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+  <div id="profileModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
     <div class="glass pop rounded-[2rem] w-full max-w-md relative overflow-hidden">
       <div class="h-[2px] bg-gradient-to-r from-transparent via-yellow-400 to-transparent"></div>
       <div class="p-8">
@@ -404,11 +385,13 @@
   </div>
 
 <script>
-  /* ── Auth state ── */
+  // ── State ──
   let currentUserName = "";
   let isLoggedIn = false;
   let selectedPfpFile = null;
+  let menuOpen = false;
 
+  // ── DOMContentLoaded ──
   document.addEventListener("DOMContentLoaded", () => {
     ["loginEmail", "loginPass"].forEach(id => {
       document.getElementById(id)?.addEventListener("keydown", e => { if (e.key === "Enter") signin(); });
@@ -430,8 +413,25 @@
       reader.onload = e => { document.getElementById("modalPfpPreview").src = e.target.result; };
       reader.readAsDataURL(file);
     });
+
+    // Check session on load
+    fetch("/api/me")
+      .then(r => r.json())
+      .then(data => {
+        if (data.loggedIn) {
+          isLoggedIn = true;
+          currentUserName = data.name;
+          document.getElementById("authBtnText").innerText = data.name.toUpperCase();
+          if (data.pfp) {
+            document.getElementById("navPfp").src = data.pfp;
+            document.getElementById("pfpRing").classList.remove("hidden");
+          }
+        }
+        syncMobileAuthText(); // always runs
+      });
   });
 
+  // ── Toast ──
   function showToast(message, isError = false) {
     const toast = document.getElementById("toast");
     const dot   = document.getElementById("toastDot");
@@ -442,8 +442,7 @@
     setTimeout(() => toast.classList.add("hidden"), 2800);
   }
 
-  let menuOpen = false;
-
+  // ── Hamburger ──
   function toggleMenu() {
     menuOpen = !menuOpen;
     const menu    = document.getElementById("mobileMenu");
@@ -467,26 +466,23 @@
     }
   }
 
+  // ── Sync mobile menu button ──
   function syncMobileAuthText() {
-    const hamburger      = document.getElementById("hamburger");
-    const mobilePfpBtn   = document.getElementById("mobilePfpBtn");
-    const mobileNameText = document.getElementById("mobileNameText");
-    const mobilePfp      = document.getElementById("mobilePfp");
+    const mobileAuthBtn = document.getElementById("mobileMenuAuthBtn");
+    const mobileAuthTxt = document.getElementById("mobileAuthText");
 
     if (isLoggedIn) {
-      hamburger.classList.add("hidden");
-      mobilePfpBtn.classList.remove("hidden");
-      mobilePfpBtn.classList.add("flex");
-      mobileNameText.textContent = currentUserName.toUpperCase();
-      const navSrc = document.getElementById("navPfp").src;
-      if (navSrc) mobilePfp.src = navSrc;
+      mobileAuthTxt.textContent = "Update Profile";
+      mobileAuthBtn.classList.remove("bg-yellow-400/10");
+      mobileAuthBtn.classList.add("bg-yellow-400/20");
     } else {
-      hamburger.classList.remove("hidden");
-      mobilePfpBtn.classList.add("hidden");
-      mobilePfpBtn.classList.remove("flex");
+      mobileAuthTxt.textContent = "Sign In / Sign Up";
+      mobileAuthBtn.classList.add("bg-yellow-400/10");
+      mobileAuthBtn.classList.remove("bg-yellow-400/20");
     }
   }
 
+  // ── Modal helpers ──
   function closeModal(id) { document.getElementById(id).classList.add("hidden"); }
 
   function handleAuthButton() {
@@ -504,10 +500,18 @@
   function switchToSignup() { closeModal("signinModal"); document.getElementById("signupModal").classList.remove("hidden"); }
   function switchToSignin()  { closeModal("signupModal"); document.getElementById("signinModal").classList.remove("hidden"); }
 
+  window.addEventListener("click", function(e) {
+    ["signinModal", "signupModal", "profileModal"].forEach(id => {
+      if (e.target === document.getElementById(id)) closeModal(id);
+    });
+  });
+
+  // ── Password validation ──
   function validatePassword(p) {
     return /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/.test(p);
   }
 
+  // ── Signup ──
   async function signup() {
     const pwd = document.getElementById("password").value;
     if (!validatePassword(pwd)) { showToast("Password needs 8+ chars, 1 capital, 1 number, 1 symbol", true); return; }
@@ -528,6 +532,7 @@
     switchToSignin();
   }
 
+  // ── Signin ──
   async function signin() {
     const res = await fetch("/signin", {
       method: "POST",
@@ -554,24 +559,29 @@
     }
   }
 
+  // ── Save profile ──
   async function saveProfileChanges() {
-    const formData = new FormData();
+    const formData    = new FormData();
     const newName     = document.getElementById("newName").value.trim();
     const currentPass = document.getElementById("currentPass").value;
     const newPass     = document.getElementById("newPass").value;
+
     if (newName)         formData.append("new_name", newName);
     if (currentPass)     formData.append("current_password", currentPass);
     if (newPass)         formData.append("new_password", newPass);
     if (selectedPfpFile) formData.append("pfp", selectedPfpFile);
 
-    const res = await fetch("/update-profile", { method: "POST", body: formData });
+    const res    = await fetch("/update-profile", { method: "POST", body: formData });
     const result = await res.json();
+
     if (result.success) {
-      if (result.name) { currentUserName = result.name; document.getElementById("authBtnText").innerText = result.name.toUpperCase(); }
+      if (result.name) {
+        currentUserName = result.name;
+        document.getElementById("authBtnText").innerText = result.name.toUpperCase();
+      }
       if (result.pfp) {
         document.getElementById("navPfp").src = result.pfp;
         document.getElementById("modalPfpPreview").src = result.pfp;
-        document.getElementById("mobilePfp").src = result.pfp;
         document.getElementById("pfpRing").classList.remove("hidden");
       }
       selectedPfpFile = null;
@@ -582,6 +592,7 @@
     }
   }
 
+  // ── Signout ──
   async function signout() {
     await fetch("/signout", { method: "POST" });
     isLoggedIn = false; currentUserName = ""; selectedPfpFile = null;
@@ -593,14 +604,7 @@
     syncMobileAuthText();
   }
 
-  window.addEventListener("click", function(e) {
-    ["signinModal", "signupModal", "profileModal"].forEach(id => {
-      if (e.target === document.getElementById(id)) closeModal(id);
-    });
-  });
-
-  /* ── Vault / filter / sort logic ── */
-  const sortBtn    = document.getElementById('sortBtn');
+  // ── Vault filter / sort logic ──
   const mediaGrid  = document.getElementById('mediaGrid');
   const filterBtns = document.querySelectorAll('.filter-btn');
 

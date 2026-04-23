@@ -45,7 +45,6 @@
     pointer-events: none;
   }
 
-  /* ── Navbar ── */
   .glass {
     background: rgba(255,255,255,0.06);
     backdrop-filter: blur(18px);
@@ -150,7 +149,6 @@
     margin: 0.5rem 0;
   }
 
-  /* ── Yearbook styles ── */
   .sticky-top {
     position: sticky;
     top: 100px;
@@ -300,20 +298,13 @@
           </div>
         </button>
 
+        <!-- Mobile: always show hamburger only -->
         <div id="mobileAuth" class="flex md:hidden items-center gap-2">
           <button id="hamburger" onclick="toggleMenu()"
             class="flex flex-col gap-[5px] items-center justify-center w-10 h-10 rounded-full glass">
             <span id="hLine1" class="ham-line"></span>
             <span id="hLine2" class="ham-line"></span>
             <span id="hLine3" class="ham-line w-[14px] self-end mr-[4px]"></span>
-          </button>
-          <button id="mobilePfpBtn" onclick="handleAuthButton()"
-            class="hidden items-center gap-2 glass rounded-full pl-3 pr-1.5 py-1.5 text-yellow-300 hover:scale-105 transition-all duration-300">
-            <span id="mobileNameText" class="text-xs font-semibold tracking-wide"></span>
-            <div class="h-8 w-8 rounded-full p-[2px] avatar-ring">
-              <img id="mobilePfp" src="https://placehold.co/32x32"
-                class="h-full w-full rounded-full object-cover border border-black/40" />
-            </div>
           </button>
         </div>
       </div>
@@ -328,7 +319,7 @@
         <a class="mobile-nav-link" href="/vault">Vault</a>
         <a class="mobile-nav-link" href="/wall">The Wall</a>
         <div class="mobile-divider my-3"></div>
-        <button onclick="handleAuthButton(); toggleMenu()"
+        <button id="mobileMenuAuthBtn" onclick="handleAuthButton(); toggleMenu()"
           class="w-full rounded-2xl bg-yellow-400/10 border border-yellow-400/30 text-yellow-300 font-semibold py-3 text-sm tracking-wide hover:bg-yellow-400/20 transition">
           <span id="mobileAuthText">Sign In / Sign Up</span>
         </button>
@@ -337,15 +328,13 @@
     </div>
   </div>
 
-  <!-- ── YEARBOOK BODY ── -->
+  <!-- YEARBOOK BODY -->
   <div class="pt-28">
-
     <header class="text-center mb-8">
       <h1 class="text-5xl font-serif mb-2">The Class of '29</h1>
       <p class="text-gray-400">Faces that defined our journey. Moments that became memories.</p>
     </header>
 
-    <!-- Sticky Search & Filter -->
     <div class="sticky-top">
       <input type="text" placeholder="Search by name or roll no" class="search-input" id="searchInput" />
       <div class="filter-buttons">
@@ -358,7 +347,6 @@
       </div>
     </div>
 
-    <!-- Yearbook Cards -->
     <div class="yearbook-grid" id="yearbookGrid">
       <div class="card" data-branch="CSE" data-name="Aavi Agrawal" data-roll="0187CS221003">
         <div class="card-header">AA</div>
@@ -369,7 +357,6 @@
           <div class="card-btn">Open Yearbook</div>
         </div>
       </div>
-
       <div class="card" data-branch="CSE" data-name="Anushka Shrivastava" data-roll="0187CS221053">
         <div class="card-header">AS</div>
         <div class="card-body">
@@ -379,7 +366,6 @@
           <div class="card-btn">View Quote</div>
         </div>
       </div>
-
       <div class="card" data-branch="ECE" data-name="Bhavesh Patel" data-roll="0187EC221012">
         <div class="card-header">BP</div>
         <div class="card-body">
@@ -389,7 +375,6 @@
           <div class="card-btn">Open Yearbook</div>
         </div>
       </div>
-
       <div class="card" data-branch="MECH" data-name="Meera Kapoor" data-roll="0187ME221045">
         <div class="card-header">MK</div>
         <div class="card-body">
@@ -404,12 +389,10 @@
     <footer class="py-6 text-center text-sm text-stone-500">
       © 2026 All memories preserved forever
     </footer>
-
   </div>
 
   <!-- SIGN IN MODAL -->
-  <div id="signinModal"
-    class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+  <div id="signinModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
     <div class="glass pop rounded-[2rem] p-8 w-full max-w-md relative">
       <button onclick="closeModal('signinModal')"
         class="absolute top-4 right-4 text-2xl text-stone-400 hover:text-yellow-400 hover:rotate-90 transition-all duration-300">×</button>
@@ -420,9 +403,7 @@
         <input id="loginPass" type="password" placeholder="Password" class="input-glass" />
       </div>
       <button onclick="signin()"
-        class="w-full mt-5 rounded-2xl bg-yellow-400 text-black font-semibold py-3 hover:scale-[1.02] transition">
-        Sign In
-      </button>
+        class="w-full mt-5 rounded-2xl bg-yellow-400 text-black font-semibold py-3 hover:scale-[1.02] transition">Sign In</button>
       <p class="text-sm text-center text-stone-400 mt-4">
         Don't have an account?
         <button onclick="switchToSignup()" class="text-yellow-400 hover:underline">Create one</button>
@@ -431,8 +412,7 @@
   </div>
 
   <!-- SIGN UP MODAL -->
-  <div id="signupModal"
-    class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+  <div id="signupModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
     <div class="glass pop rounded-[2rem] p-8 w-full max-w-2xl relative">
       <button onclick="closeModal('signupModal')"
         class="absolute top-4 right-4 text-2xl text-stone-400 hover:text-yellow-400 hover:rotate-90 transition-all duration-300">×</button>
@@ -441,19 +421,13 @@
         <input id="fullName" placeholder="Full Name" class="input-glass" />
         <input id="email" placeholder="Email" class="input-glass" />
         <select id="branch" class="input-glass bg-black text-white">
-          <option>ECS</option>
-          <option>Comp</option>
-          <option>Mech</option>
-          <option>Civil</option>
-          <option>AIDS</option>
+          <option>ECS</option><option>CS</option><option>AIDS</option><option>MECH</option><option>CIVIL</option>
         </select>
         <input id="roll" placeholder="Roll Number" class="input-glass" />
       </div>
       <input id="password" type="password" placeholder="Create Password" class="input-glass mt-4" />
       <button onclick="signup()"
-        class="w-full mt-5 rounded-2xl bg-yellow-400 text-black font-semibold py-3 hover:scale-[1.02] transition">
-        Request Access
-      </button>
+        class="w-full mt-5 rounded-2xl bg-yellow-400 text-black font-semibold py-3 hover:scale-[1.02] transition">Request Access</button>
       <p class="text-sm text-center text-stone-400 mt-4">
         Already have an account?
         <button onclick="switchToSignin()" class="text-yellow-400 hover:underline">Sign In</button>
@@ -462,8 +436,7 @@
   </div>
 
   <!-- PROFILE MODAL -->
-  <div id="profileModal"
-    class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+  <div id="profileModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
     <div class="glass pop rounded-[2rem] w-full max-w-md relative overflow-hidden">
       <div class="h-[2px] bg-gradient-to-r from-transparent via-yellow-400 to-transparent"></div>
       <div class="p-8">
@@ -497,23 +470,19 @@
         </div>
         <div class="grid grid-cols-2 gap-4 mt-6">
           <button onclick="saveProfileChanges()"
-            class="rounded-2xl bg-yellow-400 text-black py-3 font-semibold hover:scale-[1.02] transition">
-            Save Changes
-          </button>
+            class="rounded-2xl bg-yellow-400 text-black py-3 font-semibold hover:scale-[1.02] transition">Save Changes</button>
           <button onclick="signout()"
-            class="rounded-2xl border border-stone-600 py-3 hover:border-red-500/60 hover:text-red-400 transition">
-            Sign Out
-          </button>
+            class="rounded-2xl border border-stone-600 py-3 hover:border-red-500/60 hover:text-red-400 transition">Sign Out</button>
         </div>
       </div>
     </div>
   </div>
 
 <script>
-  /* ── Auth state ── */
   let currentUserName = "";
   let isLoggedIn = false;
   let selectedPfpFile = null;
+  let menuOpen = false;
 
   document.addEventListener("DOMContentLoaded", () => {
     ["loginEmail", "loginPass"].forEach(id => {
@@ -536,6 +505,21 @@
       reader.onload = e => { document.getElementById("modalPfpPreview").src = e.target.result; };
       reader.readAsDataURL(file);
     });
+
+    fetch("/api/me")
+      .then(r => r.json())
+      .then(data => {
+        if (data.loggedIn) {
+          isLoggedIn = true;
+          currentUserName = data.name;
+          document.getElementById("authBtnText").innerText = data.name.toUpperCase();
+          if (data.pfp) {
+            document.getElementById("navPfp").src = data.pfp;
+            document.getElementById("pfpRing").classList.remove("hidden");
+          }
+        }
+        syncMobileAuthText();
+      });
   });
 
   function showToast(message, isError = false) {
@@ -548,8 +532,6 @@
     setTimeout(() => toast.classList.add("hidden"), 2800);
   }
 
-  let menuOpen = false;
-
   function toggleMenu() {
     menuOpen = !menuOpen;
     const menu    = document.getElementById("mobileMenu");
@@ -557,7 +539,6 @@
     const l1 = document.getElementById("hLine1");
     const l2 = document.getElementById("hLine2");
     const l3 = document.getElementById("hLine3");
-
     if (menuOpen) {
       menu.classList.add("open");
       wrapper.style.borderRadius = "1.5rem";
@@ -574,22 +555,16 @@
   }
 
   function syncMobileAuthText() {
-    const hamburger      = document.getElementById("hamburger");
-    const mobilePfpBtn   = document.getElementById("mobilePfpBtn");
-    const mobileNameText = document.getElementById("mobileNameText");
-    const mobilePfp      = document.getElementById("mobilePfp");
-
+    const mobileAuthBtn = document.getElementById("mobileMenuAuthBtn");
+    const mobileAuthTxt = document.getElementById("mobileAuthText");
     if (isLoggedIn) {
-      hamburger.classList.add("hidden");
-      mobilePfpBtn.classList.remove("hidden");
-      mobilePfpBtn.classList.add("flex");
-      mobileNameText.textContent = currentUserName.toUpperCase();
-      const navSrc = document.getElementById("navPfp").src;
-      if (navSrc) mobilePfp.src = navSrc;
+      mobileAuthTxt.textContent = "Update Profile";
+      mobileAuthBtn.classList.remove("bg-yellow-400/10");
+      mobileAuthBtn.classList.add("bg-yellow-400/20");
     } else {
-      hamburger.classList.remove("hidden");
-      mobilePfpBtn.classList.add("hidden");
-      mobilePfpBtn.classList.remove("flex");
+      mobileAuthTxt.textContent = "Sign In / Sign Up";
+      mobileAuthBtn.classList.add("bg-yellow-400/10");
+      mobileAuthBtn.classList.remove("bg-yellow-400/20");
     }
   }
 
@@ -618,14 +593,13 @@
     const pwd = document.getElementById("password").value;
     if (!validatePassword(pwd)) { showToast("Password needs 8+ chars, 1 capital, 1 number, 1 symbol", true); return; }
     const res = await fetch("/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        full_name:   document.getElementById("fullName").value,
-        email:       document.getElementById("email").value,
-        branch:      document.getElementById("branch").value,
+        full_name: document.getElementById("fullName").value,
+        email: document.getElementById("email").value,
+        branch: document.getElementById("branch").value,
         roll_number: document.getElementById("roll").value,
-        password:    pwd
+        password: pwd
       })
     });
     const result = await res.json();
@@ -636,10 +610,9 @@
 
   async function signin() {
     const res = await fetch("/signin", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        email:    document.getElementById("loginEmail").value,
+        email: document.getElementById("loginEmail").value,
         password: document.getElementById("loginPass").value
       })
     });
@@ -662,14 +635,13 @@
 
   async function saveProfileChanges() {
     const formData = new FormData();
-    const newName     = document.getElementById("newName").value.trim();
+    const newName = document.getElementById("newName").value.trim();
     const currentPass = document.getElementById("currentPass").value;
-    const newPass     = document.getElementById("newPass").value;
+    const newPass = document.getElementById("newPass").value;
     if (newName)         formData.append("new_name", newName);
     if (currentPass)     formData.append("current_password", currentPass);
     if (newPass)         formData.append("new_password", newPass);
     if (selectedPfpFile) formData.append("pfp", selectedPfpFile);
-
     const res = await fetch("/update-profile", { method: "POST", body: formData });
     const result = await res.json();
     if (result.success) {
@@ -677,7 +649,6 @@
       if (result.pfp) {
         document.getElementById("navPfp").src = result.pfp;
         document.getElementById("modalPfpPreview").src = result.pfp;
-        document.getElementById("mobilePfp").src = result.pfp;
         document.getElementById("pfpRing").classList.remove("hidden");
       }
       selectedPfpFile = null;
@@ -705,7 +676,7 @@
     });
   });
 
-  /* ── Search & filter logic ── */
+  // Search & filter
   const filterBtns  = document.querySelectorAll('.filter-btn');
   const searchInput = document.getElementById('searchInput');
   let activeFilter  = 'All';
