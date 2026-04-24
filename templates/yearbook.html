@@ -7,8 +7,6 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
   ::selection { background: rgba(212,160,23,0.45); color: #fff7d6; }
-  ::-moz-selection { background: rgba(212,160,23,0.45); color: #fff7d6; }
-
   * { margin:0; padding:0; box-sizing:border-box; }
 
   body {
@@ -19,7 +17,6 @@
       radial-gradient(circle at 20% 30%, rgba(120,80,20,0.22), transparent 40%),
       radial-gradient(circle at 80% 20%, rgba(20,40,90,0.18), transparent 40%),
       linear-gradient(180deg, #070707, #0b0b0b 40%, #10131a 100%);
-    position: relative;
   }
 
   body::before {
@@ -67,6 +64,19 @@
     from { opacity:0; transform:scale(.94); }
     to   { opacity:1; transform:scale(1); }
   }
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(20px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  @keyframes fadeSlideUp {
+    0%   { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0);    opacity: 1; }
+  }
+  @keyframes pulseGold {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(212,160,23,0.4); }
+    50%       { box-shadow: 0 0 0 10px rgba(212,160,23,0); }
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
   .input-glass {
     width: 100%;
@@ -154,7 +164,6 @@
     top: 100px;
     z-index: 20;
     backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
     background: rgba(20,20,20,0.42);
     border: 1px solid rgba(255,255,255,0.12);
     border-radius: 24px;
@@ -197,7 +206,6 @@
     animation: fadeSlideUp 0.5s forwards;
   }
   .filter-btn.active { background: #d4a017; color: black; border-color: #d4a017; }
-
   .filter-buttons .filter-btn:nth-child(1) { animation-delay: 0.2s; }
   .filter-buttons .filter-btn:nth-child(2) { animation-delay: 0.35s; }
   .filter-buttons .filter-btn:nth-child(3) { animation-delay: 0.5s; }
@@ -205,18 +213,13 @@
   .filter-buttons .filter-btn:nth-child(5) { animation-delay: 0.8s; }
   .filter-buttons .filter-btn:nth-child(6) { animation-delay: 0.95s; }
 
-  @keyframes fadeSlideUp {
-    0%   { transform: translateY(20px); opacity: 0; }
-    100% { transform: translateY(0);    opacity: 1; }
-  }
-
   .yearbook-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 24px;
     max-width: 1200px;
     margin: auto;
-    padding-bottom: 80px;
+    padding-bottom: 120px;
   }
 
   .card {
@@ -227,25 +230,34 @@
     border: 1px solid rgba(255,255,255,0.1);
     cursor: pointer;
     transition: transform 0.3s ease, background 0.3s ease;
+    animation: fadeUp 0.4s ease both;
   }
   .card:hover { background: rgba(212,160,23,0.1); transform: scale(1.03); }
+  .card.mine  { border-color: rgba(212,160,23,0.4); }
 
   .card-header {
-    height: 180px;
+    height: 200px;
     background: rgba(255,255,255,0.05);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 3rem;
+    font-size: 3.5rem;
     font-weight: bold;
-    color: rgba(255,255,255,0.5);
+    color: rgba(255,255,255,0.3);
+    overflow: hidden;
+    position: relative;
   }
+  .card-header img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    position: absolute; inset: 0;
+  }
+  .card-header .initials { position: relative; z-index: 1; }
 
   .card-body { padding: 16px; }
-
   .roll { font-family: monospace; font-size: 0.8rem; color: #d4a017; letter-spacing: 1px; }
-  .name { font-size: 1.4rem; font-weight: 600; margin-top: 4px; }
-  .branch { font-style: italic; color: #aaa; margin-bottom: 12px; }
+  .name { font-size: 1.35rem; font-weight: 600; margin-top: 4px; }
+  .branch { font-style: italic; color: #aaa; margin-bottom: 12px; font-size: 0.9rem; }
 
   .card-btn {
     width: 100%;
@@ -257,271 +269,544 @@
     transition: all 0.3s ease;
     text-align: center;
     cursor: pointer;
+    font-size: 0.85rem;
   }
   .card-btn:hover { background: #d4a017; color: black; border-color: #d4a017; }
+
+  /* ── FLOATING YEARBOOK BUTTON ── */
+  #fabYearbook {
+    position: fixed;
+    bottom: 32px;
+    right: 28px;
+    z-index: 60;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #d4a017, #92400e);
+    color: black;
+    font-weight: 700;
+    font-size: 0.88rem;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 8px 32px rgba(212,160,23,0.35);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    animation: pulseGold 2.5s infinite;
+  }
+  #fabYearbook:hover {
+    transform: scale(1.06) translateY(-2px);
+    box-shadow: 0 14px 40px rgba(212,160,23,0.5);
+    animation: none;
+  }
+  #fabYearbook .fab-icon { font-size: 1.1rem; }
+
+  /* ── YEARBOOK MODAL ── */
+  #yearbookModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(6px);
+    z-index: 70;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  #yearbookModal.open { display: flex; }
+
+  .yb-modal-inner {
+    background: rgba(12,11,10,0.9);
+    border: 1px solid rgba(212,160,23,0.2);
+    border-radius: 2rem;
+    width: 100%;
+    max-width: 520px;
+    overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+    animation: pop 0.3s ease;
+  }
+
+  .yb-gold-bar { height: 2px; background: linear-gradient(to right, transparent, #d4a017, transparent); }
+
+  /* card preview inside modal */
+  .yb-preview {
+    background: rgba(255,255,255,0.04);
+    border-radius: 1.25rem;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .yb-preview-img {
+    height: 160px;
+    background: rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: rgba(255,255,255,0.25);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .yb-preview-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .yb-preview-img .overlay {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: #facc15;
+    text-transform: uppercase;
+  }
+  .yb-preview-img:hover .overlay { opacity: 1; }
+
+  .yb-preview-body { padding: 14px 16px; }
+  .yb-preview-roll { font-family: monospace; font-size: 0.75rem; color: #d4a017; letter-spacing: 1px; }
+  .yb-preview-name { font-size: 1.25rem; font-weight: 600; margin-top: 3px; }
+  .yb-preview-branch { font-style: italic; color: #aaa; font-size: 0.85rem; }
+
+  /* spinner */
+  .spinner {
+    display: inline-block;
+    width: 18px; height: 18px;
+    border: 2px solid rgba(0,0,0,0.3);
+    border-top-color: black;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+
+  /* empty state */
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 80px 20px;
+    color: #57534e;
+  }
+  .empty-state .emoji { font-size: 3rem; margin-bottom: 12px; }
+  .empty-state p { font-size: 1rem; }
 
   a { text-decoration: none; }
 </style>
 </head>
 <body class="p-8">
-  <div class="blur-orb"></div>
+<div class="blur-orb"></div>
 
-  <!-- TOAST -->
-  <div id="toast"
-    class="hidden fixed top-24 right-6 z-[100] min-w-[320px] max-w-sm rounded-3xl px-5 py-4 border border-yellow-400/30 bg-stone-900/70 backdrop-blur-2xl shadow-2xl shadow-black/40 transition-all duration-500">
-    <div class="absolute inset-0 rounded-3xl bg-gradient-to-r from-yellow-400/10 via-transparent to-stone-200/5 pointer-events-none"></div>
-    <div class="relative flex items-start gap-3">
-      <div id="toastDot" class="mt-1 h-2.5 w-2.5 rounded-full bg-yellow-400 shadow-lg shadow-yellow-400/50 shrink-0"></div>
-      <p id="toastText" class="text-sm leading-6 text-stone-100 font-medium"></p>
-    </div>
+<!-- TOAST -->
+<div id="toast" class="hidden fixed top-24 right-6 z-[100] min-w-[320px] max-w-sm rounded-3xl px-5 py-4 border border-yellow-400/30 bg-stone-900/70 backdrop-blur-2xl shadow-2xl shadow-black/40 transition-all duration-500">
+  <div class="absolute inset-0 rounded-3xl bg-gradient-to-r from-yellow-400/10 via-transparent to-stone-200/5 pointer-events-none"></div>
+  <div class="relative flex items-start gap-3">
+    <div id="toastDot" class="mt-1 h-2.5 w-2.5 rounded-full bg-yellow-400 shadow-lg shadow-yellow-400/50 shrink-0"></div>
+    <p id="toastText" class="text-sm leading-6 text-stone-100 font-medium"></p>
   </div>
+</div>
 
-  <!-- NAVBAR -->
-  <div id="navWrapper" class="glass fade-down fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl rounded-full z-50 transition-all duration-400">
-    <div class="px-6 md:px-8 py-4 flex items-center justify-between">
-      <a href="/" class="text-2xl font-bold tracking-wide text-yellow-400">Echoes</a>
-
-      <div class="hidden md:flex items-center gap-8 text-sm font-medium">
-        <a class="nav-link" href="/journey">The Journey</a>
-        <a class="nav-link active" href="/yearbook">Year Book</a>
-        <a class="nav-link" href="/vault">Vault</a>
-        <a class="nav-link" href="/wall">The Wall</a>
-      </div>
-
-      <div class="flex items-center gap-3">
-        <button id="authBtn" onclick="handleAuthButton()"
-          class="hidden md:flex glass rounded-full px-5 py-2 text-yellow-300 hover:scale-105 transition-all duration-300 items-center gap-3">
-          <span id="authBtnText" class="font-semibold tracking-wide">Sign Up</span>
-          <div id="pfpRing" class="hidden h-10 w-10 rounded-full p-[2px] avatar-ring shadow-lg shadow-yellow-400/30">
-            <img id="navPfp" src="https://placehold.co/40x40"
-              class="h-full w-full rounded-full object-cover border border-black/40" />
-          </div>
+<!-- NAVBAR -->
+<div id="navWrapper" class="glass fade-down fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl rounded-full z-50 transition-all duration-400">
+  <div class="px-6 md:px-8 py-4 flex items-center justify-between">
+    <a href="/" class="text-2xl font-bold tracking-wide text-yellow-400">Echoes</a>
+    <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+      <a class="nav-link" href="/journey">The Journey</a>
+      <a class="nav-link active" href="/yearbook">Year Book</a>
+      <a class="nav-link" href="/vault">Vault</a>
+      <a class="nav-link" href="/wall">The Wall</a>
+    </div>
+    <div class="flex items-center gap-3">
+      <button id="authBtn" onclick="handleAuthButton()"
+        class="hidden md:flex glass rounded-full px-5 py-2 text-yellow-300 hover:scale-105 transition-all duration-300 items-center gap-3">
+        <span id="authBtnText" class="font-semibold tracking-wide">Sign Up</span>
+        <div id="pfpRing" class="hidden h-10 w-10 rounded-full p-[2px] avatar-ring shadow-lg shadow-yellow-400/30">
+          <img id="navPfp" src="https://placehold.co/40x40" class="h-full w-full rounded-full object-cover border border-black/40" />
+        </div>
+      </button>
+      <div id="mobileAuth" class="flex md:hidden items-center gap-2">
+        <button id="hamburger" onclick="toggleMenu()" class="flex flex-col gap-[5px] items-center justify-center w-10 h-10 rounded-full glass">
+          <span id="hLine1" class="ham-line"></span>
+          <span id="hLine2" class="ham-line"></span>
+          <span id="hLine3" class="ham-line w-[14px] self-end mr-[4px]"></span>
         </button>
-
-        <!-- Mobile: always show hamburger only -->
-        <div id="mobileAuth" class="flex md:hidden items-center gap-2">
-          <button id="hamburger" onclick="toggleMenu()"
-            class="flex flex-col gap-[5px] items-center justify-center w-10 h-10 rounded-full glass">
-            <span id="hLine1" class="ham-line"></span>
-            <span id="hLine2" class="ham-line"></span>
-            <span id="hLine3" class="ham-line w-[14px] self-end mr-[4px]"></span>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Mobile menu -->
-    <div id="mobileMenu">
-      <div class="px-6 pb-5">
-        <div class="mobile-divider mb-3"></div>
-        <a class="mobile-nav-link" href="/journey">The Journey</a>
-        <a class="mobile-nav-link active" href="/yearbook">Year Book</a>
-        <a class="mobile-nav-link" href="/vault">Vault</a>
-        <a class="mobile-nav-link" href="/wall">The Wall</a>
-        <div class="mobile-divider my-3"></div>
-        <button id="mobileMenuAuthBtn" onclick="handleAuthButton(); toggleMenu()"
-          class="w-full rounded-2xl bg-yellow-400/10 border border-yellow-400/30 text-yellow-300 font-semibold py-3 text-sm tracking-wide hover:bg-yellow-400/20 transition">
-          <span id="mobileAuthText">Sign In / Sign Up</span>
-        </button>
-        <div class="mobile-divider mt-3"></div>
       </div>
     </div>
   </div>
-
-  <!-- YEARBOOK BODY -->
-  <div class="pt-28">
-    <header class="text-center mb-8">
-      <h1 class="text-5xl font-serif mb-2">The Class of '29</h1>
-      <p class="text-gray-400">Faces that defined our journey. Moments that became memories.</p>
-    </header>
-
-    <div class="sticky-top">
-      <input type="text" placeholder="Search by name or roll no" class="search-input" id="searchInput" />
-      <div class="filter-buttons">
-        <button class="filter-btn active" data-filter="All">All</button>
-        <button class="filter-btn" data-filter="CSE">CSE</button>
-        <button class="filter-btn" data-filter="ECE">ECE</button>
-        <button class="filter-btn" data-filter="MECH">MECH</button>
-        <button class="filter-btn" data-filter="CIVIL">CIVIL</button>
-        <button class="filter-btn" data-filter="AIDS">AIDS</button>
-      </div>
+  <div id="mobileMenu">
+    <div class="px-6 pb-5">
+      <div class="mobile-divider mb-3"></div>
+      <a class="mobile-nav-link" href="/journey">The Journey</a>
+      <a class="mobile-nav-link active" href="/yearbook">Year Book</a>
+      <a class="mobile-nav-link" href="/vault">Vault</a>
+      <a class="mobile-nav-link" href="/wall">The Wall</a>
+      <div class="mobile-divider my-3"></div>
+      <button id="mobileMenuAuthBtn" onclick="handleAuthButton(); toggleMenu()"
+        class="w-full rounded-2xl bg-yellow-400/10 border border-yellow-400/30 text-yellow-300 font-semibold py-3 text-sm tracking-wide hover:bg-yellow-400/20 transition">
+        <span id="mobileAuthText">Sign In / Sign Up</span>
+      </button>
+      <div class="mobile-divider mt-3"></div>
     </div>
+  </div>
+</div>
 
-    <div class="yearbook-grid" id="yearbookGrid">
-      <div class="card" data-branch="CSE" data-name="Aavi Agrawal" data-roll="0187CS221003">
-        <div class="card-header">AA</div>
-        <div class="card-body">
-          <div class="roll">0187CS221003</div>
-          <div class="name">Aavi Agrawal</div>
-          <div class="branch">CSE</div>
-          <div class="card-btn">Open Yearbook</div>
-        </div>
-      </div>
-      <div class="card" data-branch="CSE" data-name="Anushka Shrivastava" data-roll="0187CS221053">
-        <div class="card-header">AS</div>
-        <div class="card-body">
-          <div class="roll">0187CS221053</div>
-          <div class="name">Anushka Shrivastava</div>
-          <div class="branch">CSE</div>
-          <div class="card-btn">View Quote</div>
-        </div>
-      </div>
-      <div class="card" data-branch="ECE" data-name="Bhavesh Patel" data-roll="0187EC221012">
-        <div class="card-header">BP</div>
-        <div class="card-body">
-          <div class="roll">0187EC221012</div>
-          <div class="name">Bhavesh Patel</div>
-          <div class="branch">ECE</div>
-          <div class="card-btn">Open Yearbook</div>
-        </div>
-      </div>
-      <div class="card" data-branch="MECH" data-name="Meera Kapoor" data-roll="0187ME221045">
-        <div class="card-header">MK</div>
-        <div class="card-body">
-          <div class="roll">0187ME221045</div>
-          <div class="name">Meera Kapoor</div>
-          <div class="branch">MECH</div>
-          <div class="card-btn">Open Yearbook</div>
-        </div>
-      </div>
+<!-- PAGE BODY -->
+<div class="pt-28">
+  <header class="text-center mb-8">
+    <h1 class="text-5xl font-serif mb-2">The Class of '29</h1>
+    <p class="text-gray-400">Faces that defined our journey. Moments that became memories.</p>
+  </header>
+
+  <div class="sticky-top">
+    <input type="text" placeholder="Search by name or roll no" class="search-input" id="searchInput" />
+    <div class="filter-buttons">
+      <button class="filter-btn active" data-filter="All">All</button>
+      <button class="filter-btn" data-filter="CSE">CSE</button>
+      <button class="filter-btn" data-filter="ECE">ECE</button>
+      <button class="filter-btn" data-filter="MECH">MECH</button>
+      <button class="filter-btn" data-filter="CIVIL">CIVIL</button>
+      <button class="filter-btn" data-filter="AIDS">AIDS</button>
     </div>
-
-    <footer class="py-6 text-center text-sm text-stone-500">
-      © 2026 All memories preserved forever
-    </footer>
   </div>
 
-  <!-- SIGN IN MODAL -->
-  <div id="signinModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-    <div class="glass pop rounded-[2rem] p-8 w-full max-w-md relative">
-      <button onclick="closeModal('signinModal')"
-        class="absolute top-4 right-4 text-2xl text-stone-400 hover:text-yellow-400 hover:rotate-90 transition-all duration-300">×</button>
-      <h2 class="text-3xl font-bold text-yellow-400 mb-2 text-center">Welcome Back</h2>
-      <p class="text-stone-400 text-center mb-6 text-sm">Sign in to access your yearbook</p>
-      <div class="space-y-4">
-        <input id="loginEmail" type="email" placeholder="Email" class="input-glass" />
-        <input id="loginPass" type="password" placeholder="Password" class="input-glass" />
+  <div class="yearbook-grid" id="yearbookGrid">
+    <!-- cards injected by JS -->
+  </div>
+
+  <footer class="py-6 text-center text-sm text-stone-500">© 2026 All memories preserved forever</footer>
+</div>
+
+<!-- ── FLOATING YEARBOOK BUTTON ── -->
+<button id="fabYearbook" onclick="openYearbookModal()">
+  <span class="fab-icon">📖</span>
+  <span id="fabLabel">Create Your Yearbook</span>
+</button>
+
+<!-- ── YEARBOOK CREATE/EDIT MODAL ── -->
+<div id="yearbookModal">
+  <div class="yb-modal-inner">
+    <div class="yb-gold-bar"></div>
+    <div class="p-7">
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="text-2xl font-bold text-yellow-400" id="ybModalTitle">Your Yearbook Card</h2>
+        <button onclick="closeYearbookModal()" class="text-2xl text-stone-400 hover:text-yellow-400 hover:rotate-90 transition-all duration-300">×</button>
       </div>
-      <button onclick="signin()"
-        class="w-full mt-5 rounded-2xl bg-yellow-400 text-black font-semibold py-3 hover:scale-[1.02] transition">Sign In</button>
-      <p class="text-sm text-center text-stone-400 mt-4">
-        Don't have an account?
-        <button onclick="switchToSignup()" class="text-yellow-400 hover:underline">Create one</button>
+      <p class="text-stone-500 text-xs tracking-widest uppercase mb-5" id="ybModalSub">Preview how you'll appear</p>
+
+      <!-- live preview card -->
+      <div class="yb-preview mb-5">
+        <div class="yb-preview-img" id="ybPreviewImg" onclick="document.getElementById('ybPhotoUpload').click()">
+          <span class="initials" id="ybInitials">?</span>
+          <img id="ybPreviewPhoto" style="display:none" />
+          <div class="overlay">📷 Change Photo</div>
+        </div>
+        <div class="yb-preview-body">
+          <div class="yb-preview-roll" id="ybPreviewRoll">—</div>
+          <div class="yb-preview-name" id="ybPreviewName">—</div>
+          <div class="yb-preview-branch" id="ybPreviewBranch">—</div>
+        </div>
+      </div>
+
+      <!-- hidden file input -->
+      <input id="ybPhotoUpload" type="file" accept="image/*" class="hidden" />
+
+      <div class="upload-zone mb-5" id="ybUploadZone" onclick="document.getElementById('ybPhotoUpload').click()">
+        <span id="ybUploadText">📁 Choose a photo for your yearbook card</span>
+      </div>
+
+      <p class="text-stone-600 text-xs mb-5 text-center">
+        Name, roll number and branch are pulled from your signup — only the photo is yours to set.
+        This photo also updates your profile picture.
       </p>
+
+      <button id="ybSubmitBtn" onclick="submitYearbook()"
+        class="w-full rounded-2xl bg-yellow-400 text-black font-bold py-3 hover:scale-[1.02] transition text-sm tracking-wide">
+        <span id="ybSubmitLabel">Publish to Yearbook</span>
+      </button>
     </div>
   </div>
+</div>
 
-  <!-- SIGN UP MODAL -->
-  <div id="signupModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-    <div class="glass pop rounded-[2rem] p-8 w-full max-w-2xl relative">
-      <button onclick="closeModal('signupModal')"
-        class="absolute top-4 right-4 text-2xl text-stone-400 hover:text-yellow-400 hover:rotate-90 transition-all duration-300">×</button>
-      <h2 class="text-3xl font-bold text-yellow-400 mb-6 text-center">Request Access</h2>
-      <div class="grid md:grid-cols-2 gap-4">
-        <input id="fullName" placeholder="Full Name" class="input-glass" />
-        <input id="email" placeholder="Email" class="input-glass" />
-        <select id="branch" class="input-glass bg-black text-white">
-          <option>ECS</option><option>CS</option><option>AIDS</option><option>MECH</option><option>CIVIL</option>
-        </select>
-        <input id="roll" placeholder="Roll Number" class="input-glass" />
+<!-- SIGN IN MODAL -->
+<div id="signinModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+  <div class="glass pop rounded-[2rem] p-8 w-full max-w-md relative">
+    <button onclick="closeModal('signinModal')" class="absolute top-4 right-4 text-2xl text-stone-400 hover:text-yellow-400 hover:rotate-90 transition-all duration-300">×</button>
+    <h2 class="text-3xl font-bold text-yellow-400 mb-2 text-center">Welcome Back</h2>
+    <p class="text-stone-400 text-center mb-6 text-sm">Sign in to access your yearbook</p>
+    <div class="space-y-4">
+      <input id="loginEmail" type="email" placeholder="Email" class="input-glass" />
+      <input id="loginPass" type="password" placeholder="Password" class="input-glass" />
+    </div>
+    <button onclick="signin()" class="w-full mt-5 rounded-2xl bg-yellow-400 text-black font-semibold py-3 hover:scale-[1.02] transition">Sign In</button>
+    <p class="text-sm text-center text-stone-400 mt-4">
+      Don't have an account?
+      <button onclick="switchToSignup()" class="text-yellow-400 hover:underline">Create one</button>
+    </p>
+  </div>
+</div>
+
+<!-- SIGN UP MODAL -->
+<div id="signupModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+  <div class="glass pop rounded-[2rem] p-8 w-full max-w-2xl relative">
+    <button onclick="closeModal('signupModal')" class="absolute top-4 right-4 text-2xl text-stone-400 hover:text-yellow-400 hover:rotate-90 transition-all duration-300">×</button>
+    <h2 class="text-3xl font-bold text-yellow-400 mb-6 text-center">Request Access</h2>
+    <div class="grid md:grid-cols-2 gap-4">
+      <input id="fullName" placeholder="Full Name" class="input-glass" />
+      <input id="email" placeholder="Email" class="input-glass" />
+      <select id="branch" class="input-glass bg-black text-white">
+        <option>ECS</option><option>CSE</option><option>AIDS</option><option>MECH</option><option>CIVIL</option><option>ECE</option>
+      </select>
+      <input id="roll" placeholder="Roll Number" class="input-glass" />
+    </div>
+    <input id="password" type="password" placeholder="Create Password" class="input-glass mt-4" />
+    <button onclick="signup()" class="w-full mt-5 rounded-2xl bg-yellow-400 text-black font-semibold py-3 hover:scale-[1.02] transition">Request Access</button>
+    <p class="text-sm text-center text-stone-400 mt-4">
+      Already have an account?
+      <button onclick="switchToSignin()" class="text-yellow-400 hover:underline">Sign In</button>
+    </p>
+  </div>
+</div>
+
+<!-- PROFILE MODAL — no pfp here, handled via yearbook modal -->
+<div id="profileModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+  <div class="glass pop rounded-[2rem] w-full max-w-md relative overflow-hidden">
+    <div class="h-[2px] bg-gradient-to-r from-transparent via-yellow-400 to-transparent"></div>
+    <div class="p-8">
+      <button onclick="closeModal('profileModal')" class="absolute top-5 right-5 text-2xl text-stone-400 hover:text-yellow-400 hover:rotate-90 transition-all duration-300">×</button>
+      <div class="flex items-center gap-4 mb-6">
+        <div class="h-14 w-14 rounded-full p-[2px] avatar-ring shrink-0">
+          <img id="modalPfpPreview" src="https://placehold.co/56x56" class="h-full w-full rounded-full object-cover border-2 border-black" />
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold text-yellow-400">Profile Settings</h2>
+          <p class="text-stone-500 text-xs tracking-widest uppercase">Manage your identity</p>
+        </div>
       </div>
-      <input id="password" type="password" placeholder="Create Password" class="input-glass mt-4" />
-      <button onclick="signup()"
-        class="w-full mt-5 rounded-2xl bg-yellow-400 text-black font-semibold py-3 hover:scale-[1.02] transition">Request Access</button>
-      <p class="text-sm text-center text-stone-400 mt-4">
-        Already have an account?
-        <button onclick="switchToSignin()" class="text-yellow-400 hover:underline">Sign In</button>
+      <p class="text-stone-600 text-xs mb-4 bg-stone-900/50 rounded-xl p-3 border border-stone-800">
+        📷 To update your profile picture, use the <span class="text-yellow-400 font-semibold">Your Yearbook</span> button (bottom right after signing in).
       </p>
-    </div>
-  </div>
-
-  <!-- PROFILE MODAL -->
-  <div id="profileModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-    <div class="glass pop rounded-[2rem] w-full max-w-md relative overflow-hidden">
-      <div class="h-[2px] bg-gradient-to-r from-transparent via-yellow-400 to-transparent"></div>
-      <div class="p-8">
-        <button onclick="closeModal('profileModal')"
-          class="absolute top-5 right-5 text-2xl text-stone-400 hover:text-yellow-400 hover:rotate-90 transition-all duration-300">×</button>
-        <h2 class="text-3xl font-bold text-yellow-400 mb-1 text-center">Profile Settings</h2>
-        <p class="text-stone-500 text-xs text-center tracking-widest uppercase mb-6">Manage your identity</p>
-        <div class="flex items-center gap-5 mb-5">
-          <div class="h-16 w-16 rounded-full p-[2px] avatar-ring shrink-0">
-            <img id="modalPfpPreview" src="https://placehold.co/64x64"
-              class="h-full w-full rounded-full object-cover border-2 border-black" />
-          </div>
-          <div class="flex-1">
-            <p class="section-label">Profile Picture</p>
-            <input id="pfpUpload" type="file" accept="image/*" class="hidden" />
-            <div id="uploadZone" class="upload-zone" onclick="document.getElementById('pfpUpload').click()">
-              <span id="uploadZoneText">📁 Choose image</span>
-            </div>
-          </div>
-        </div>
-        <div class="divider"></div>
-        <div class="mb-4">
-          <p class="section-label">Display Name</p>
-          <input id="newName" placeholder="Enter new name" class="input-glass" />
-        </div>
-        <div class="divider"></div>
-        <div class="space-y-3">
-          <p class="section-label">Change Password</p>
-          <input id="currentPass" type="password" placeholder="Current Password" class="input-glass" />
-          <input id="newPass" type="password" placeholder="New Password" class="input-glass" />
-        </div>
-        <div class="grid grid-cols-2 gap-4 mt-6">
-          <button onclick="saveProfileChanges()"
-            class="rounded-2xl bg-yellow-400 text-black py-3 font-semibold hover:scale-[1.02] transition">Save Changes</button>
-          <button onclick="signout()"
-            class="rounded-2xl border border-stone-600 py-3 hover:border-red-500/60 hover:text-red-400 transition">Sign Out</button>
-        </div>
+      <div class="divider"></div>
+      <div class="mb-4">
+        <p class="section-label">Display Name</p>
+        <input id="newName" placeholder="Enter new name" class="input-glass" />
+      </div>
+      <div class="divider"></div>
+      <div class="space-y-3">
+        <p class="section-label">Change Password</p>
+        <input id="currentPass" type="password" placeholder="Current Password" class="input-glass" />
+        <input id="newPass" type="password" placeholder="New Password" class="input-glass" />
+      </div>
+      <div class="grid grid-cols-2 gap-4 mt-6">
+        <button onclick="saveProfileChanges()" class="rounded-2xl bg-yellow-400 text-black py-3 font-semibold hover:scale-[1.02] transition">Save Changes</button>
+        <button onclick="signout()" class="rounded-2xl border border-stone-600 py-3 hover:border-red-500/60 hover:text-red-400 transition">Sign Out</button>
       </div>
     </div>
   </div>
+</div>
 
 <script>
-  let currentUserName = "";
-  let isLoggedIn = false;
-  let selectedPfpFile = null;
-  let menuOpen = false;
+  // ── STATE ──
+  let currentUser    = null; // { name, roll, branch, pfp, has_yearbook }
+  let isLoggedIn     = false;
+  let menuOpen       = false;
+  let ybPhotoFile    = null;
+  let activeFilter   = 'All';
+  let allCards       = []; // raw data from API
 
+  // ── INIT ──
   document.addEventListener("DOMContentLoaded", () => {
-    ["loginEmail", "loginPass"].forEach(id => {
-      document.getElementById(id)?.addEventListener("keydown", e => { if (e.key === "Enter") signin(); });
-    });
-    ["fullName", "email", "roll", "password"].forEach(id => {
-      document.getElementById(id)?.addEventListener("keydown", e => { if (e.key === "Enter") signup(); });
-    });
-    ["newName", "currentPass", "newPass"].forEach(id => {
-      document.getElementById(id)?.addEventListener("keydown", e => { if (e.key === "Enter") saveProfileChanges(); });
-    });
+    // Enter key bindings
+    ["loginEmail","loginPass"].forEach(id =>
+      document.getElementById(id)?.addEventListener("keydown", e => { if(e.key==="Enter") signin(); }));
+    ["fullName","email","roll","password"].forEach(id =>
+      document.getElementById(id)?.addEventListener("keydown", e => { if(e.key==="Enter") signup(); }));
+    ["newName","currentPass","newPass"].forEach(id =>
+      document.getElementById(id)?.addEventListener("keydown", e => { if(e.key==="Enter") saveProfileChanges(); }));
 
-    document.getElementById("pfpUpload").addEventListener("change", function () {
+    // yearbook photo upload
+    document.getElementById("ybPhotoUpload").addEventListener("change", function() {
       const file = this.files[0];
       if (!file) return;
-      selectedPfpFile = file;
-      document.getElementById("uploadZoneText").textContent = "✓ " + file.name;
-      document.getElementById("uploadZone").classList.add("has-file");
+      ybPhotoFile = file;
+      document.getElementById("ybUploadText").textContent = "✓ " + file.name;
+      document.getElementById("ybUploadZone").classList.add("has-file");
       const reader = new FileReader();
-      reader.onload = e => { document.getElementById("modalPfpPreview").src = e.target.result; };
+      reader.onload = e => {
+        const photo = document.getElementById("ybPreviewPhoto");
+        photo.src = e.target.result;
+        photo.style.display = "block";
+        document.getElementById("ybInitials").style.display = "none";
+      };
       reader.readAsDataURL(file);
     });
 
-    fetch("/api/me")
-      .then(r => r.json())
-      .then(data => {
-        if (data.loggedIn) {
-          isLoggedIn = true;
-          currentUserName = data.name;
-          document.getElementById("authBtnText").innerText = data.name.toUpperCase();
-          if (data.pfp) {
-            document.getElementById("navPfp").src = data.pfp;
-            document.getElementById("pfpRing").classList.remove("hidden");
-          }
-        }
-        syncMobileAuthText();
-      });
+    // Load user session + yearbook grid
+    fetchMe().then(() => loadGrid());
   });
 
+  async function fetchMe() {
+    try {
+      const r = await fetch("/api/me");
+      const data = await r.json();
+      if (data.loggedIn) {
+        isLoggedIn  = true;
+        currentUser = data; // expects: name, roll, branch, pfp, has_yearbook
+        document.getElementById("authBtnText").innerText = data.name.toUpperCase();
+        if (data.pfp) {
+          document.getElementById("navPfp").src = data.pfp;
+          document.getElementById("pfpRing").classList.remove("hidden");
+          document.getElementById("modalPfpPreview").src = data.pfp;
+        }
+        // show FAB
+        const fab = document.getElementById("fabYearbook");
+        fab.style.display = "flex";
+        document.getElementById("fabLabel").textContent =
+          data.has_yearbook ? "Open Your Yearbook" : "Create Your Yearbook";
+      }
+      syncMobileAuthText();
+    } catch(e) { /* not logged in */ }
+  }
+
+  // ── GRID ──
+  async function loadGrid() {
+    try {
+      const r    = await fetch("/api/yearbook");
+      const data = await r.json(); // array of { name, roll, branch, pfp, user_id }
+      allCards   = data;
+      renderGrid(allCards);
+    } catch(e) {
+      renderGrid([]);
+    }
+  }
+
+  function renderGrid(cards) {
+    const grid  = document.getElementById("yearbookGrid");
+    const query = document.getElementById("searchInput").value.toLowerCase();
+    const filtered = cards.filter(c => {
+      const matchBranch = activeFilter === "All" || c.branch === activeFilter;
+      const matchSearch = c.name.toLowerCase().includes(query) || c.roll.toLowerCase().includes(query);
+      return matchBranch && matchSearch;
+    });
+
+    if (!filtered.length) {
+      grid.innerHTML = `<div class="empty-state"><div class="emoji">📭</div><p>No yearbook entries yet. Be the first!</p></div>`;
+      return;
+    }
+
+    grid.innerHTML = filtered.map((c, i) => {
+      const initials = c.name.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();
+      const isMine   = isLoggedIn && currentUser && c.roll === currentUser.roll;
+      const imgTag   = c.pfp
+        ? `<img src="${c.pfp}" alt="${c.name}" />`
+        : `<span class="initials">${initials}</span>`;
+      return `
+        <div class="card${isMine ? " mine" : ""}"
+          data-branch="${c.branch}" data-name="${c.name}" data-roll="${c.roll}"
+          style="animation-delay:${i * 0.05}s"
+          onclick="${isMine ? "openYearbookModal()" : "void(0)"}">
+          <div class="card-header">${imgTag}</div>
+          <div class="card-body">
+            <div class="roll">${c.roll}</div>
+            <div class="name">${c.name}${isMine ? ' <span style="color:#d4a017;font-size:0.7rem">● you</span>' : ""}</div>
+            <div class="branch">${c.branch}</div>
+            <div class="card-btn">${isMine ? "Edit Your Card" : "View Profile"}</div>
+          </div>
+        </div>`;
+    }).join("");
+  }
+
+  // ── SEARCH + FILTER ──
+  document.getElementById("searchInput").addEventListener("input", () => renderGrid(allCards));
+
+  document.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      activeFilter = btn.dataset.filter;
+      renderGrid(allCards);
+    });
+  });
+
+  // ── YEARBOOK MODAL ──
+  function openYearbookModal() {
+    if (!isLoggedIn) { document.getElementById("signinModal").classList.remove("hidden"); return; }
+    const u = currentUser;
+
+    // populate preview from user data
+    document.getElementById("ybPreviewRoll").textContent   = u.roll   || "—";
+    document.getElementById("ybPreviewName").textContent   = u.name   || "—";
+    document.getElementById("ybPreviewBranch").textContent = u.branch || "—";
+    const initials = (u.name || "?").split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();
+    document.getElementById("ybInitials").textContent = initials;
+
+    // if they already have a photo
+    if (u.pfp) {
+      const photo = document.getElementById("ybPreviewPhoto");
+      photo.src = u.pfp;
+      photo.style.display = "block";
+      document.getElementById("ybInitials").style.display = "none";
+    } else {
+      document.getElementById("ybPreviewPhoto").style.display = "none";
+      document.getElementById("ybInitials").style.display = "block";
+    }
+
+    // reset upload zone
+    ybPhotoFile = null;
+    document.getElementById("ybUploadText").textContent = u.pfp ? "📁 Replace photo" : "📁 Choose a photo for your yearbook card";
+    document.getElementById("ybUploadZone").classList.remove("has-file");
+    document.getElementById("ybPhotoUpload").value = "";
+
+    // update title/btn if editing
+    const hasYB = u.has_yearbook;
+    document.getElementById("ybModalTitle").textContent = hasYB ? "Edit Your Card" : "Your Yearbook Card";
+    document.getElementById("ybModalSub").textContent   = hasYB ? "Update your yearbook entry" : "Preview how you'll appear";
+    document.getElementById("ybSubmitLabel").textContent = hasYB ? "Update Yearbook Card" : "Publish to Yearbook";
+
+    document.getElementById("yearbookModal").classList.add("open");
+  }
+
+  function closeYearbookModal() {
+    document.getElementById("yearbookModal").classList.remove("open");
+  }
+
+  async function submitYearbook() {
+    const btn   = document.getElementById("ybSubmitBtn");
+    const label = document.getElementById("ybSubmitLabel");
+    btn.disabled = true;
+    label.innerHTML = `<span class="spinner"></span> Saving...`;
+
+    const formData = new FormData();
+    if (ybPhotoFile) formData.append("photo", ybPhotoFile);
+
+    try {
+      const r   = await fetch("/api/yearbook/save", { method: "POST", body: formData });
+      const res = await r.json();
+      if (res.success) {
+        // sync pfp to nav immediately
+        if (res.pfp) {
+          currentUser.pfp = res.pfp;
+          document.getElementById("navPfp").src = res.pfp;
+          document.getElementById("pfpRing").classList.remove("hidden");
+          document.getElementById("modalPfpPreview").src = res.pfp;
+        }
+        currentUser.has_yearbook = true;
+        document.getElementById("fabLabel").textContent = "Open Your Yearbook";
+        closeYearbookModal();
+        showToast(res.created ? "You're in the yearbook! 🎉" : "Card updated!");
+        loadGrid(); // refresh grid
+      } else {
+        showToast(res.message || "Something went wrong", true);
+      }
+    } catch(e) {
+      showToast("Network error", true);
+    }
+
+    btn.disabled = false;
+    label.textContent = currentUser.has_yearbook ? "Update Yearbook Card" : "Publish to Yearbook";
+  }
+
+  // ── TOAST ──
   function showToast(message, isError = false) {
     const toast = document.getElementById("toast");
     const dot   = document.getElementById("toastDot");
@@ -529,42 +814,36 @@
     toast.classList.remove("hidden");
     toast.style.borderColor = isError ? "rgba(248,113,113,0.4)" : "rgba(250,204,21,0.3)";
     dot.style.background    = isError ? "#f87171" : "#facc15";
-    setTimeout(() => toast.classList.add("hidden"), 2800);
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => toast.classList.add("hidden"), 2800);
   }
 
+  // ── NAVBAR / HAMBURGER ──
   function toggleMenu() {
     menuOpen = !menuOpen;
-    const menu    = document.getElementById("mobileMenu");
-    const wrapper = document.getElementById("navWrapper");
-    const l1 = document.getElementById("hLine1");
-    const l2 = document.getElementById("hLine2");
-    const l3 = document.getElementById("hLine3");
+    const menu = document.getElementById("mobileMenu");
+    const wrap = document.getElementById("navWrapper");
+    const l1 = document.getElementById("hLine1"), l2 = document.getElementById("hLine2"), l3 = document.getElementById("hLine3");
     if (menuOpen) {
-      menu.classList.add("open");
-      wrapper.style.borderRadius = "1.5rem";
-      l1.style.transform = "translateY(7px) rotate(45deg)";
-      l2.style.opacity   = "0";
-      l3.style.transform = "translateY(-7px) rotate(-45deg)";
-      l3.style.width = "22px"; l3.style.marginRight = "0"; l3.style.alignSelf = "auto";
+      menu.classList.add("open"); wrap.style.borderRadius = "1.5rem";
+      l1.style.transform = "translateY(7px) rotate(45deg)"; l2.style.opacity = "0";
+      l3.style.transform = "translateY(-7px) rotate(-45deg)"; l3.style.width="22px"; l3.style.marginRight="0"; l3.style.alignSelf="auto";
     } else {
-      menu.classList.remove("open");
-      wrapper.style.borderRadius = "9999px";
-      l1.style.transform = ""; l2.style.opacity = "1"; l3.style.transform = "";
-      l3.style.width = "14px"; l3.style.marginRight = "4px"; l3.style.alignSelf = "flex-end";
+      menu.classList.remove("open"); wrap.style.borderRadius = "9999px";
+      l1.style.transform=""; l2.style.opacity="1"; l3.style.transform="";
+      l3.style.width="14px"; l3.style.marginRight="4px"; l3.style.alignSelf="flex-end";
     }
   }
 
   function syncMobileAuthText() {
-    const mobileAuthBtn = document.getElementById("mobileMenuAuthBtn");
-    const mobileAuthTxt = document.getElementById("mobileAuthText");
+    const btn = document.getElementById("mobileMenuAuthBtn");
+    const txt = document.getElementById("mobileAuthText");
     if (isLoggedIn) {
-      mobileAuthTxt.textContent = "Update Profile";
-      mobileAuthBtn.classList.remove("bg-yellow-400/10");
-      mobileAuthBtn.classList.add("bg-yellow-400/20");
+      txt.textContent = "Update Profile";
+      btn.classList.replace("bg-yellow-400/10","bg-yellow-400/20");
     } else {
-      mobileAuthTxt.textContent = "Sign In / Sign Up";
-      mobileAuthBtn.classList.add("bg-yellow-400/10");
-      mobileAuthBtn.classList.remove("bg-yellow-400/20");
+      txt.textContent = "Sign In / Sign Up";
+      btn.classList.replace("bg-yellow-400/20","bg-yellow-400/10");
     }
   }
 
@@ -575,9 +854,6 @@
       document.getElementById("signinModal").classList.remove("hidden");
     } else {
       document.getElementById("modalPfpPreview").src = document.getElementById("navPfp").src;
-      selectedPfpFile = null;
-      document.getElementById("uploadZoneText").textContent = "📁 Choose image";
-      document.getElementById("uploadZone").classList.remove("has-file");
       document.getElementById("profileModal").classList.remove("hidden");
     }
   }
@@ -610,7 +886,7 @@
 
   async function signin() {
     const res = await fetch("/signin", {
-      method: "POST", headers: { "Content-Type": "application/json" },
+      method: "POST", headers: {"Content-Type":"application/json"},
       body: JSON.stringify({
         email: document.getElementById("loginEmail").value,
         password: document.getElementById("loginPass").value
@@ -619,7 +895,7 @@
     const result = await res.json();
     if (result.success) {
       isLoggedIn = true;
-      currentUserName = result.name;
+      currentUser = { name: result.name, roll: result.roll, branch: result.branch, pfp: result.pfp, has_yearbook: result.has_yearbook };
       document.getElementById("authBtnText").innerText = result.name.toUpperCase();
       if (result.pfp) {
         document.getElementById("navPfp").src = result.pfp;
@@ -628,6 +904,11 @@
       closeModal("signinModal");
       showToast("Welcome back, " + result.name);
       syncMobileAuthText();
+      // show FAB
+      const fab = document.getElementById("fabYearbook");
+      fab.style.display = "flex";
+      document.getElementById("fabLabel").textContent = result.has_yearbook ? "Open Your Yearbook" : "Create Your Yearbook";
+      loadGrid(); // re-render so "you" badge appears
     } else {
       showToast(result.message || "Incorrect credentials", true);
     }
@@ -635,23 +916,19 @@
 
   async function saveProfileChanges() {
     const formData = new FormData();
-    const newName = document.getElementById("newName").value.trim();
+    const newName     = document.getElementById("newName").value.trim();
     const currentPass = document.getElementById("currentPass").value;
-    const newPass = document.getElementById("newPass").value;
-    if (newName)         formData.append("new_name", newName);
-    if (currentPass)     formData.append("current_password", currentPass);
-    if (newPass)         formData.append("new_password", newPass);
-    if (selectedPfpFile) formData.append("pfp", selectedPfpFile);
-    const res = await fetch("/update-profile", { method: "POST", body: formData });
+    const newPass     = document.getElementById("newPass").value;
+    if (newName)     formData.append("new_name", newName);
+    if (currentPass) formData.append("current_password", currentPass);
+    if (newPass)     formData.append("new_password", newPass);
+    const res    = await fetch("/update-profile", { method: "POST", body: formData });
     const result = await res.json();
     if (result.success) {
-      if (result.name) { currentUserName = result.name; document.getElementById("authBtnText").innerText = result.name.toUpperCase(); }
-      if (result.pfp) {
-        document.getElementById("navPfp").src = result.pfp;
-        document.getElementById("modalPfpPreview").src = result.pfp;
-        document.getElementById("pfpRing").classList.remove("hidden");
+      if (result.name) {
+        currentUser.name = result.name;
+        document.getElementById("authBtnText").innerText = result.name.toUpperCase();
       }
-      selectedPfpFile = null;
       showToast("Profile updated");
       closeModal("profileModal");
     } else {
@@ -661,45 +938,24 @@
 
   async function signout() {
     await fetch("/signout", { method: "POST" });
-    isLoggedIn = false; currentUserName = ""; selectedPfpFile = null;
+    isLoggedIn = false; currentUser = null; ybPhotoFile = null;
     document.getElementById("authBtnText").innerText = "Sign Up";
     document.getElementById("navPfp").src = "";
     document.getElementById("pfpRing").classList.add("hidden");
+    document.getElementById("fabYearbook").style.display = "none";
     closeModal("profileModal");
     showToast("Signed out");
     syncMobileAuthText();
+    loadGrid();
   }
 
-  window.addEventListener("click", function(e) {
-    ["signinModal", "signupModal", "profileModal"].forEach(id => {
+  // close modals on backdrop click
+  window.addEventListener("click", e => {
+    ["signinModal","signupModal","profileModal"].forEach(id => {
       if (e.target === document.getElementById(id)) closeModal(id);
     });
+    if (e.target === document.getElementById("yearbookModal")) closeYearbookModal();
   });
-
-  // Search & filter
-  const filterBtns  = document.querySelectorAll('.filter-btn');
-  const searchInput = document.getElementById('searchInput');
-  let activeFilter  = 'All';
-
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      filterBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      activeFilter = btn.dataset.filter;
-      applyFilters();
-    });
-  });
-
-  searchInput.addEventListener('input', applyFilters);
-
-  function applyFilters() {
-    const query = searchInput.value.toLowerCase();
-    document.querySelectorAll('.card').forEach(card => {
-      const matchBranch = activeFilter === 'All' || card.dataset.branch === activeFilter;
-      const matchSearch = card.dataset.name.toLowerCase().includes(query) || card.dataset.roll.includes(query);
-      card.style.display = matchBranch && matchSearch ? '' : 'none';
-    });
-  }
 </script>
 </body>
 </html>
