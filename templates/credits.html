@@ -2,188 +2,877 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Liquid Balls UI</title>
-
-<script src="https://cdn.tailwindcss.com"></script>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Credits — Echoes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
 <style>
-body {
-  overflow: hidden;
-}
-.fade-out {
-  opacity: 0;
-  transform: scale(0.5);
-  pointer-events: none;
-  transition: all 0.5s ease;
-}
-/* LIQUID BALL */
-.ball {
-  width: 130px;
-  height: 130px;
-  background: black;
-  position: absolute;
-  top: -200px;
-  border-radius: 50%;
-  overflow: hidden;
-  cursor: pointer;
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  transition: transform 0.3s ease, border 0.3s ease;
-}
-
-/* IMAGE */
-.ball img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-/* HOVER */
-.ball:hover {
-  transform: scale(1.08);
-  border: 3px solid yellow;
-}
-
-.ball:hover img {
-  opacity: 1;
-}
-
-/* LIQUID DROP ANIMATION */
-@keyframes liquidDrop {
-  0% {
-    top: -200px;
-    transform: scaleY(1.2) scaleX(0.8);
-    border-radius: 60% 40% 50% 50%;
+  :root {
+    --gold: #c9a84c;
+    --gold-dim: #7a6030;
+    --gold-glow: rgba(201,168,76,0.15);
+    --cream: #f0ead8;
+    --dark: #060503;
+    --mid: #100e08;
+    --mid2: #1a1610;
   }
 
-  50% {
-    transform: scaleY(1) scaleX(1);
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    background: var(--dark);
+    color: var(--cream);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    cursor: default;
   }
 
-  80% {
-    top: 65vh;
-    transform: scaleY(0.7) scaleX(1.3); /* squash */
-    border-radius: 40% 60% 50% 50%;
+  /* ── SCROLLABLE WRAPPER (for profile page) ── */
+  body.scroll { overflow-y: auto; }
+
+  /* ═══════════════════════════════
+     MAIN BG
+  ═══════════════════════════════ */
+  #bg {
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 70%, #1f160a 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 20%, #120f07 0%, transparent 50%),
+      var(--dark);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 0;
+  }
+  .bg-word {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(5rem, 13vw, 11rem);
+    font-weight: 300;
+    font-style: italic;
+    color: rgba(201,168,76,0.035);
+    letter-spacing: 0.04em;
+    user-select: none;
+    pointer-events: none;
+    line-height: 1;
   }
 
-  90% {
-    transform: scaleY(1.2) scaleX(0.8); /* bounce stretch */
+  /* ═══════════════════════════════
+     NAV
+  ═══════════════════════════════ */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2.5rem;
+    z-index: 100;
+    background: linear-gradient(to bottom, rgba(6,5,3,0.97) 0%, transparent 100%);
   }
-
-  100% {
-    top: 60vh;
-    transform: scale(1);
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 300;
+    letter-spacing: 0.28em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+  .nav-credits {
+    font-size: 0.65rem;
+    letter-spacing: 0.38em;
+    text-transform: uppercase;
+    color: rgba(240,234,216,0.45);
+    cursor: pointer;
+    padding: 10px 0;
+    position: relative;
+    transition: color 0.35s;
+    user-select: none;
+  }
+  .nav-credits:hover { color: var(--cream); }
+  .nav-credits::after {
+    content: '';
+    position: absolute;
+    bottom: 4px; left: 50%;
+    transform: translateX(-50%);
+    width: 4px; height: 4px;
     border-radius: 50%;
+    background: var(--gold);
+    opacity: 0;
+    transition: opacity 0.3s;
   }
-}
+  .nav-credits:hover::after { opacity: 1; }
 
-/* APPLY */
-#ball1 {
-  left: 35%;
-  animation: liquidDrop 1.2s cubic-bezier(.2,.8,.2,1) forwards;
-}
+  /* ═══════════════════════════════
+     DROPS LAYER
+  ═══════════════════════════════ */
+  #drops-layer {
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 200;
+    overflow: hidden;
+  }
+  .drop {
+    position: absolute;
+    top: -28px;
+    width: 16px; height: 22px;
+    pointer-events: auto;
+    cursor: pointer;
+    animation: dropfall linear forwards;
+    transform-origin: center;
+  }
+  .drop svg { width: 100%; height: 100%; display: block; }
+  .drop path { transition: fill 0.2s, filter 0.2s; }
+  .drop:hover path {
+    fill: rgba(255,255,255,0.95);
+    filter: drop-shadow(0 0 6px rgba(255,255,255,0.6));
+  }
 
-#ball2 {
-  left: 55%;
-  animation: liquidDrop 1.4s cubic-bezier(.2,.8,.2,1) forwards;
-}
+  @keyframes dropfall {
+    0%   { top: -28px; opacity: 0; }
+    6%   { opacity: 1; }
+    78%  { opacity: 1; }
+    100% { top: 110vh; opacity: 0; }
+  }
 
-/* EXPAND */
-.expand {
-  position: fixed !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) scale(10);
-  z-index: 20;
-  transition: all 0.7s cubic-bezier(.2,.8,.2,1);
-}
+  /* ═══════════════════════════════
+     CINEMA OVERLAY
+  ═══════════════════════════════ */
+  #cinema {
+    position: fixed; inset: 0;
+    background: #000;
+    z-index: 300;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.75s ease;
+    overflow: hidden;
+  }
+  #cinema.on  { display: block; }
+  #cinema.in  { opacity: 1; }
 
-/* BLACK SCREEN */
-.black {
-  background: black !important;
-  transition: background 0.6s ease;
-}
+  /* ── CREDITS SCROLL ── */
+  #credits-wrap {
+    position: absolute;
+    width: 100%;
+    top: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  #credits-wrap.roll {
+    transition: top 22s cubic-bezier(0.06, 0, 0.22, 1);
+    top: -340%;
+  }
 
-/* CONTENT */
-.content {
-  position: fixed;
-  color: white;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: none;
-  z-index: 30;
-  text-align: center;
-}
+  .c-spacer { flex-shrink: 0; }
 
-.show {
-  display: block;
-}
+  .c-app-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--gold);
+    letter-spacing: 0.12em;
+    text-align: center;
+    padding: 2.5rem 1rem 0.6rem;
+  }
+  .c-batch {
+    font-size: 0.6rem;
+    letter-spacing: 0.6em;
+    color: rgba(201,168,76,0.3);
+    text-align: center;
+    padding-bottom: 3.5rem;
+    text-transform: uppercase;
+  }
+  .c-vline {
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, var(--gold-dim), transparent);
+    margin: 0 auto;
+    flex-shrink: 0;
+  }
+  .c-block {
+    text-align: center;
+    padding: 2.2rem 1.5rem;
+    opacity: 0;
+    transition: opacity 1.4s ease;
+  }
+  .c-block.show { opacity: 1; }
+  .c-role {
+    font-size: 0.58rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 0.75rem;
+  }
+  .c-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    font-weight: 300;
+    color: var(--cream);
+    letter-spacing: 0.07em;
+  }
+  .c-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-style: italic;
+    color: rgba(240,234,216,0.38);
+    max-width: 420px;
+    margin: 0 auto;
+    line-height: 2;
+    text-align: center;
+    padding: 3rem 2rem;
+    opacity: 0;
+    transition: opacity 1.4s ease;
+  }
+  .c-quote.show { opacity: 1; }
+  .c-stack {
+    text-align: center;
+    opacity: 0;
+    transition: opacity 1.4s ease;
+    padding: 1.5rem;
+  }
+  .c-stack.show { opacity: 1; }
+  .c-stack-label {
+    font-size: 0.58rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 0.6rem;
+  }
+  .c-stack-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    letter-spacing: 0.3em;
+    color: rgba(240,234,216,0.5);
+  }
+  .c-dedication {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    font-style: italic;
+    color: rgba(240,234,216,0.18);
+    text-align: center;
+    padding: 3.5rem 2rem;
+    max-width: 480px;
+    margin: 0 auto;
+    opacity: 0;
+    transition: opacity 1.4s ease;
+    line-height: 1.8;
+  }
+  .c-dedication.show { opacity: 1; }
+  .c-copyright {
+    font-size: 0.55rem;
+    letter-spacing: 0.5em;
+    color: rgba(201,168,76,0.15);
+    text-align: center;
+    padding: 1rem;
+    text-transform: uppercase;
+    opacity: 0;
+    transition: opacity 1.4s ease;
+  }
+  .c-copyright.show { opacity: 1; }
 
-/* GLOW */
-.ball:hover {
-  box-shadow: 0 0 25px rgba(255,255,0,0.5);
-}
+  /* ── REVEAL BTN ── */
+  #reveal-wrap {
+    position: absolute;
+    bottom: -100px; left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 1.1s ease, bottom 1s cubic-bezier(0.34,1.56,0.64,1);
+    white-space: nowrap;
+    text-align: center;
+  }
+  #reveal-wrap.show { opacity: 1; bottom: 9vh; }
+
+  #reveal-btn {
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.63rem;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    padding: 15px 44px;
+    cursor: pointer;
+    transition: background 0.35s, color 0.35s, box-shadow 0.35s;
+    display: block;
+  }
+  #reveal-btn:hover {
+    background: var(--gold);
+    color: #000;
+    box-shadow: 0 0 30px rgba(201,168,76,0.25);
+  }
+  .reveal-sub {
+    font-size: 0.52rem;
+    letter-spacing: 0.35em;
+    color: rgba(201,168,76,0.2);
+    margin-top: 1rem;
+    text-transform: uppercase;
+  }
+
+  /* ═══════════════════════════════
+     PEOPLE PAGE
+  ═══════════════════════════════ */
+  #people-page {
+    position: fixed; inset: 0;
+    background: var(--dark);
+    z-index: 400;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.85s ease;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2.8rem;
+  }
+  #people-page.on  { display: flex; }
+  #people-page.in  { opacity: 1; }
+
+  .p-eyebrow {
+    font-size: 0.58rem;
+    letter-spacing: 0.6em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    text-align: center;
+  }
+  .circles-row {
+    display: flex;
+    align-items: center;
+    gap: 5rem;
+  }
+  .p-sep {
+    width: 1px; height: 100px;
+    background: linear-gradient(to bottom, transparent, rgba(201,168,76,0.2), transparent);
+    flex-shrink: 0;
+  }
+  .person-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.1rem;
+    cursor: pointer;
+  }
+  .p-circle {
+    width: 155px; height: 155px;
+    border-radius: 50%;
+    border: 1px solid rgba(201,168,76,0.3);
+    overflow: hidden;
+    position: relative;
+    background: var(--mid2);
+    transition: border-color 0.45s, transform 0.45s, box-shadow 0.45s;
+  }
+  .p-circle img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: grayscale(20%) brightness(0.9);
+    transition: filter 0.45s;
+  }
+  .p-circle::before {
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at 30% 30%, rgba(201,168,76,0.1), transparent 60%);
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.45s;
+  }
+  .person-wrap:hover .p-circle {
+    border-color: var(--gold);
+    transform: scale(1.06) translateY(-4px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(201,168,76,0.12);
+  }
+  .person-wrap:hover .p-circle img { filter: grayscale(0%) brightness(1); }
+  .person-wrap:hover .p-circle::before { opacity: 1; }
+
+  .p-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    color: var(--cream);
+    text-align: center;
+  }
+  .p-role {
+    font-size: 0.56rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    text-align: center;
+    margin-top: -0.4rem;
+  }
+  .p-tap {
+    font-size: 0.52rem;
+    letter-spacing: 0.4em;
+    color: rgba(201,168,76,0.18);
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  #btn-back-main {
+    position: absolute; top: 1.6rem; left: 2.2rem;
+    background: none; border: none;
+    color: rgba(240,234,216,0.3);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+  #btn-back-main:hover { color: var(--cream); }
+
+  /* ═══════════════════════════════
+     PROFILE PAGE
+  ═══════════════════════════════ */
+  #profile-page {
+    position: fixed; inset: 0;
+    background: var(--dark);
+    z-index: 500;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.7s ease;
+    overflow-y: auto;
+  }
+  #profile-page.on { display: block; }
+  #profile-page.in { opacity: 1; }
+
+  .profile-inner {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 7rem 2rem 5rem;
+    max-width: 540px;
+    margin: 0 auto;
+    text-align: center;
+    gap: 0;
+  }
+
+  .prof-img-wrap {
+    width: 135px; height: 135px;
+    border-radius: 50%;
+    border: 1px solid var(--gold);
+    overflow: hidden;
+    background: var(--mid2);
+    margin-bottom: 2rem;
+    box-shadow: 0 0 60px rgba(201,168,76,0.08);
+  }
+  .prof-img-wrap img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+  }
+
+  .prof-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.6rem;
+    font-weight: 300;
+    color: var(--cream);
+    letter-spacing: 0.06em;
+    margin-bottom: 0.5rem;
+  }
+  .prof-role {
+    font-size: 0.6rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.8rem;
+  }
+  .prof-divider {
+    width: 40px; height: 1px;
+    background: var(--gold-dim);
+    margin: 0 auto 1.8rem;
+  }
+  .prof-bio {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.12rem;
+    font-style: italic;
+    color: rgba(240,234,216,0.55);
+    line-height: 1.95;
+    max-width: 400px;
+    margin-bottom: 2.8rem;
+  }
+
+  .prof-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 3rem;
+  }
+  .prof-table tr {
+    border-bottom: 1px solid rgba(201,168,76,0.07);
+  }
+  .prof-table tr:first-child { border-top: 1px solid rgba(201,168,76,0.07); }
+  .prof-table td {
+    padding: 1rem 0;
+    font-size: 0.82rem;
+    vertical-align: middle;
+  }
+  .prof-table td:first-child {
+    font-size: 0.58rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    text-align: left;
+    width: 38%;
+  }
+  .prof-table td:last-child {
+    color: rgba(240,234,216,0.75);
+    text-align: right;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+  }
+
+  .prof-back {
+    background: transparent;
+    border: 1px solid rgba(201,168,76,0.28);
+    color: rgba(201,168,76,0.5);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    padding: 13px 34px;
+    cursor: pointer;
+    transition: border-color 0.35s, color 0.35s, box-shadow 0.35s;
+  }
+  .prof-back:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    box-shadow: 0 0 20px rgba(201,168,76,0.1);
+  }
+
+  #btn-prof-back {
+    position: absolute; top: 1.6rem; left: 2.2rem;
+    background: none; border: none;
+    color: rgba(240,234,216,0.3);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+  #btn-prof-back:hover { color: var(--cream); }
+
+  /* ── PARTICLES (ambient bg dots) ── */
+  .particle {
+    position: fixed;
+    border-radius: 50%;
+    background: rgba(201,168,76,0.25);
+    pointer-events: none;
+    animation: floatup linear infinite;
+  }
+  @keyframes floatup {
+    0%   { transform: translateY(0) scale(1); opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 0.4; }
+    100% { transform: translateY(-100vh) scale(0.4); opacity: 0; }
+  }
+
+  /* ── CURSOR GLOW ── */
+  #cursor-glow {
+    position: fixed;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,168,76,0.04), transparent 70%);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    transition: opacity 0.3s;
+  }
 </style>
 </head>
+<body>
 
-<body class="bg-white">
+<!-- CURSOR GLOW -->
+<div id="cursor-glow"></div>
 
-<!-- BALLS -->
-<div id="ball1" class="ball">
-  <img src="https://source.unsplash.com/300x300/?nature">
+<!-- MAIN BG -->
+<div id="bg">
+  <div class="bg-word">Echoes</div>
 </div>
 
-<div id="ball2" class="ball">
-  <img src="https://source.unsplash.com/300x300/?technology">
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Echoes</div>
+  <div class="nav-credits" id="trig">Credits</div>
+</nav>
+
+<!-- DROPS LAYER -->
+<div id="drops-layer"></div>
+
+<!-- ═══════════════ CINEMA ═══════════════ -->
+<div id="cinema">
+  <div id="credits-wrap">
+    <div class="c-spacer" style="height:38vh"></div>
+
+    <div class="c-app-title">Echoes</div>
+    <!-- ✏️ CHANGE BATCH / SUBTITLE -->
+    <div class="c-batch">Batch 2025 – 2029 · A Digital Memory</div>
+
+    <div class="c-vline" style="height:80px"></div>
+
+    <div class="c-block">
+      <div class="c-role">Brought to life by</div>
+    </div>
+
+    <div class="c-block">
+      <!-- ✏️ CHANGE NAME + ROLE -->
+      <div class="c-role">Full Stack Developer</div>
+      <div class="c-name">Your Name Here</div>
+    </div>
+
+    <div class="c-vline" style="height:55px"></div>
+
+    <div class="c-block">
+      <!-- ✏️ CHANGE NAME + ROLE -->
+      <div class="c-role">Designer &amp; Developer</div>
+      <div class="c-name">Their Name Here</div>
+    </div>
+
+    <div class="c-vline" style="height:70px"></div>
+
+    <!-- ✏️ CHANGE QUOTE -->
+    <div class="c-quote">"Every memory deserves a place that feels like home."</div>
+
+    <div class="c-vline" style="height:60px"></div>
+
+    <div class="c-stack">
+      <div class="c-stack-label">Built with</div>
+      <!-- ✏️ CHANGE STACK -->
+      <div class="c-stack-val">Flask · MongoDB · Python · Love</div>
+    </div>
+
+    <div class="c-vline" style="height:60px"></div>
+
+    <!-- ✏️ CHANGE DEDICATION -->
+    <div class="c-dedication">"Dedicated to every batch that dared to dream — and every memory worth keeping."</div>
+
+    <div class="c-copyright">© 2025 Echoes · All rights reserved</div>
+
+    <div class="c-spacer" style="height:60vh"></div>
+  </div>
+
+  <div id="reveal-wrap">
+    <button id="reveal-btn">View the people behind this</button>
+    <div class="reveal-sub">Two people. One idea. Infinite echoes.</div>
+  </div>
 </div>
 
-<!-- CONTENT -->
-<div id="content1" class="content">
-  <h1 class="text-4xl font-bold mb-4">Nature 🌿</h1>
-  <p>Data for Ball 1</p>
+<!-- ═══════════════ PEOPLE PAGE ═══════════════ -->
+<div id="people-page">
+  <button id="btn-back-main">← Back</button>
+  <div class="p-eyebrow">The minds behind echoes</div>
+
+  <div class="circles-row">
+
+    <!-- PERSON 1 -->
+    <div class="person-wrap" data-idx="0">
+      <div class="p-circle">
+        <!-- ✏️ SWAP src -->
+        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face" alt="Person 1">
+      </div>
+      <!-- ✏️ CHANGE -->
+      <div class="p-name">Your Name</div>
+      <div class="p-role">Full Stack Dev</div>
+    </div>
+
+    <div class="p-sep"></div>
+
+    <!-- PERSON 2 -->
+    <div class="person-wrap" data-idx="1">
+      <div class="p-circle">
+        <!-- ✏️ SWAP src -->
+        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop&crop=face" alt="Person 2">
+      </div>
+      <!-- ✏️ CHANGE -->
+      <div class="p-name">Their Name</div>
+      <div class="p-role">Designer &amp; Dev</div>
+    </div>
+
+  </div>
+  <div class="p-tap">Tap a circle to explore</div>
 </div>
 
-<div id="content2" class="content">
-  <h1 class="text-4xl font-bold mb-4">Technology 💻</h1>
-  <p>Data for Ball 2</p>
+<!-- ═══════════════ PROFILE PAGE ═══════════════ -->
+<div id="profile-page">
+  <button id="btn-prof-back">← Back to team</button>
+  <div class="profile-inner">
+    <div class="prof-img-wrap">
+      <img id="prof-img" src="" alt="">
+    </div>
+    <div class="prof-name" id="prof-name"></div>
+    <div class="prof-role" id="prof-role"></div>
+    <div class="prof-divider"></div>
+    <div class="prof-bio" id="prof-bio"></div>
+    <table class="prof-table" id="prof-table"></table>
+    <button class="prof-back" id="btn-prof-back2">← Back to team</button>
+  </div>
 </div>
 
-<script>const ball1 = document.getElementById("ball1");
-const ball2 = document.getElementById("ball2");
+<script>
+// ═══════════════════════════════════════════════
+// ✏️  YOUR DATA — fill this in
+// ═══════════════════════════════════════════════
+const people = [
+  {
+    img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=500&fit=crop&crop=face',
+    name: 'Your Name Here',
+    role: 'Full Stack Developer',
+    bio: '"Your quote or short bio goes here. Keep it personal and real."',
+    details: [
+      { label: 'Batch',    value: '2025 – 2029' },
+      { label: 'Stack',    value: 'Flask · MongoDB · Python' },
+      { label: 'GitHub',   value: '@yourhandle' },
+      { label: 'Based in', value: 'Your City' },
+      { label: 'Fun fact', value: 'Something cool about you' },
+    ]
+  },
+  {
+    img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&h=500&fit=crop&crop=face',
+    name: 'Their Name Here',
+    role: 'Designer & Developer',
+    bio: '"Their quote or short bio goes here. Make it memorable."',
+    details: [
+      { label: 'Batch',    value: '2025 – 2029' },
+      { label: 'Craft',    value: 'UI · Motion · CSS' },
+      { label: 'GitHub',   value: '@theirhandle' },
+      { label: 'Based in', value: 'Their City' },
+      { label: 'Fun fact', value: 'Something cool about them' },
+    ]
+  }
+];
+// ═══════════════════════════════════════════════
 
-const content1 = document.getElementById("content1");
-const content2 = document.getElementById("content2");
+const $ = id => document.getElementById(id);
+const cinema    = $('cinema');
+const cWrap     = $('credits-wrap');
+const revealW   = $('reveal-wrap');
+const peoplePg  = $('people-page');
+const profilePg = $('profile-page');
+const dropsLay  = $('drops-layer');
 
-let clicked = false; // prevent double click chaos
+let live = false, dropTimer = null;
 
-function activate(activeBall, otherBall, content) {
-  if (clicked) return;
-  clicked = true;
+/* ── Ambient particles ── */
+function spawnParticle() {
+  const p = document.createElement('div');
+  p.className = 'particle';
+  const sz = Math.random() * 2.5 + 1;
+  p.style.cssText = `
+    width:${sz}px;height:${sz}px;
+    left:${Math.random()*100}%;
+    bottom:${Math.random()*20}%;
+    animation-duration:${8+Math.random()*14}s;
+    animation-delay:${Math.random()*8}s;
+    opacity:0;
+  `;
+  document.body.appendChild(p);
+  setTimeout(() => p.remove(), 22000);
+}
+setInterval(spawnParticle, 1200);
 
-  // fade out the other ball
-  otherBall.classList.add("fade-out");
+/* ── Cursor glow ── */
+const glow = $('cursor-glow');
+document.addEventListener('mousemove', e => {
+  glow.style.left = e.clientX + 'px';
+  glow.style.top  = e.clientY + 'px';
+});
 
-  // make background black
-  document.body.classList.add("black");
-
-  // expand clicked ball
-  activeBall.classList.add("expand");
-
-  // show content
-  setTimeout(() => {
-    content.classList.add("show");
-  }, 600);
+/* ── Drops ── */
+function spawnDrop() {
+  const d = document.createElement('div');
+  d.className = 'drop';
+  d.style.left = (Math.random() * 88 + 4) + '%';
+  const dur = 2.2 + Math.random() * 2.2;
+  d.style.animationDuration = dur + 's';
+  d.style.animationDelay    = (Math.random() * 0.4) + 's';
+  d.innerHTML = `<svg viewBox="0 0 16 22" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="dg" cx="40%" cy="30%" r="65%">
+        <stop offset="0%" stop-color="rgba(255,220,130,0.9)"/>
+        <stop offset="100%" stop-color="rgba(180,120,30,0.6)"/>
+      </radialGradient>
+    </defs>
+    <path d="M8 0C8 0 1 9 1 13.5C1 17.42 4.13 21 8 21C11.87 21 15 17.42 15 13.5C15 9 8 0 8 0Z" fill="url(#dg)"/>
+  </svg>`;
+  d.addEventListener('click', triggerCinema);
+  dropsLay.appendChild(d);
+  setTimeout(() => d.remove(), (dur + 0.8) * 1000);
 }
 
-ball1.onclick = () => activate(ball1, ball2, content1);
-ball2.onclick = () => activate(ball2, ball1, content2);
-</script>
+$('trig').addEventListener('click', () => {
+  if (live) return;
+  for (let i = 0; i < 7; i++) setTimeout(spawnDrop, i * 140);
+  dropTimer = setInterval(spawnDrop, 340);
+  setTimeout(() => { clearInterval(dropTimer); dropTimer = null; }, 5000);
+});
 
+/* ── Cinema trigger ── */
+function triggerCinema() {
+  if (live) return;
+  live = true;
+  clearInterval(dropTimer); dropTimer = null;
+  dropsLay.innerHTML = '';
+
+  cinema.classList.add('on');
+  requestAnimationFrame(() => cinema.classList.add('in'));
+
+  const fadables = cWrap.querySelectorAll('.c-block, .c-quote, .c-stack, .c-dedication, .c-copyright');
+  fadables.forEach((el, i) => {
+    setTimeout(() => el.classList.add('show'), 1000 + i * 380);
+  });
+
+  setTimeout(() => cWrap.classList.add('roll'), 1500);
+  setTimeout(() => revealW.classList.add('show'), 19000);
+}
+
+/* ── Reveal people ── */
+$('reveal-btn').addEventListener('click', () => {
+  peoplePg.classList.add('on');
+  requestAnimationFrame(() => peoplePg.classList.add('in'));
+});
+
+/* ── Back from people ── */
+$('btn-back-main').addEventListener('click', resetCinema);
+
+function resetCinema() {
+  peoplePg.classList.remove('in');
+  setTimeout(() => peoplePg.classList.remove('on'), 850);
+
+  cinema.classList.remove('in');
+  setTimeout(() => {
+    cinema.classList.remove('on');
+    live = false;
+    cWrap.classList.remove('roll');
+    revealW.classList.remove('show');
+    cWrap.querySelectorAll('.c-block,.c-quote,.c-stack,.c-dedication,.c-copyright')
+      .forEach(el => el.classList.remove('show'));
+    void cWrap.offsetHeight; // reflow to reset position
+  }, 850);
+}
+
+/* ── Open profile ── */
+document.querySelectorAll('.person-wrap').forEach(w => {
+  w.addEventListener('click', () => {
+    const p = people[+w.dataset.idx];
+    $('prof-img').src   = p.img;
+    $('prof-name').textContent = p.name;
+    $('prof-role').textContent = p.role;
+    $('prof-bio').textContent  = p.bio;
+    $('prof-table').innerHTML  = p.details
+      .map(d => `<tr><td>${d.label}</td><td>${d.value}</td></tr>`)
+      .join('');
+    profilePg.classList.add('on');
+    requestAnimationFrame(() => profilePg.classList.add('in'));
+  });
+});
+
+/* ── Back from profile ── */
+function closeProfile() {
+  profilePg.classList.remove('in');
+  setTimeout(() => profilePg.classList.remove('on'), 700);
+}
+$('btn-prof-back').addEventListener('click', closeProfile);
+$('btn-prof-back2').addEventListener('click', closeProfile);
+</script>
 </body>
 </html>
