@@ -3,959 +3,1288 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Echoes - Yearbook</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<title>Echoes — Year Book</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  ::selection { background: rgba(212,160,23,0.45); color: #fff7d6; }
-  * { margin:0; padding:0; box-sizing:border-box; }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg:       #0d0d0d;
+    --surface:  #141414;
+    --card-bg:  #181818;
+    --border:   rgba(255,255,255,0.08);
+    --border-h: rgba(255,255,255,0.16);
+    --amber:    #d4a017;
+    --amber-dim:rgba(212,160,23,0.18);
+    --amber-glow:rgba(212,160,23,0.35);
+    --text:     #f0ede8;
+    --muted:    #8a8580;
+    --dim:      #3a3732;
+    --serif:    'Playfair Display', Georgia, serif;
+    --mono:     'DM Mono', monospace;
+    --sans:     'DM Sans', sans-serif;
+  }
+
+  ::selection { background: rgba(212,160,23,0.3); color: #fff7d0; }
 
   body {
-    min-height: 200vh;
-    font-family: Arial, sans-serif;
-    color: white;
-    background:
-      radial-gradient(circle at 20% 30%, rgba(120,80,20,0.22), transparent 40%),
-      radial-gradient(circle at 80% 20%, rgba(20,40,90,0.18), transparent 40%),
-      linear-gradient(180deg, #070707, #0b0b0b 40%, #10131a 100%);
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
   }
 
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background:
-      repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 6px),
-      repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 5px);
-    opacity: 0.25;
+  /* ─── GRAIN OVERLAY ─── */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
     pointer-events: none;
-    mix-blend-mode: soft-light;
+    z-index: 0;
+    opacity: 0.6;
   }
 
-  .blur-orb {
+  /* ─── AMBIENT ORBS ─── */
+  .orb {
     position: fixed;
-    top: 120px; right: 8%;
-    width: 320px; height: 320px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(212,160,23,0.22), rgba(40,60,120,0.08), transparent 70%);
-    filter: blur(60px);
-    opacity: 0.7;
     pointer-events: none;
+    filter: blur(80px);
+    opacity: 0.12;
+    z-index: 0;
   }
+  .orb-1 { width: 500px; height: 500px; background: #d4a017; top: -180px; right: -100px; }
+  .orb-2 { width: 400px; height: 400px; background: #1a3a8f; bottom: 10%; left: -120px; }
 
-  .glass {
-    background: rgba(255,255,255,0.06);
-    backdrop-filter: blur(18px);
-    border: 1px solid rgba(255,255,255,0.08);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+    width: calc(100% - 32px); max-width: 1160px;
+    background: rgba(14,13,12,0.72);
+    backdrop-filter: blur(20px) saturate(140%);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    z-index: 100;
+    padding: 0 28px;
+    height: 60px;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: border-color 0.3s;
   }
+  nav:hover { border-color: var(--border-h); }
 
-  .nav-link { color: #d6d3d1; transition: color 0.2s; text-decoration: none; }
-  .nav-link:hover { color: #facc15; }
-  .nav-link.active { color: #facc15; border-bottom: 1px solid #facc15; padding-bottom: 4px; }
-
-  .fade-down { animation: fadeDown .7s ease; }
-  .pop       { animation: pop .35s ease; }
-
-  @keyframes fadeDown {
-    from { opacity:0; transform:translateY(-25px); }
-    to   { opacity:1; transform:translateY(0); }
-  }
-  @keyframes pop {
-    from { opacity:0; transform:scale(.94); }
-    to   { opacity:1; transform:scale(1); }
-  }
-  @keyframes fadeUp {
-    from { opacity:0; transform:translateY(20px); }
-    to   { opacity:1; transform:translateY(0); }
-  }
-  @keyframes fadeSlideUp {
-    0%   { transform: translateY(20px); opacity: 0; }
-    100% { transform: translateY(0);    opacity: 1; }
-  }
-  @keyframes pulseGold {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(212,160,23,0.4); }
-    50%       { box-shadow: 0 0 0 10px rgba(212,160,23,0); }
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .input-glass {
-    width: 100%;
-    border-radius: 1rem;
-    padding: 0.75rem 1rem;
-    background: rgba(28,25,23,0.6);
-    border: 1px solid #44403c;
-    outline: none;
-    color: #f5f5f4;
-    transition: border-color .2s;
-    font-size: 0.875rem;
-  }
-  .input-glass::placeholder { color: #78716c; }
-  .input-glass:focus        { border-color: #facc15; }
-
-  .section-label {
-    font-size: 0.65rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #57534e;
-    margin-bottom: 0.35rem;
-  }
-
-  .upload-zone {
-    width: 100%;
-    border-radius: 1rem;
-    padding: 0.75rem 1rem;
-    background: rgba(28,25,23,0.6);
-    border: 1px dashed rgba(250,204,21,0.25);
-    color: #78716c;
-    font-size: 0.8rem;
-    text-align: center;
-    cursor: pointer;
-    transition: all .2s;
-  }
-  .upload-zone:hover    { border-color: #facc15; color: #facc15; }
-  .upload-zone.has-file { border-color: rgba(250,204,21,.5); color: #facc15; }
-
-  .divider {
-    height: 1px;
-    background: linear-gradient(to right, transparent, rgba(255,255,255,0.07), transparent);
-    margin: 1rem 0;
-  }
-
-  .avatar-ring { background: conic-gradient(#facc15, #92400e, #facc15); }
-
-  .ham-line {
-    display: block;
-    width: 22px; height: 2px;
-    background: #facc15;
-    border-radius: 2px;
-    transition: transform 0.35s ease, opacity 0.25s ease, width 0.3s ease;
-    transform-origin: center;
-  }
-
-  #mobileMenu {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease;
-    opacity: 0;
-  }
-  #mobileMenu.open { max-height: 400px; opacity: 1; }
-
-  .mobile-nav-link {
-    display: block;
-    padding: 0.75rem 0;
-    color: #d6d3d1;
-    font-size: 1.1rem;
-    font-weight: 500;
-    letter-spacing: 0.03em;
-    transition: color 0.2s, padding-left 0.2s;
+  .nav-brand {
+    font-family: var(--serif);
+    font-size: 1.3rem;
+    color: var(--amber);
+    letter-spacing: 0.04em;
     text-decoration: none;
   }
-  .mobile-nav-link:hover,
-  .mobile-nav-link.active { color: #facc15; padding-left: 0.5rem; }
 
-  .mobile-divider {
-    height: 1px;
-    background: linear-gradient(to right, transparent, rgba(255,255,255,0.08), transparent);
-    margin: 0.5rem 0;
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: color 0.2s;
   }
+  .nav-links a:hover, .nav-links a.active { color: var(--text); }
+  .nav-links a.active { color: var(--amber); }
 
-  .sticky-top {
-    position: sticky;
-    top: 100px;
-    z-index: 20;
-    backdrop-filter: blur(14px);
-    background: rgba(20,20,20,0.42);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 24px;
-    padding: 16px;
-    margin-bottom: 32px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 12px;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
-  }
+  .nav-right { display: flex; align-items: center; gap: 12px; }
 
-  .search-input {
-    flex: 1;
-    min-width: 220px;
-    padding: 12px 16px;
+  .nav-auth-btn {
+    background: transparent;
+    border: 1px solid var(--border-h);
     border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.16);
-    background: rgba(255,255,255,0.08);
-    color: white;
-    outline: none;
-    backdrop-filter: blur(10px);
-    animation: fadeSlideUp 0.6s ease-out forwards;
-  }
-  .search-input::placeholder { color: rgba(255,255,255,0.45); }
-
-  .filter-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
-
-  .filter-btn {
-    padding: 10px 18px;
-    border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.16);
+    padding: 8px 20px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
     cursor: pointer;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-    background: rgba(255,255,255,0.08);
-    color: white;
-    opacity: 0;
-    transform: translateY(10px);
-    animation: fadeSlideUp 0.5s forwards;
+    display: flex; align-items: center; gap: 10px;
+    transition: all 0.25s;
   }
-  .filter-btn.active { background: #d4a017; color: black; border-color: #d4a017; }
-  .filter-buttons .filter-btn:nth-child(1) { animation-delay: 0.2s; }
-  .filter-buttons .filter-btn:nth-child(2) { animation-delay: 0.35s; }
-  .filter-buttons .filter-btn:nth-child(3) { animation-delay: 0.5s; }
-  .filter-buttons .filter-btn:nth-child(4) { animation-delay: 0.65s; }
-  .filter-buttons .filter-btn:nth-child(5) { animation-delay: 0.8s; }
-  .filter-buttons .filter-btn:nth-child(6) { animation-delay: 0.95s; }
+  .nav-auth-btn:hover { border-color: var(--amber); color: var(--amber); }
 
-  .yearbook-grid {
+  .nav-pfp-ring {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    padding: 2px;
+    background: conic-gradient(var(--amber), #92400e, var(--amber));
+    display: none;
+  }
+  .nav-pfp-ring img {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #0d0d0d;
+    display: block;
+  }
+
+  /* ─── PAGE ─── */
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 100px 24px 80px;
+  }
+
+  /* ─── HEADER ─── */
+  .page-header {
+    text-align: center;
+    margin-bottom: 56px;
+    animation: fadeUp 0.8s ease both;
+  }
+  .page-header .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--amber);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .page-header h1 {
+    font-family: var(--serif);
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  .page-header p {
+    margin-top: 16px;
+    color: var(--muted);
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+  }
+
+  /* ─── CONTROLS BAR ─── */
+  .controls {
+    position: sticky; top: 84px; z-index: 50;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
+    padding: 14px 18px;
+    background: rgba(14,13,12,0.7);
+    backdrop-filter: blur(18px);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    margin-bottom: 40px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  .search-wrap {
+    position: relative;
+    flex: 1; min-width: 200px;
+  }
+  .search-icon {
+    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+    width: 14px; height: 14px;
+    color: var(--muted);
+    pointer-events: none;
+  }
+  .search-input {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 14px 10px 38px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-input::placeholder { color: var(--muted); }
+  .search-input:focus { border-color: rgba(212,160,23,0.4); }
+
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; }
+  .filter-pill {
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.22s;
+    white-space: nowrap;
+  }
+  .filter-pill:hover { border-color: var(--border-h); color: var(--text); }
+  .filter-pill.active {
+    background: var(--amber);
+    border-color: var(--amber);
+    color: #0d0d0d;
+    font-weight: 500;
+  }
+
+  /* ─── GRID ─── */
+  .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 24px;
-    max-width: 1200px;
-    margin: auto;
-    padding-bottom: 120px;
   }
 
-  .card {
-    background: rgba(255,255,255,0.05);
-    border-radius: 24px;
+  /* ─── YEARBOOK CARD ─── */
+  .yb-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
     overflow: hidden;
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255,255,255,0.1);
-    cursor: pointer;
-    transition: transform 0.3s ease, background 0.3s ease;
-    animation: fadeUp 0.4s ease both;
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    animation: fadeUp 0.5s ease both;
   }
-  .card:hover { background: rgba(212,160,23,0.1); transform: scale(1.03); }
-  .card.mine  { border-color: rgba(212,160,23,0.4); }
+  .yb-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(212,160,23,0.3);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(212,160,23,0.1);
+  }
+  .yb-card.is-mine {
+    border-color: rgba(212,160,23,0.35);
+  }
 
-  .card-header {
-    height: 200px;
-    background: rgba(255,255,255,0.05);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3.5rem;
-    font-weight: bold;
-    color: rgba(255,255,255,0.3);
-    overflow: hidden;
+  /* Photo area */
+  .card-photo {
     position: relative;
+    width: 100%;
+    aspect-ratio: 4/5;
+    background: #1f1e1c;
+    overflow: hidden;
   }
-  .card-header img {
+  .card-photo img {
     width: 100%; height: 100%;
     object-fit: cover;
-    position: absolute; inset: 0;
+    filter: grayscale(100%) contrast(1.05);
+    transition: filter 0.4s ease, transform 0.4s ease;
+    display: block;
   }
-  .card-header .initials { position: relative; z-index: 1; }
+  .yb-card:hover .card-photo img {
+    filter: grayscale(60%) contrast(1.1);
+    transform: scale(1.03);
+  }
 
-  .card-body { padding: 16px; }
-  .roll { font-family: monospace; font-size: 0.8rem; color: #d4a017; letter-spacing: 1px; }
-  .name { font-size: 1.35rem; font-weight: 600; margin-top: 4px; }
-  .branch { font-style: italic; color: #aaa; margin-bottom: 12px; font-size: 0.9rem; }
+  /* Initials placeholder */
+  .initials-block {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--serif);
+    font-size: 4.5rem;
+    font-weight: 900;
+    color: rgba(255,255,255,0.12);
+    letter-spacing: -0.02em;
+    user-select: none;
+    background: linear-gradient(135deg, #1c1b19, #222120);
+  }
 
-  .card-btn {
+  /* Hover overlay */
+  .card-overlay {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.55);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    flex-direction: column; gap: 8px;
+  }
+  .yb-card:hover .card-overlay { opacity: 1; }
+  .overlay-label {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--amber);
+    border: 1px solid rgba(212,160,23,0.4);
+    border-radius: 999px;
+    padding: 8px 18px;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(8px);
+  }
+  .mine-badge {
+    position: absolute; top: 12px; right: 12px;
+    background: var(--amber);
+    color: #0d0d0d;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    padding: 4px 10px;
+    border-radius: 999px;
+    text-transform: uppercase;
+  }
+
+  /* Card body */
+  .card-body { padding: 18px 18px 20px; }
+  .card-roll {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--amber);
+    letter-spacing: 0.14em;
+    margin-bottom: 5px;
+  }
+  .card-name {
+    font-family: var(--serif);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+  .card-branch {
+    font-size: 0.78rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    margin-bottom: 16px;
+  }
+
+  /* Card action button */
+  .card-action {
     width: 100%;
     padding: 10px;
     border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.16);
-    background: rgba(255,255,255,0.08);
-    color: white;
-    transition: all 0.3s ease;
-    text-align: center;
-    cursor: pointer;
-    font-size: 0.85rem;
-  }
-  .card-btn:hover { background: #d4a017; color: black; border-color: #d4a017; }
-
-  /* ── FLOATING YEARBOOK BUTTON ── */
-  #fabYearbook {
-    position: fixed;
-    bottom: 32px;
-    right: 28px;
-    z-index: 60;
-    display: none;
-    align-items: center;
-    gap: 10px;
-    padding: 14px 22px;
-    border-radius: 999px;
-    background: linear-gradient(135deg, #d4a017, #92400e);
-    color: black;
-    font-weight: 700;
-    font-size: 0.88rem;
-    letter-spacing: 0.04em;
-    cursor: pointer;
-    border: none;
-    box-shadow: 0 8px 32px rgba(212,160,23,0.35);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-    animation: pulseGold 2.5s infinite;
-  }
-  #fabYearbook:hover {
-    transform: scale(1.06) translateY(-2px);
-    box-shadow: 0 14px 40px rgba(212,160,23,0.5);
-    animation: none;
-  }
-  #fabYearbook .fab-icon { font-size: 1.1rem; }
-
-  /* ── YEARBOOK MODAL ── */
-  #yearbookModal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.75);
-    backdrop-filter: blur(6px);
-    z-index: 70;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
-  }
-  #yearbookModal.open { display: flex; }
-
-  .yb-modal-inner {
-    background: rgba(12,11,10,0.9);
-    border: 1px solid rgba(212,160,23,0.2);
-    border-radius: 2rem;
-    width: 100%;
-    max-width: 520px;
-    overflow: hidden;
-    box-shadow: 0 32px 80px rgba(0,0,0,0.6);
-    animation: pop 0.3s ease;
-  }
-
-  .yb-gold-bar { height: 2px; background: linear-gradient(to right, transparent, #d4a017, transparent); }
-
-  /* card preview inside modal */
-  .yb-preview {
-    background: rgba(255,255,255,0.04);
-    border-radius: 1.25rem;
-    overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.08);
-  }
-  .yb-preview-img {
-    height: 160px;
-    background: rgba(255,255,255,0.05);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3rem;
-    color: rgba(255,255,255,0.25);
-    position: relative;
-    overflow: hidden;
-    cursor: pointer;
-  }
-  .yb-preview-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-  .yb-preview-img .overlay {
-    position: absolute; inset: 0;
-    background: rgba(0,0,0,0.45);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.2s;
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    color: #facc15;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
   }
-  .yb-preview-img:hover .overlay { opacity: 1; }
-
-  .yb-preview-body { padding: 14px 16px; }
-  .yb-preview-roll { font-family: monospace; font-size: 0.75rem; color: #d4a017; letter-spacing: 1px; }
-  .yb-preview-name { font-size: 1.25rem; font-weight: 600; margin-top: 3px; }
-  .yb-preview-branch { font-style: italic; color: #aaa; font-size: 0.85rem; }
-
-  /* spinner */
-  .spinner {
-    display: inline-block;
-    width: 18px; height: 18px;
-    border: 2px solid rgba(0,0,0,0.3);
-    border-top-color: black;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    vertical-align: middle;
-    margin-right: 6px;
+  .card-action:hover {
+    border-color: var(--amber);
+    color: var(--amber);
+    background: var(--amber-dim);
+  }
+  .card-action.edit-action {
+    border-color: rgba(212,160,23,0.35);
+    color: var(--amber);
+    background: var(--amber-dim);
+  }
+  .card-action.edit-action:hover {
+    background: rgba(212,160,23,0.28);
   }
 
-  /* empty state */
+  /* ─── EMPTY STATE ─── */
   .empty-state {
-    grid-column: 1 / -1;
+    grid-column: 1/-1;
     text-align: center;
     padding: 80px 20px;
-    color: #57534e;
   }
-  .empty-state .emoji { font-size: 3rem; margin-bottom: 12px; }
-  .empty-state p { font-size: 1rem; }
+  .empty-state .big { font-size: 3.5rem; margin-bottom: 16px; opacity: 0.3; }
+  .empty-state p { color: var(--muted); font-size: 0.95rem; }
 
-  a { text-decoration: none; }
+  /* ─── FAB ─── */
+  #fab {
+    position: fixed; bottom: 32px; right: 32px;
+    z-index: 90;
+    display: none;
+    align-items: center; gap: 10px;
+    padding: 15px 24px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #d4a017 0%, #b8860b 100%);
+    color: #0d0d0d;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 8px 32px rgba(212,160,23,0.4);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    animation: fabPulse 3s ease infinite;
+  }
+  #fab:hover {
+    transform: translateY(-3px) scale(1.04);
+    box-shadow: 0 16px 48px rgba(212,160,23,0.55);
+    animation: none;
+  }
+  @keyframes fabPulse {
+    0%,100% { box-shadow: 0 8px 32px rgba(212,160,23,0.4); }
+    50%      { box-shadow: 0 8px 48px rgba(212,160,23,0.65); }
+  }
+
+  /* ─── MODALS ─── */
+  .modal-backdrop {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.78);
+    backdrop-filter: blur(8px);
+    z-index: 200;
+    align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .modal-backdrop.open { display: flex; }
+
+  .modal {
+    background: #141210;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px;
+    width: 100%; max-width: 480px;
+    overflow: hidden;
+    position: relative;
+    animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  .modal.wide { max-width: 620px; }
+
+  .modal-gold-line { height: 1px; background: linear-gradient(to right, transparent, var(--amber), transparent); }
+
+  .modal-body { padding: 32px; }
+
+  .modal-close {
+    position: absolute; top: 18px; right: 18px;
+    width: 32px; height: 32px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--muted);
+    font-size: 1.1rem;
+    transition: all 0.2s;
+  }
+  .modal-close:hover { color: var(--amber); border-color: rgba(212,160,23,0.4); transform: rotate(90deg); }
+
+  .modal-title {
+    font-family: var(--serif);
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: var(--amber);
+    margin-bottom: 6px;
+  }
+  .modal-sub {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  /* form fields */
+  .field { margin-bottom: 14px; }
+  .field label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 6px;
+  }
+  .input {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 11px 14px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .input::placeholder { color: var(--dim); }
+  .input:focus { border-color: rgba(212,160,23,0.4); }
+  select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a8580' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+  select.input option { background: #141414; }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .divider-line { height: 1px; background: var(--border); margin: 20px 0; }
+
+  .btn {
+    display: block; width: 100%;
+    padding: 13px;
+    border-radius: 14px;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.22s;
+    border: none;
+  }
+  .btn-primary {
+    background: var(--amber);
+    color: #0d0d0d;
+  }
+  .btn-primary:hover { background: #e8b020; transform: scale(1.02); }
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border-h);
+    color: var(--muted);
+  }
+  .btn-ghost:hover { border-color: #e05050; color: #e05050; }
+  .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px; }
+
+  .text-link {
+    background: none; border: none;
+    color: var(--amber); cursor: pointer;
+    font-size: inherit; font-family: inherit;
+    text-decoration: underline; text-underline-offset: 3px;
+  }
+  .modal-footer {
+    text-align: center;
+    font-size: 0.83rem;
+    color: var(--muted);
+    margin-top: 20px;
+  }
+
+  /* ─── YEARBOOK MODAL CARD PREVIEW ─── */
+  .yb-preview-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    cursor: pointer;
+  }
+  .yb-preview-photo {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    background: #1a1917;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .yb-preview-photo img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: grayscale(100%);
+    display: none;
+  }
+  .yb-preview-initials {
+    font-family: var(--serif);
+    font-size: 4rem;
+    font-weight: 900;
+    color: rgba(255,255,255,0.1);
+    letter-spacing: -0.02em;
+  }
+  .yb-preview-change {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.2s;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    color: var(--amber);
+    text-transform: uppercase;
+  }
+  .yb-preview-card:hover .yb-preview-change { opacity: 1; }
+  .yb-preview-info { padding: 14px 16px; }
+  .yb-preview-roll { font-family: var(--mono); font-size: 0.7rem; color: var(--amber); letter-spacing: 0.12em; margin-bottom: 4px; }
+  .yb-preview-name { font-family: var(--serif); font-size: 1.2rem; font-weight: 700; }
+  .yb-preview-branch { font-size: 0.8rem; color: var(--muted); font-style: italic; }
+
+  .upload-zone {
+    width: 100%;
+    border: 1px dashed rgba(212,160,23,0.3);
+    border-radius: 12px;
+    padding: 13px;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+    margin-bottom: 12px;
+  }
+  .upload-zone:hover { border-color: var(--amber); color: var(--amber); }
+  .upload-zone.filled { border-color: rgba(212,160,23,0.6); color: var(--amber); }
+
+  .notice {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+
+  /* ─── PROFILE MODAL ─── */
+  .profile-header {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 24px;
+  }
+  .profile-pfp-ring {
+    width: 52px; height: 52px;
+    border-radius: 50%; padding: 2px;
+    background: conic-gradient(var(--amber), #92400e, var(--amber));
+    flex-shrink: 0;
+  }
+  .profile-pfp-ring img {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #141210;
+    display: block;
+  }
+
+  /* ─── TOAST ─── */
+  #toast {
+    position: fixed; top: 90px; right: 24px;
+    z-index: 500;
+    display: none;
+    min-width: 280px;
+    background: rgba(14,13,12,0.88);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(212,160,23,0.3);
+    border-radius: 16px;
+    padding: 14px 18px;
+    animation: slideInRight 0.35s ease;
+  }
+  #toast.open { display: flex; align-items: center; gap: 10px; }
+  .toast-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); flex-shrink: 0; }
+  .toast-dot.err { background: #e05050; }
+  #toast-text { font-size: 0.85rem; color: var(--text); }
+
+  /* ─── SPINNER ─── */
+  .spinner {
+    display: inline-block; width: 16px; height: 16px;
+    border: 2px solid rgba(0,0,0,0.25);
+    border-top-color: #0d0d0d;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle; margin-right: 6px;
+  }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.92); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ─── MOBILE NAV ─── */
+  .hamburger {
+    display: none;
+    flex-direction: column; gap: 5px;
+    background: none; border: none;
+    cursor: pointer; padding: 6px;
+  }
+  .ham-bar { width: 22px; height: 2px; background: var(--amber); border-radius: 2px; transition: all 0.3s; }
+
+  .mobile-menu {
+    display: none;
+    position: fixed; inset: 0;
+    top: 80px;
+    background: rgba(13,13,13,0.97);
+    backdrop-filter: blur(20px);
+    z-index: 90;
+    padding: 40px 32px;
+    flex-direction: column; gap: 8px;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    font-family: var(--serif);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    transition: color 0.2s;
+  }
+  .mobile-menu a:hover, .mobile-menu a.active { color: var(--amber); }
+
+  @media (max-width: 700px) {
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .nav-auth-btn .nav-name { display: none; }
+    .field-row { grid-template-columns: 1fr; }
+  }
+
+  /* footer */
+  footer { text-align: center; padding: 40px 0 20px; font-family: var(--mono); font-size: 0.65rem; color: var(--dim); letter-spacing: 0.12em; text-transform: uppercase; }
 </style>
 </head>
-<body class="p-8">
-<div class="blur-orb"></div>
+<body>
 
-<!-- TOAST -->
-<div id="toast" class="hidden fixed top-24 right-6 z-[100] min-w-[320px] max-w-sm rounded-3xl px-5 py-4 border border-yellow-400/30 bg-stone-900/70 backdrop-blur-2xl shadow-2xl shadow-black/40 transition-all duration-500">
-  <div class="absolute inset-0 rounded-3xl bg-gradient-to-r from-yellow-400/10 via-transparent to-stone-200/5 pointer-events-none"></div>
-  <div class="relative flex items-start gap-3">
-    <div id="toastDot" class="mt-1 h-2.5 w-2.5 rounded-full bg-yellow-400 shadow-lg shadow-yellow-400/50 shrink-0"></div>
-    <p id="toastText" class="text-sm leading-6 text-stone-100 font-medium"></p>
-  </div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<!-- ── TOAST ── -->
+<div id="toast">
+  <span class="toast-dot" id="toast-dot"></span>
+  <span id="toast-text"></span>
 </div>
 
-<!-- NAVBAR -->
-<div id="navWrapper" class="glass fade-down fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl rounded-full z-50 transition-all duration-400">
-  <div class="px-6 md:px-8 py-4 flex items-center justify-between">
-    <a href="/" class="text-2xl font-bold tracking-wide text-yellow-400">Echoes</a>
-    <div class="hidden md:flex items-center gap-8 text-sm font-medium">
-      <a class="nav-link" href="/journey">The Journey</a>
-      <a class="nav-link active" href="/yearbook">Year Book</a>
-      <a class="nav-link" href="/vault">Vault</a>
-      <a class="nav-link" href="/wall">The Wall</a>
-    </div>
-    <div class="flex items-center gap-3">
-      <button id="authBtn" onclick="handleAuthButton()"
-        class="hidden md:flex glass rounded-full px-5 py-2 text-yellow-300 hover:scale-105 transition-all duration-300 items-center gap-3">
-        <span id="authBtnText" class="font-semibold tracking-wide">Sign Up</span>
-        <div id="pfpRing" class="hidden h-10 w-10 rounded-full p-[2px] avatar-ring shadow-lg shadow-yellow-400/30">
-          <img id="navPfp" src="https://placehold.co/40x40" class="h-full w-full rounded-full object-cover border border-black/40" />
-        </div>
-      </button>
-      <div id="mobileAuth" class="flex md:hidden items-center gap-2">
-        <button id="hamburger" onclick="toggleMenu()" class="flex flex-col gap-[5px] items-center justify-center w-10 h-10 rounded-full glass">
-          <span id="hLine1" class="ham-line"></span>
-          <span id="hLine2" class="ham-line"></span>
-          <span id="hLine3" class="ham-line w-[14px] self-end mr-[4px]"></span>
-        </button>
+<!-- ── NAV ── -->
+<nav>
+  <a href="/" class="nav-brand">Echoes</a>
+  <ul class="nav-links">
+    <li><a href="/journey">The Journey</a></li>
+    <li><a href="/yearbook" class="active">Year Book</a></li>
+    <li><a href="/vault">Vault</a></li>
+    <li><a href="/wall">The Wall</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="nav-auth-btn" id="navAuthBtn" onclick="handleNavAuth()">
+      <span class="nav-name" id="navAuthText">Sign In</span>
+      <div class="nav-pfp-ring" id="navPfpRing">
+        <img id="navPfpImg" src="" alt="pfp" />
       </div>
-    </div>
+    </button>
+    <button class="hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
+      <span class="ham-bar" id="hb1"></span>
+      <span class="ham-bar" id="hb2"></span>
+      <span class="ham-bar" id="hb3"></span>
+    </button>
   </div>
-  <div id="mobileMenu">
-    <div class="px-6 pb-5">
-      <div class="mobile-divider mb-3"></div>
-      <a class="mobile-nav-link" href="/journey">The Journey</a>
-      <a class="mobile-nav-link active" href="/yearbook">Year Book</a>
-      <a class="mobile-nav-link" href="/vault">Vault</a>
-      <a class="mobile-nav-link" href="/wall">The Wall</a>
-      <div class="mobile-divider my-3"></div>
-      <button id="mobileMenuAuthBtn" onclick="handleAuthButton(); toggleMenu()"
-        class="w-full rounded-2xl bg-yellow-400/10 border border-yellow-400/30 text-yellow-300 font-semibold py-3 text-sm tracking-wide hover:bg-yellow-400/20 transition">
-        <span id="mobileAuthText">Sign In / Sign Up</span>
-      </button>
-      <div class="mobile-divider mt-3"></div>
-    </div>
-  </div>
+</nav>
+
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="/journey">The Journey</a>
+  <a href="/yearbook" class="active">Year Book</a>
+  <a href="/vault">Vault</a>
+  <a href="/wall">The Wall</a>
 </div>
 
-<!-- PAGE BODY -->
-<div class="pt-28">
-  <header class="text-center mb-8">
-    <h1 class="text-5xl font-serif mb-2">The Class of '29</h1>
-    <p class="text-gray-400">Faces that defined our journey. Moments that became memories.</p>
+<!-- ── PAGE ── -->
+<div class="page">
+  <header class="page-header">
+    <div class="eyebrow">Batch 2025 — 2029</div>
+    <h1>The Class of '29</h1>
+    <p>Faces that defined our journey. Moments that became memories.</p>
   </header>
 
-  <div class="sticky-top">
-    <input type="text" placeholder="Search by name or roll no" class="search-input" id="searchInput" />
-    <div class="filter-buttons">
-      <button class="filter-btn active" data-filter="All">All</button>
-      <button class="filter-btn" data-filter="CSE">CSE</button>
-      <button class="filter-btn" data-filter="ECE">ECE</button>
-      <button class="filter-btn" data-filter="MECH">MECH</button>
-      <button class="filter-btn" data-filter="CIVIL">CIVIL</button>
-      <button class="filter-btn" data-filter="AIDS">AIDS</button>
+  <!-- Controls -->
+  <div class="controls">
+    <div class="search-wrap">
+      <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="7" stroke-width="2"/>
+        <path d="m16.5 16.5 4 4" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <input type="text" id="searchInput" class="search-input" placeholder="Search by name or roll number…" />
+    </div>
+    <div class="filters" id="filtersBar">
+      <button class="filter-pill active" data-f="All">All Majors</button>
+      <button class="filter-pill" data-f="CSE">CSE</button>
+      <button class="filter-pill" data-f="ECE">ECE</button>
+      <button class="filter-pill" data-f="MECH">Mech</button>
+      <button class="filter-pill" data-f="CIVIL">Civil</button>
+      <button class="filter-pill" data-f="AIDS">AIDS</button>
     </div>
   </div>
 
-  <div class="yearbook-grid" id="yearbookGrid">
-    <!-- cards injected by JS -->
-  </div>
+  <!-- Grid -->
+  <div class="grid" id="grid"></div>
 
-  <footer class="py-6 text-center text-sm text-stone-500">© 2026 All memories preserved forever</footer>
+  <footer>© 2026 Echoes — All memories preserved forever</footer>
 </div>
 
-<!-- ── FLOATING YEARBOOK BUTTON ── -->
-<button id="fabYearbook" onclick="openYearbookModal()">
-  <span class="fab-icon">📖</span>
-  <span id="fabLabel">Create Your Yearbook</span>
+<!-- ── FAB ── -->
+<button id="fab" onclick="openYearbookModal()">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+  </svg>
+  <span id="fabLabel">Create Your Card</span>
 </button>
 
-<!-- ── YEARBOOK CREATE/EDIT MODAL ── -->
-<div id="yearbookModal">
-  <div class="yb-modal-inner">
-    <div class="yb-gold-bar"></div>
-    <div class="p-7">
-      <div class="flex items-center justify-between mb-1">
-        <h2 class="text-2xl font-bold text-yellow-400" id="ybModalTitle">Your Yearbook Card</h2>
-        <button onclick="closeYearbookModal()" class="text-2xl text-stone-400 hover:text-yellow-400 hover:rotate-90 transition-all duration-300">×</button>
-      </div>
-      <p class="text-stone-500 text-xs tracking-widest uppercase mb-5" id="ybModalSub">Preview how you'll appear</p>
+<!-- ══════════════════════════════════════════════════
+     YEARBOOK MODAL
+══════════════════════════════════════════════════ -->
+<div class="modal-backdrop" id="ybModal">
+  <div class="modal">
+    <div class="modal-gold-line"></div>
+    <div class="modal-body">
+      <button class="modal-close" onclick="closeModal('ybModal')">×</button>
+      <div class="modal-title" id="ybTitle">Your Card</div>
+      <div class="modal-sub" id="ybSub">Preview · Add Photo · Publish</div>
 
-      <!-- live preview card -->
-      <div class="yb-preview mb-5">
-        <div class="yb-preview-img" id="ybPreviewImg" onclick="document.getElementById('ybPhotoUpload').click()">
-          <span class="initials" id="ybInitials">?</span>
-          <img id="ybPreviewPhoto" style="display:none" />
-          <div class="overlay">📷 Change Photo</div>
+      <!-- Live card preview -->
+      <div class="yb-preview-card" onclick="document.getElementById('ybFileInput').click()">
+        <div class="yb-preview-photo">
+          <div class="yb-preview-initials" id="ybInitials">?</div>
+          <img id="ybPreviewImg" />
+          <div class="yb-preview-change">Change Photo</div>
         </div>
-        <div class="yb-preview-body">
-          <div class="yb-preview-roll" id="ybPreviewRoll">—</div>
-          <div class="yb-preview-name" id="ybPreviewName">—</div>
-          <div class="yb-preview-branch" id="ybPreviewBranch">—</div>
+        <div class="yb-preview-info">
+          <div class="yb-preview-roll" id="ybRoll">—</div>
+          <div class="yb-preview-name" id="ybName">—</div>
+          <div class="yb-preview-branch" id="ybBranch">—</div>
         </div>
       </div>
 
-      <!-- hidden file input -->
-      <input id="ybPhotoUpload" type="file" accept="image/*" class="hidden" />
-
-      <div class="upload-zone mb-5" id="ybUploadZone" onclick="document.getElementById('ybPhotoUpload').click()">
-        <span id="ybUploadText">📁 Choose a photo for your yearbook card</span>
+      <input type="file" id="ybFileInput" accept="image/*" style="display:none" />
+      <div class="upload-zone" id="ybUploadZone" onclick="document.getElementById('ybFileInput').click()">
+        <span id="ybUploadText">Choose a photo for your card</span>
       </div>
 
-      <p class="text-stone-600 text-xs mb-5 text-center">
-        Name, roll number and branch are pulled from your signup — only the photo is yours to set.
-        This photo also updates your profile picture.
-      </p>
+      <div class="notice">
+        Your name, roll number and branch are pulled from your account.
+        Only the photo is yours to set — it also updates your profile picture.
+      </div>
 
-      <button id="ybSubmitBtn" onclick="submitYearbook()"
-        class="w-full rounded-2xl bg-yellow-400 text-black font-bold py-3 hover:scale-[1.02] transition text-sm tracking-wide">
+      <button class="btn btn-primary" id="ybSubmitBtn" onclick="submitYearbook()">
         <span id="ybSubmitLabel">Publish to Yearbook</span>
       </button>
     </div>
   </div>
 </div>
 
-<!-- SIGN IN MODAL -->
-<div id="signinModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-  <div class="glass pop rounded-[2rem] p-8 w-full max-w-md relative">
-    <button onclick="closeModal('signinModal')" class="absolute top-4 right-4 text-2xl text-stone-400 hover:text-yellow-400 hover:rotate-90 transition-all duration-300">×</button>
-    <h2 class="text-3xl font-bold text-yellow-400 mb-2 text-center">Welcome Back</h2>
-    <p class="text-stone-400 text-center mb-6 text-sm">Sign in to access your yearbook</p>
-    <div class="space-y-4">
-      <input id="loginEmail" type="email" placeholder="Email" class="input-glass" />
-      <input id="loginPass" type="password" placeholder="Password" class="input-glass" />
+<!-- ══════════════════════════════════════════════════
+     SIGN IN MODAL
+══════════════════════════════════════════════════ -->
+<div class="modal-backdrop" id="signinModal">
+  <div class="modal">
+    <div class="modal-gold-line"></div>
+    <div class="modal-body">
+      <button class="modal-close" onclick="closeModal('signinModal')">×</button>
+      <div class="modal-title">Welcome Back</div>
+      <div class="modal-sub">Sign in to access your yearbook</div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="siEmail" class="input" placeholder="you@college.edu" />
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="siPass" class="input" placeholder="••••••••" />
+      </div>
+      <button class="btn btn-primary" style="margin-top:20px" onclick="doSignin()">Sign In</button>
+      <div class="modal-footer">
+        No account? <button class="text-link" onclick="switchModal('signinModal','signupModal')">Request access</button>
+      </div>
     </div>
-    <button onclick="signin()" class="w-full mt-5 rounded-2xl bg-yellow-400 text-black font-semibold py-3 hover:scale-[1.02] transition">Sign In</button>
-    <p class="text-sm text-center text-stone-400 mt-4">
-      Don't have an account?
-      <button onclick="switchToSignup()" class="text-yellow-400 hover:underline">Create one</button>
-    </p>
   </div>
 </div>
 
-<!-- SIGN UP MODAL -->
-<div id="signupModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-  <div class="glass pop rounded-[2rem] p-8 w-full max-w-2xl relative">
-    <button onclick="closeModal('signupModal')" class="absolute top-4 right-4 text-2xl text-stone-400 hover:text-yellow-400 hover:rotate-90 transition-all duration-300">×</button>
-    <h2 class="text-3xl font-bold text-yellow-400 mb-6 text-center">Request Access</h2>
-    <div class="grid md:grid-cols-2 gap-4">
-      <input id="fullName" placeholder="Full Name" class="input-glass" />
-      <input id="email" placeholder="Email" class="input-glass" />
-      <select id="branch" class="input-glass bg-black text-white">
-        <option>ECS</option><option>CSE</option><option>AIDS</option><option>MECH</option><option>CIVIL</option><option>ECE</option>
-      </select>
-      <input id="roll" placeholder="Roll Number" class="input-glass" />
+<!-- ══════════════════════════════════════════════════
+     SIGN UP MODAL
+══════════════════════════════════════════════════ -->
+<div class="modal-backdrop" id="signupModal">
+  <div class="modal wide">
+    <div class="modal-gold-line"></div>
+    <div class="modal-body">
+      <button class="modal-close" onclick="closeModal('signupModal')">×</button>
+      <div class="modal-title">Request Access</div>
+      <div class="modal-sub">Your account requires admin approval</div>
+      <div class="field-row">
+        <div class="field">
+          <label>Full Name</label>
+          <input type="text" id="suName" class="input" placeholder="Your full name" />
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="suEmail" class="input" placeholder="you@college.edu" />
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Branch</label>
+          <select id="suBranch" class="input">
+            <option>ECS</option><option>CSE</option><option>AIDS</option>
+            <option>MECH</option><option>CIVIL</option><option>ECE</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Roll Number</label>
+          <input type="text" id="suRoll" class="input" placeholder="e.g. 22CS045" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="suPass" class="input" placeholder="Min. 8 chars, 1 uppercase, 1 number, 1 symbol" />
+      </div>
+      <button class="btn btn-primary" style="margin-top:20px" onclick="doSignup()">Request Access</button>
+      <div class="modal-footer">
+        Already have an account? <button class="text-link" onclick="switchModal('signupModal','signinModal')">Sign in</button>
+      </div>
     </div>
-    <input id="password" type="password" placeholder="Create Password" class="input-glass mt-4" />
-    <button onclick="signup()" class="w-full mt-5 rounded-2xl bg-yellow-400 text-black font-semibold py-3 hover:scale-[1.02] transition">Request Access</button>
-    <p class="text-sm text-center text-stone-400 mt-4">
-      Already have an account?
-      <button onclick="switchToSignin()" class="text-yellow-400 hover:underline">Sign In</button>
-    </p>
   </div>
 </div>
 
-<!-- PROFILE MODAL — no pfp here, handled via yearbook modal -->
-<div id="profileModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-  <div class="glass pop rounded-[2rem] w-full max-w-md relative overflow-hidden">
-    <div class="h-[2px] bg-gradient-to-r from-transparent via-yellow-400 to-transparent"></div>
-    <div class="p-8">
-      <button onclick="closeModal('profileModal')" class="absolute top-5 right-5 text-2xl text-stone-400 hover:text-yellow-400 hover:rotate-90 transition-all duration-300">×</button>
-      <div class="flex items-center gap-4 mb-6">
-        <div class="h-14 w-14 rounded-full p-[2px] avatar-ring shrink-0">
-          <img id="modalPfpPreview" src="https://placehold.co/56x56" class="h-full w-full rounded-full object-cover border-2 border-black" />
+<!-- ══════════════════════════════════════════════════
+     PROFILE MODAL
+══════════════════════════════════════════════════ -->
+<div class="modal-backdrop" id="profileModal">
+  <div class="modal">
+    <div class="modal-gold-line"></div>
+    <div class="modal-body">
+      <button class="modal-close" onclick="closeModal('profileModal')">×</button>
+      <div class="profile-header">
+        <div class="profile-pfp-ring">
+          <img id="profilePfpImg" src="" alt="pfp" />
         </div>
         <div>
-          <h2 class="text-2xl font-bold text-yellow-400">Profile Settings</h2>
-          <p class="text-stone-500 text-xs tracking-widest uppercase">Manage your identity</p>
+          <div class="modal-title" style="font-size:1.4rem; margin-bottom:2px">Profile</div>
+          <div class="modal-sub" style="margin-bottom:0">Manage your identity</div>
         </div>
       </div>
-      <p class="text-stone-600 text-xs mb-4 bg-stone-900/50 rounded-xl p-3 border border-stone-800">
-        📷 To update your profile picture, use the <span class="text-yellow-400 font-semibold">Your Yearbook</span> button (bottom right after signing in).
-      </p>
-      <div class="divider"></div>
-      <div class="mb-4">
-        <p class="section-label">Display Name</p>
-        <input id="newName" placeholder="Enter new name" class="input-glass" />
+      <div class="notice" style="margin-bottom:16px">
+        To update your profile picture, use the <strong style="color:var(--amber)">Create / Edit Card</strong> button (bottom right) after signing in.
       </div>
-      <div class="divider"></div>
-      <div class="space-y-3">
-        <p class="section-label">Change Password</p>
-        <input id="currentPass" type="password" placeholder="Current Password" class="input-glass" />
-        <input id="newPass" type="password" placeholder="New Password" class="input-glass" />
+      <div class="field">
+        <label>Display Name</label>
+        <input type="text" id="prName" class="input" placeholder="New display name" />
       </div>
-      <div class="grid grid-cols-2 gap-4 mt-6">
-        <button onclick="saveProfileChanges()" class="rounded-2xl bg-yellow-400 text-black py-3 font-semibold hover:scale-[1.02] transition">Save Changes</button>
-        <button onclick="signout()" class="rounded-2xl border border-stone-600 py-3 hover:border-red-500/60 hover:text-red-400 transition">Sign Out</button>
+      <div class="divider-line"></div>
+      <div class="field">
+        <label>Current Password</label>
+        <input type="password" id="prCurPass" class="input" placeholder="Required to change password" />
+      </div>
+      <div class="field">
+        <label>New Password</label>
+        <input type="password" id="prNewPass" class="input" placeholder="Leave blank to keep current" />
+      </div>
+      <div class="btn-grid">
+        <button class="btn btn-primary" onclick="doUpdateProfile()">Save Changes</button>
+        <button class="btn btn-ghost" onclick="doSignout()">Sign Out</button>
       </div>
     </div>
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════════ -->
 <script>
-  // ── STATE ──
-  let currentUser    = null; // { name, roll, branch, pfp, has_yearbook }
-  let isLoggedIn     = false;
-  let menuOpen       = false;
-  let ybPhotoFile    = null;
-  let activeFilter   = 'All';
-  let allCards       = []; // raw data from API
+// ── STATE ──
+let user       = null;  // { name, roll, branch, pfp, has_yearbook, loggedIn }
+let allCards   = [];
+let activeFilter = 'All';
+let ybFile     = null;
+let menuOpen   = false;
 
-  // ── INIT ──
-  document.addEventListener("DOMContentLoaded", () => {
-    // Enter key bindings
-    ["loginEmail","loginPass"].forEach(id =>
-      document.getElementById(id)?.addEventListener("keydown", e => { if(e.key==="Enter") signin(); }));
-    ["fullName","email","roll","password"].forEach(id =>
-      document.getElementById(id)?.addEventListener("keydown", e => { if(e.key==="Enter") signup(); }));
-    ["newName","currentPass","newPass"].forEach(id =>
-      document.getElementById(id)?.addEventListener("keydown", e => { if(e.key==="Enter") saveProfileChanges(); }));
+// ── INIT ──
+window.addEventListener('DOMContentLoaded', () => {
+  fetchMe().then(() => loadGrid());
 
-    // yearbook photo upload
-    document.getElementById("ybPhotoUpload").addEventListener("change", function() {
-      const file = this.files[0];
-      if (!file) return;
-      ybPhotoFile = file;
-      document.getElementById("ybUploadText").textContent = "✓ " + file.name;
-      document.getElementById("ybUploadZone").classList.add("has-file");
-      const reader = new FileReader();
-      reader.onload = e => {
-        const photo = document.getElementById("ybPreviewPhoto");
-        photo.src = e.target.result;
-        photo.style.display = "block";
-        document.getElementById("ybInitials").style.display = "none";
-      };
-      reader.readAsDataURL(file);
-    });
+  document.getElementById('searchInput').addEventListener('input', () => renderGrid());
 
-    // Load user session + yearbook grid
-    fetchMe().then(() => loadGrid());
+  document.getElementById('filtersBar').addEventListener('click', e => {
+    const pill = e.target.closest('.filter-pill');
+    if (!pill) return;
+    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    activeFilter = pill.dataset.f;
+    renderGrid();
   });
 
-  async function fetchMe() {
-    try {
-      const r = await fetch("/api/me");
-      const data = await r.json();
-      if (data.loggedIn) {
-        isLoggedIn  = true;
-        currentUser = data; // expects: name, roll, branch, pfp, has_yearbook
-        document.getElementById("authBtnText").innerText = data.name.toUpperCase();
-        if (data.pfp) {
-          document.getElementById("navPfp").src = data.pfp;
-          document.getElementById("pfpRing").classList.remove("hidden");
-          document.getElementById("modalPfpPreview").src = data.pfp;
-        }
-        // show FAB
-        const fab = document.getElementById("fabYearbook");
-        fab.style.display = "flex";
-        document.getElementById("fabLabel").textContent =
-          data.has_yearbook ? "Open Your Yearbook" : "Create Your Yearbook";
-      }
-      syncMobileAuthText();
-    } catch(e) { /* not logged in */ }
-  }
-
-  // ── GRID ──
-  async function loadGrid() {
-    try {
-      const r    = await fetch("/api/yearbook");
-      const data = await r.json(); // array of { name, roll, branch, pfp, user_id }
-      allCards   = data;
-      renderGrid(allCards);
-    } catch(e) {
-      renderGrid([]);
-    }
-  }
-
-  function renderGrid(cards) {
-    const grid  = document.getElementById("yearbookGrid");
-    const query = document.getElementById("searchInput").value.toLowerCase();
-    const filtered = cards.filter(c => {
-      const matchBranch = activeFilter === "All" || c.branch === activeFilter;
-      const matchSearch = c.name.toLowerCase().includes(query) || c.roll.toLowerCase().includes(query);
-      return matchBranch && matchSearch;
-    });
-
-    if (!filtered.length) {
-      grid.innerHTML = `<div class="empty-state"><div class="emoji">📭</div><p>No yearbook entries yet. Be the first!</p></div>`;
-      return;
-    }
-
-    grid.innerHTML = filtered.map((c, i) => {
-      const initials = c.name.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();
-      const isMine   = isLoggedIn && currentUser && c.roll === currentUser.roll;
-      const imgTag   = c.pfp
-        ? `<img src="${c.pfp}" alt="${c.name}" />`
-        : `<span class="initials">${initials}</span>`;
-      return `
-        <div class="card${isMine ? " mine" : ""}"
-          data-branch="${c.branch}" data-name="${c.name}" data-roll="${c.roll}"
-          style="animation-delay:${i * 0.05}s"
-          onclick="${isMine ? "openYearbookModal()" : "void(0)"}">
-          <div class="card-header">${imgTag}</div>
-          <div class="card-body">
-            <div class="roll">${c.roll}</div>
-            <div class="name">${c.name}${isMine ? ' <span style="color:#d4a017;font-size:0.7rem">● you</span>' : ""}</div>
-            <div class="branch">${c.branch}</div>
-            <div class="card-btn">${isMine ? "Edit Your Card" : "View Profile"}</div>
-          </div>
-        </div>`;
-    }).join("");
-  }
-
-  // ── SEARCH + FILTER ──
-  document.getElementById("searchInput").addEventListener("input", () => renderGrid(allCards));
-
-  document.querySelectorAll(".filter-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      activeFilter = btn.dataset.filter;
-      renderGrid(allCards);
-    });
+  document.getElementById('ybFileInput').addEventListener('change', function() {
+    const file = this.files[0];
+    if (!file) return;
+    ybFile = file;
+    document.getElementById('ybUploadText').textContent = '✓ ' + file.name;
+    document.getElementById('ybUploadZone').classList.add('filled');
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const img = document.getElementById('ybPreviewImg');
+      img.src = ev.target.result;
+      img.style.display = 'block';
+      document.getElementById('ybInitials').style.display = 'none';
+    };
+    reader.readAsDataURL(file);
   });
 
-  // ── YEARBOOK MODAL ──
-  function openYearbookModal() {
-    if (!isLoggedIn) { document.getElementById("signinModal").classList.remove("hidden"); return; }
-    const u = currentUser;
-
-    // populate preview from user data
-    document.getElementById("ybPreviewRoll").textContent   = u.roll   || "—";
-    document.getElementById("ybPreviewName").textContent   = u.name   || "—";
-    document.getElementById("ybPreviewBranch").textContent = u.branch || "—";
-    const initials = (u.name || "?").split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();
-    document.getElementById("ybInitials").textContent = initials;
-
-    // if they already have a photo
-    if (u.pfp) {
-      const photo = document.getElementById("ybPreviewPhoto");
-      photo.src = u.pfp;
-      photo.style.display = "block";
-      document.getElementById("ybInitials").style.display = "none";
-    } else {
-      document.getElementById("ybPreviewPhoto").style.display = "none";
-      document.getElementById("ybInitials").style.display = "block";
-    }
-
-    // reset upload zone
-    ybPhotoFile = null;
-    document.getElementById("ybUploadText").textContent = u.pfp ? "📁 Replace photo" : "📁 Choose a photo for your yearbook card";
-    document.getElementById("ybUploadZone").classList.remove("has-file");
-    document.getElementById("ybPhotoUpload").value = "";
-
-    // update title/btn if editing
-    const hasYB = u.has_yearbook;
-    document.getElementById("ybModalTitle").textContent = hasYB ? "Edit Your Card" : "Your Yearbook Card";
-    document.getElementById("ybModalSub").textContent   = hasYB ? "Update your yearbook entry" : "Preview how you'll appear";
-    document.getElementById("ybSubmitLabel").textContent = hasYB ? "Update Yearbook Card" : "Publish to Yearbook";
-
-    document.getElementById("yearbookModal").classList.add("open");
-  }
-
-  function closeYearbookModal() {
-    document.getElementById("yearbookModal").classList.remove("open");
-  }
-
-  async function submitYearbook() {
-    const btn   = document.getElementById("ybSubmitBtn");
-    const label = document.getElementById("ybSubmitLabel");
-    btn.disabled = true;
-    label.innerHTML = `<span class="spinner"></span> Saving...`;
-
-    const formData = new FormData();
-    if (ybPhotoFile) formData.append("photo", ybPhotoFile);
-
-    try {
-      const r   = await fetch("/api/yearbook/save", { method: "POST", body: formData });
-      const res = await r.json();
-      if (res.success) {
-        // sync pfp to nav immediately
-        if (res.pfp) {
-          currentUser.pfp = res.pfp;
-          document.getElementById("navPfp").src = res.pfp;
-          document.getElementById("pfpRing").classList.remove("hidden");
-          document.getElementById("modalPfpPreview").src = res.pfp;
-        }
-        currentUser.has_yearbook = true;
-        document.getElementById("fabLabel").textContent = "Open Your Yearbook";
-        closeYearbookModal();
-        showToast(res.created ? "You're in the yearbook! 🎉" : "Card updated!");
-        loadGrid(); // refresh grid
-      } else {
-        showToast(res.message || "Something went wrong", true);
-      }
-    } catch(e) {
-      showToast("Network error", true);
-    }
-
-    btn.disabled = false;
-    label.textContent = currentUser.has_yearbook ? "Update Yearbook Card" : "Publish to Yearbook";
-  }
-
-  // ── TOAST ──
-  function showToast(message, isError = false) {
-    const toast = document.getElementById("toast");
-    const dot   = document.getElementById("toastDot");
-    document.getElementById("toastText").textContent = message;
-    toast.classList.remove("hidden");
-    toast.style.borderColor = isError ? "rgba(248,113,113,0.4)" : "rgba(250,204,21,0.3)";
-    dot.style.background    = isError ? "#f87171" : "#facc15";
-    clearTimeout(window._toastTimer);
-    window._toastTimer = setTimeout(() => toast.classList.add("hidden"), 2800);
-  }
-
-  // ── NAVBAR / HAMBURGER ──
-  function toggleMenu() {
-    menuOpen = !menuOpen;
-    const menu = document.getElementById("mobileMenu");
-    const wrap = document.getElementById("navWrapper");
-    const l1 = document.getElementById("hLine1"), l2 = document.getElementById("hLine2"), l3 = document.getElementById("hLine3");
-    if (menuOpen) {
-      menu.classList.add("open"); wrap.style.borderRadius = "1.5rem";
-      l1.style.transform = "translateY(7px) rotate(45deg)"; l2.style.opacity = "0";
-      l3.style.transform = "translateY(-7px) rotate(-45deg)"; l3.style.width="22px"; l3.style.marginRight="0"; l3.style.alignSelf="auto";
-    } else {
-      menu.classList.remove("open"); wrap.style.borderRadius = "9999px";
-      l1.style.transform=""; l2.style.opacity="1"; l3.style.transform="";
-      l3.style.width="14px"; l3.style.marginRight="4px"; l3.style.alignSelf="flex-end";
-    }
-  }
-
-  function syncMobileAuthText() {
-    const btn = document.getElementById("mobileMenuAuthBtn");
-    const txt = document.getElementById("mobileAuthText");
-    if (isLoggedIn) {
-      txt.textContent = "Update Profile";
-      btn.classList.replace("bg-yellow-400/10","bg-yellow-400/20");
-    } else {
-      txt.textContent = "Sign In / Sign Up";
-      btn.classList.replace("bg-yellow-400/20","bg-yellow-400/10");
-    }
-  }
-
-  function closeModal(id) { document.getElementById(id).classList.add("hidden"); }
-
-  function handleAuthButton() {
-    if (!isLoggedIn) {
-      document.getElementById("signinModal").classList.remove("hidden");
-    } else {
-      document.getElementById("modalPfpPreview").src = document.getElementById("navPfp").src;
-      document.getElementById("profileModal").classList.remove("hidden");
-    }
-  }
-
-  function switchToSignup() { closeModal("signinModal"); document.getElementById("signupModal").classList.remove("hidden"); }
-  function switchToSignin()  { closeModal("signupModal"); document.getElementById("signinModal").classList.remove("hidden"); }
-
-  function validatePassword(p) {
-    return /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/.test(p);
-  }
-
-  async function signup() {
-    const pwd = document.getElementById("password").value;
-    if (!validatePassword(pwd)) { showToast("Password needs 8+ chars, 1 capital, 1 number, 1 symbol", true); return; }
-    const res = await fetch("/signup", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        full_name: document.getElementById("fullName").value,
-        email: document.getElementById("email").value,
-        branch: document.getElementById("branch").value,
-        roll_number: document.getElementById("roll").value,
-        password: pwd
-      })
-    });
-    const result = await res.json();
-    if (result.message?.toLowerCase().includes("exists")) { showToast("User already exists", true); return; }
-    showToast("Access request submitted!");
-    switchToSignin();
-  }
-
-  async function signin() {
-    const res = await fetch("/signin", {
-      method: "POST", headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({
-        email: document.getElementById("loginEmail").value,
-        password: document.getElementById("loginPass").value
-      })
-    });
-    const result = await res.json();
-    if (result.success) {
-      isLoggedIn = true;
-      currentUser = { name: result.name, roll: result.roll, branch: result.branch, pfp: result.pfp, has_yearbook: result.has_yearbook };
-      document.getElementById("authBtnText").innerText = result.name.toUpperCase();
-      if (result.pfp) {
-        document.getElementById("navPfp").src = result.pfp;
-        document.getElementById("pfpRing").classList.remove("hidden");
-      }
-      closeModal("signinModal");
-      showToast("Welcome back, " + result.name);
-      syncMobileAuthText();
-      // show FAB
-      const fab = document.getElementById("fabYearbook");
-      fab.style.display = "flex";
-      document.getElementById("fabLabel").textContent = result.has_yearbook ? "Open Your Yearbook" : "Create Your Yearbook";
-      loadGrid(); // re-render so "you" badge appears
-    } else {
-      showToast(result.message || "Incorrect credentials", true);
-    }
-  }
-
-  async function saveProfileChanges() {
-    const formData = new FormData();
-    const newName     = document.getElementById("newName").value.trim();
-    const currentPass = document.getElementById("currentPass").value;
-    const newPass     = document.getElementById("newPass").value;
-    if (newName)     formData.append("new_name", newName);
-    if (currentPass) formData.append("current_password", currentPass);
-    if (newPass)     formData.append("new_password", newPass);
-    const res    = await fetch("/update-profile", { method: "POST", body: formData });
-    const result = await res.json();
-    if (result.success) {
-      if (result.name) {
-        currentUser.name = result.name;
-        document.getElementById("authBtnText").innerText = result.name.toUpperCase();
-      }
-      showToast("Profile updated");
-      closeModal("profileModal");
-    } else {
-      showToast(result.message || "Update failed", true);
-    }
-  }
-
-  async function signout() {
-    await fetch("/signout", { method: "POST" });
-    isLoggedIn = false; currentUser = null; ybPhotoFile = null;
-    document.getElementById("authBtnText").innerText = "Sign Up";
-    document.getElementById("navPfp").src = "";
-    document.getElementById("pfpRing").classList.add("hidden");
-    document.getElementById("fabYearbook").style.display = "none";
-    closeModal("profileModal");
-    showToast("Signed out");
-    syncMobileAuthText();
-    loadGrid();
-  }
-
-  // close modals on backdrop click
-  window.addEventListener("click", e => {
-    ["signinModal","signupModal","profileModal"].forEach(id => {
-      if (e.target === document.getElementById(id)) closeModal(id);
-    });
-    if (e.target === document.getElementById("yearbookModal")) closeYearbookModal();
+  // Close modals on backdrop click
+  document.querySelectorAll('.modal-backdrop').forEach(bd => {
+    bd.addEventListener('click', e => { if (e.target === bd) bd.classList.remove('open'); });
   });
+
+  // Enter key shortcuts
+  [['siEmail','siPass'],['suName','suEmail','suRoll','suPass']].forEach(ids => {
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('keydown', e => {
+        if (e.key === 'Enter') id.startsWith('si') ? doSignin() : doSignup();
+      });
+    });
+  });
+});
+
+// ── SESSION ──
+async function fetchMe() {
+  try {
+    const r = await fetch('/api/me');
+    const d = await r.json();
+    if (d.loggedIn) {
+      user = d;
+      updateNavForLoggedIn();
+      showFab();
+    }
+  } catch {}
+}
+
+function updateNavForLoggedIn() {
+  if (!user) return;
+  document.getElementById('navAuthText').textContent = user.name.split(' ')[0].toUpperCase();
+  if (user.pfp) {
+    const ring = document.getElementById('navPfpRing');
+    const img  = document.getElementById('navPfpImg');
+    ring.style.display = 'block';
+    img.src = user.pfp;
+    document.getElementById('profilePfpImg').src = user.pfp;
+  }
+}
+
+function showFab() {
+  const fab = document.getElementById('fab');
+  fab.style.display = 'flex';
+  document.getElementById('fabLabel').textContent =
+    user.has_yearbook ? 'Edit Your Card' : 'Create Your Card';
+}
+
+// ── GRID ──
+async function loadGrid() {
+  try {
+    const r = await fetch('/api/yearbook');
+    allCards = await r.json();
+  } catch { allCards = []; }
+  renderGrid();
+}
+
+function initials(name) {
+  return (name || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+}
+
+function renderGrid() {
+  const grid  = document.getElementById('grid');
+  const query = document.getElementById('searchInput').value.toLowerCase();
+
+  const filtered = allCards.filter(c => {
+    const matchBranch = activeFilter === 'All' || c.branch === activeFilter;
+    const matchSearch = c.name.toLowerCase().includes(query) || c.roll.toLowerCase().includes(query);
+    return matchBranch && matchSearch;
+  });
+
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="empty-state">
+      <div class="big">◯</div>
+      <p>No entries found. Be the first to add your card.</p>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map((c, i) => {
+    const mine   = user && c.roll === user.roll;
+    const inits  = initials(c.name);
+    const photo  = c.photo || '';
+
+    const photoHtml = photo
+      ? `<img src="${photo}" alt="${c.name}" style="width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(100%) contrast(1.05);transition:filter .4s,transform .4s" />`
+      : `<div class="initials-block">${inits}</div>`;
+
+    const overlayLabel = mine ? 'Edit Your Card' : 'View Profile';
+
+    return `<div class="yb-card${mine ? ' is-mine' : ''}"
+        style="animation-delay:${Math.min(i * 0.04, 0.5)}s"
+        onclick="${mine ? 'openYearbookModal()' : 'void(0)'}">
+      <div class="card-photo">
+        ${photoHtml}
+        <div class="card-overlay">
+          <span class="overlay-label">${overlayLabel}</span>
+        </div>
+        ${mine ? '<span class="mine-badge">You</span>' : ''}
+      </div>
+      <div class="card-body">
+        <div class="card-roll">${c.roll}</div>
+        <div class="card-name">${c.name}</div>
+        <div class="card-branch">${c.branch}</div>
+        <button class="card-action${mine ? ' edit-action' : ''}"
+          onclick="event.stopPropagation();${mine ? 'openYearbookModal()' : 'void(0)'}">
+          ${mine ? 'Edit Your Card' : 'View Profile'}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── YEARBOOK MODAL ──
+function openYearbookModal() {
+  if (!user) { openModal('signinModal'); return; }
+
+  document.getElementById('ybTitle').textContent  = user.has_yearbook ? 'Edit Your Card' : 'Your Card';
+  document.getElementById('ybSub').textContent    = user.has_yearbook ? 'Update your yearbook entry' : 'Preview · Add Photo · Publish';
+  document.getElementById('ybSubmitLabel').textContent = user.has_yearbook ? 'Update Card' : 'Publish to Yearbook';
+
+  document.getElementById('ybRoll').textContent   = user.roll   || '—';
+  document.getElementById('ybName').textContent   = user.name   || '—';
+  document.getElementById('ybBranch').textContent = user.branch || '—';
+  document.getElementById('ybInitials').textContent = initials(user.name || '?');
+
+  if (user.pfp) {
+    const img = document.getElementById('ybPreviewImg');
+    img.src = user.pfp;
+    img.style.display = 'block';
+    document.getElementById('ybInitials').style.display = 'none';
+  } else {
+    document.getElementById('ybPreviewImg').style.display = 'none';
+    document.getElementById('ybInitials').style.display = 'block';
+  }
+
+  ybFile = null;
+  document.getElementById('ybFileInput').value = '';
+  document.getElementById('ybUploadText').textContent = user.pfp ? 'Replace photo' : 'Choose a photo for your card';
+  document.getElementById('ybUploadZone').classList.remove('filled');
+
+  openModal('ybModal');
+}
+
+async function submitYearbook() {
+  const btn   = document.getElementById('ybSubmitBtn');
+  const label = document.getElementById('ybSubmitLabel');
+  btn.disabled = true;
+  label.innerHTML = '<span class="spinner"></span>Saving…';
+
+  const fd = new FormData();
+  if (ybFile) fd.append('photo', ybFile);
+
+  try {
+    const r   = await fetch('/api/yearbook/save', { method: 'POST', body: fd });
+    const res = await r.json();
+    if (res.success) {
+      if (res.photo) {
+        user.pfp = res.photo;
+        document.getElementById('navPfpImg').src = res.photo;
+        document.getElementById('navPfpRing').style.display = 'block';
+        document.getElementById('profilePfpImg').src = res.photo;
+      }
+      user.has_yearbook = true;
+      showFab();
+      closeModal('ybModal');
+      toast(res.created ? "You're in the yearbook! 🎉" : 'Card updated!');
+      loadGrid();
+    } else {
+      toast(res.message || 'Something went wrong', true);
+    }
+  } catch { toast('Network error', true); }
+
+  btn.disabled = false;
+  label.textContent = user.has_yearbook ? 'Update Card' : 'Publish to Yearbook';
+}
+
+// ── AUTH ──
+function handleNavAuth() {
+  if (!user) { openModal('signinModal'); }
+  else        { openModal('profileModal'); }
+}
+
+async function doSignin() {
+  const email = document.getElementById('siEmail').value;
+  const pass  = document.getElementById('siPass').value;
+  try {
+    const r   = await fetch('/signin', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, password: pass }) });
+    const res = await r.json();
+    if (res.success) {
+      user = { name: res.name, roll: res.roll, branch: res.branch, pfp: res.pfp, has_yearbook: res.has_yearbook, loggedIn: true };
+      updateNavForLoggedIn();
+      showFab();
+      closeModal('signinModal');
+      toast('Welcome back, ' + res.name.split(' ')[0] + '!');
+      loadGrid();
+    } else {
+      toast(res.message || 'Incorrect credentials', true);
+    }
+  } catch { toast('Network error', true); }
+}
+
+async function doSignup() {
+  const pass = document.getElementById('suPass').value;
+  if (!/^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/.test(pass)) {
+    toast('Password needs 8+ chars, 1 uppercase, 1 number, 1 symbol', true); return;
+  }
+  try {
+    const r   = await fetch('/signup', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({
+      full_name:   document.getElementById('suName').value,
+      email:       document.getElementById('suEmail').value,
+      branch:      document.getElementById('suBranch').value,
+      roll_number: document.getElementById('suRoll').value,
+      password:    pass
+    })});
+    const res = await r.json();
+    if (res.message?.toLowerCase().includes('exists')) { toast('User already exists', true); return; }
+    toast('Access request submitted — wait for admin approval!');
+    switchModal('signupModal', 'signinModal');
+  } catch { toast('Network error', true); }
+}
+
+async function doUpdateProfile() {
+  const fd = new FormData();
+  const n  = document.getElementById('prName').value.trim();
+  const cp = document.getElementById('prCurPass').value;
+  const np = document.getElementById('prNewPass').value;
+  if (n)  fd.append('new_name', n);
+  if (cp) fd.append('current_password', cp);
+  if (np) fd.append('new_password', np);
+  try {
+    const r   = await fetch('/update-profile', { method:'POST', body: fd });
+    const res = await r.json();
+    if (res.success) {
+      if (res.name) { user.name = res.name; document.getElementById('navAuthText').textContent = res.name.split(' ')[0].toUpperCase(); }
+      closeModal('profileModal'); toast('Profile updated!');
+    } else { toast(res.message || 'Update failed', true); }
+  } catch { toast('Network error', true); }
+}
+
+async function doSignout() {
+  await fetch('/signout', { method: 'POST' });
+  user = null;
+  document.getElementById('navAuthText').textContent = 'Sign In';
+  document.getElementById('navPfpRing').style.display = 'none';
+  document.getElementById('fab').style.display = 'none';
+  closeModal('profileModal');
+  toast('Signed out.');
+  loadGrid();
+}
+
+// ── MODAL HELPERS ──
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function switchModal(from, to) { closeModal(from); openModal(to); }
+
+// ── TOAST ──
+function toast(msg, err = false) {
+  const el  = document.getElementById('toast');
+  const dot = document.getElementById('toast-dot');
+  document.getElementById('toast-text').textContent = msg;
+  dot.className = 'toast-dot' + (err ? ' err' : '');
+  el.style.borderColor = err ? 'rgba(224,80,80,0.4)' : 'rgba(212,160,23,0.35)';
+  el.classList.add('open');
+  clearTimeout(window._tid);
+  window._tid = setTimeout(() => el.classList.remove('open'), 3000);
+}
+
+// ── MOBILE MENU ──
+function toggleMobileMenu() {
+  menuOpen = !menuOpen;
+  document.getElementById('mobileMenu').classList.toggle('open', menuOpen);
+  const [b1, b2, b3] = ['hb1','hb2','hb3'].map(id => document.getElementById(id));
+  if (menuOpen) {
+    b1.style.transform = 'translateY(7px) rotate(45deg)';
+    b2.style.opacity   = '0';
+    b3.style.transform = 'translateY(-7px) rotate(-45deg)';
+  } else {
+    b1.style.transform = b3.style.transform = '';
+    b2.style.opacity   = '1';
+  }
+}
 </script>
 </body>
 </html>
